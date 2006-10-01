@@ -97,17 +97,11 @@ public abstract class Constants {
    * TO BE USED AS A CONSTANT
    */
   public static int MAX_PLAN_RECURSION = 3;
-
-
+  
   /**
-   * Command line parameters
+   * Make JUnit test cases subclass FilteringTestCase.
    */
-  protected static final String OPTION_DEPTH = "depth";
-  protected static final String OPTION_HELP = "help";
-  protected static final String OPTION_OUTDIR = "outdir";
-  protected static final String OPTION_VERBOSE = "verbose";
-  protected static final String OPTION_VERBOSEALL = "verboseAll";
-
+  public static boolean JUNIT_FILTERING = false;
 
   /**
    * Line separator

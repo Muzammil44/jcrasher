@@ -12,6 +12,8 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
+import edu.gatech.cc.jcrasher.plans.blocks.Block;
+
 /**
  * Provides basic JUnit test case writing functions.
  * 
@@ -19,7 +21,20 @@ import java.io.IOException;
  */
 public abstract class AbstractJUnitTestWriter {
   
+	protected final Class testeeClass;
+	protected final String comment;
   
+	/**
+	 * Constructor
+	 */
+	protected AbstractJUnitTestWriter(
+			final Class testeeClass,
+			final String comment) {
+		
+		this.testeeClass = notNull(testeeClass);
+		this.comment = notNull(comment);		
+	}
+	
   /**
    * Generates the "package bla;" header.
    * 
@@ -32,7 +47,7 @@ public abstract class AbstractJUnitTestWriter {
    * </pre>
    * Empty string if testeeClass resides in the default package.
    */
-  protected String getPackageHeader(final Class testeeClass) {
+  protected String getPackageHeader() {
     notNull(testeeClass);
     final StringBuilder sb = new StringBuilder();
     

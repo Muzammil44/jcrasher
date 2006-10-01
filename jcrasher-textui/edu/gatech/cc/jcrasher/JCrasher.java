@@ -31,10 +31,11 @@ public class JCrasher {
 		"every PACKAGE and their sub-packages.\n" +
 		"Example: java edu.gatech.cc.jcrasher.JCrasher p1.C p2\n\n" +
 		
-		"  -d, --depth=INT  maximal depth of method chaining (default 3)\n" +
-		"  -o, --outdir=DIR where JCrasher writes test case sources to (default .)\n" +
-		"  -v, --version    print version number\n" +
-		"  -h, --help       print these instructions\n"
+		"  -d, --depth=INT      maximal depth of method chaining (default 3)\n" +
+		"  -h, --help           print these instructions\n"+
+		"  -j, --junitFiltering make generated test cases extend FilteringTestCase\n" +
+		"  -o, --outdir=DIR     where JCrasher writes test case sources to (default .)\n" +
+		"  -v, --version        print version number\n"
 	;
 
 	protected final static String name = "JCrasher 2";	
@@ -243,11 +244,12 @@ public class JCrasher {
 	protected Class[] parse(String[] args){
 		LongOpt[] longopts = new LongOpt[]{
 				new LongOpt("depth", LongOpt.REQUIRED_ARGUMENT, null, 'd'),
+				new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),				
+				new LongOpt("junitFiltering", LongOpt.NO_ARGUMENT, null, 'j'),
 	   		new LongOpt("outdir", LongOpt.REQUIRED_ARGUMENT, null, 'o'),
-				new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),
 				new LongOpt("version", LongOpt.NO_ARGUMENT, null, 'v')
 	  };
-	  Getopt g = new Getopt("JCrasher", args, "d:ho:v;", longopts);
+	  Getopt g = new Getopt("JCrasher", args, "d:hjo:v;", longopts);
 	  int opt = 0;
 	  while ((opt = g.getopt()) != -1) {
 	  	switch (opt) {
@@ -255,6 +257,10 @@ public class JCrasher {
 	  		case 'd':  //--depth .. maximum nesting depth.
 	  			parseDepth(g.getOptarg());
 	  			break;
+	  			
+	  		case 'j':  //--junitFiltering .. FilteringTestCase.
+	  			Constants.JUNIT_FILTERING = true;
+	  			break;	  			
 	      
 	      case 'o':  //--outdir .. write test sources to.
 	      	parseOutDir(g.getOptarg());
