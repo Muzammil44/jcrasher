@@ -35,7 +35,6 @@ public class CrasherImpl implements Crasher {
 	 */
 	protected final TypeGraph typeSpace = TypeGraphImpl.instance();
 	protected final Generator generator = new ExecutingGenerator();
-	protected final TestCaseWriter testCaseWriter = new JUnitTestCaseWriter();
 
 
 	/**
@@ -61,7 +60,9 @@ public class CrasherImpl implements Crasher {
 		for (Class c: classes) {			
 			final List<Block> blockList = generator.getBlocks(c);
 			final Block[] blocks = blockList.toArray(new Block[blockList.size()]);
-			testCaseWriter.writeTestFile(false, c, blocks, "No comment.");
+			final TestCaseWriter testCaseWriter = new JUnitTestCaseWriter(
+					c, "No comment", Constants.JUNIT_FILTERING, blocks);
+			testCaseWriter.write();
 		}
 	}
 }

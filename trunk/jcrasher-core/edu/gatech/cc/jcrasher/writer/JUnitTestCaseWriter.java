@@ -22,22 +22,66 @@ import edu.gatech.cc.jcrasher.plans.blocks.Block;
  */
 public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
     TestCaseWriter {
-  
+	
+	protected final boolean doFilter;
+	protected final int fileNr;					//-1 = no number.
+	protected final Block[] blocks;
+	
+	
+	/**
+	 * Constructor.
+	 * <p>
+   * Writes a series of test cases to a new java file together
+   * with a text that will be included as a comment.
+	 * @param doFilter wrap test case into a try-catch block that passes any
+   * thrown exception to JCrasher's runtime filters.
+	 */
+	public JUnitTestCaseWriter(
+			final Class testeeClass,
+			final String comment,
+      boolean doFilter,
+      final Block[] blocks,
+      int fileNr) {
+	
+		super(notNull(testeeClass), notNull(comment));
+		
+		this.doFilter = doFilter;
+		this.blocks = notNull(blocks);
+		this.fileNr = fileNr;
+	}
+	
 
+	/**
+	 * Constructor.
+	 * 
+	 * Creates a unnumbered test class.
+	 */
+	public JUnitTestCaseWriter(
+			final Class testeeClass,
+      final String comment,
+      boolean doFilter,
+      final Block[] blocks) {
+	
+		this(
+				notNull(testeeClass),
+				notNull(comment),
+				doFilter, 
+				notNull(blocks),
+				-1);	
+	}
+	
   /**
    * @return simple name of generated class = <simpleClassName>Test.
    * E.g., TesteeTest1 for (foo.bar.Testee, 1)
    */
-  protected String getSimpleTestName(final Class testeeClass) {
+  protected String getSimpleTestName() {
     notNull(testeeClass);
     
-//    String testeeName = testeeClass.getName();
-//    int lastDotPos = testeeName.lastIndexOf('.') + 1;
-//    check(lastDotPos>=0);
-//
-//    String simpleTesteeName = testeeName.substring(lastDotPos);
+    String res = testeeClass.getSimpleName()+"Test";
+    if (fileNr > -1)
+    	res += fileNr;
     
-    return testeeClass.getSimpleName()+"Test";
+    return res;
   }
   
   
@@ -49,13 +93,11 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
    *    protected void tearDown() { [..] }    
    * </PRE> 
    */
-  protected String getHeader(
-      boolean doFilter,
-      final Class testeeClass) {
+  protected String getHeader() {
     
     notNull(testeeClass);
     
-    final String simpleTestName = getSimpleTestName(testeeClass);
+    final String simpleTestName = getSimpleTestName();
     String qualSuperClassName = "junit.framework.TestCase";
     if (doFilter) {
       qualSuperClassName = "edu.gatech.cc.junit.FilteringTestCase";
@@ -94,17 +136,14 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
    * public static Test suite() { [..] }
    * </PRE> 
    */
-  protected String getFooter(
-      boolean doFilter,
-      final Class testeeClass,
-      final Block[] blocks) {    
+  protected String getFooter() {    
 
     notNull(testeeClass);
     notNull(blocks);
     
     final String qualTesteeName = testeeClass.getName();
-    final String simpleTestName = getSimpleTestName(testeeClass);
-    final String testedMethName = getTestedMethName(blocks);
+    final String simpleTestName = getSimpleTestName();
+    final String testedMethName = getTestedMethName();
     final StringBuilder sb = new StringBuilder();
     
     if (doFilter && (testedMethName != null)) {
@@ -149,7 +188,7 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
   /**
    * @return name of meth under test or <init> if common in blocks, null else.
    */
-  protected String getTestedMethName(final Block[] blocks) {
+  protected String getTestedMethName() {
     notNull(blocks);
 
     switch (blocks.length) {
@@ -182,12 +221,9 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
    *   }
    * </pre>
    */
-  protected String getTestCases(
-      boolean doFilter,
-      final Class testee,
-      final Block[] blocks) {
+  protected String getTestCases() {
     
-    notNull(testee);
+    notNull(testeeClass);
     notNull(blocks);
     
     final StringBuilder sb = new StringBuilder();
@@ -201,7 +237,7 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
       }
       
       sb.append(
-          blocks[i].toString(doFilter? TAB+TAB : TAB, testee)+          NL);
+          blocks[i].toString(doFilter? TAB+TAB : TAB, testeeClass)+     NL);
       
       if(doFilter) {
         sb.append(
@@ -215,13 +251,9 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
 
   
   /**
-   * @param doFilter if test case execution should filter any exception thrown.
+   * Creates the test case.
    */
-  public File writeTestFile(
-      boolean doFilter,
-      final Class testeeClass,
-      final Block[] blocks,
-      final String comment) {
+  public File write() {
     
     notNull(testeeClass);
     notNull(blocks);
@@ -234,13 +266,13 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
     }
     
     String content = 
-        getPackageHeader(testeeClass)+                                  
+        getPackageHeader()+                                  
         getJavaDocComment(comment, "")+
-        getHeader(doFilter, testeeClass)+
-        getTestCases(doFilter, testeeClass, blocks)+
+        getHeader()+
+        getTestCases()+
         TAB+                                                            NL+
         TAB+                                                            NL+
-        getFooter(doFilter, testeeClass, blocks)+
+        getFooter()+
         "}";
     
     boolean success = false;
@@ -255,6 +287,5 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
     }
 
     return outFile;
-  }
-
+  }  
 }

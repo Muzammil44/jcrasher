@@ -28,40 +28,63 @@ import edu.gatech.cc.jcrasher.Loadee;
 public class AbstractJUnitTestWriterTest extends TestCase {
 
   protected Class inDefaultPackage = null;
-  protected AbstractJUnitTestWriter junitTestWriter = null;
 
   
   @Override
   protected void setUp() throws Exception { 
     super.setUp();
     
-    junitTestWriter = new ConcreteJUnitTestWriter();
     inDefaultPackage = Class.forName("InDefaultPackage");
   }
   
-  
-  public void testGetPackageHeader() {
+
+  public void testConstructor() {
     try {
-      junitTestWriter.getPackageHeader(null);
-      fail("getPackageHeader(null) not allowed");
+    	AbstractJUnitTestWriter junitTestWriter = 
+      	new ConcreteJUnitTestWriter(null, "No comment");
+      fail("Constructor(null, ..) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
+  	
+    try {
+    	AbstractJUnitTestWriter junitTestWriter = 
+      	new ConcreteJUnitTestWriter(inDefaultPackage, null);
+      fail("Constructor(.., null) not allowed");
+    }
+    catch(RuntimeException e) {  //expected
+    }
+  	
+  }
+  
+  public void testGetPackageHeader() {
+  	AbstractJUnitTestWriter junitTestWriter = 
+    	new ConcreteJUnitTestWriter(inDefaultPackage, "No comment");
+    assertEquals("", junitTestWriter.getPackageHeader());
     
-    assertEquals("", junitTestWriter.getPackageHeader(inDefaultPackage));
+    junitTestWriter = 
+    	new ConcreteJUnitTestWriter(Loadee.class, "No comment");
     assertEquals(
         "package edu.gatech.cc.jcrasher;"+NL+NL,
-        junitTestWriter.getPackageHeader(Loadee.class));
+        junitTestWriter.getPackageHeader());
+    
+    junitTestWriter = 
+    	new ConcreteJUnitTestWriter(Loadee.StaticMember.class, "No comment");
     assertEquals(
         "package edu.gatech.cc.jcrasher;"+NL+NL,
-        junitTestWriter.getPackageHeader(Loadee.StaticMember.class));
+        junitTestWriter.getPackageHeader());
+    
+    junitTestWriter = 
+    	new ConcreteJUnitTestWriter(Loadee.Inner.class, "No comment");    
     assertEquals(
         "package edu.gatech.cc.jcrasher;"+NL+NL,
-        junitTestWriter.getPackageHeader(Loadee.Inner.class));
+        junitTestWriter.getPackageHeader());
   }
 
 
   public void testJavadocComment() {
+  	AbstractJUnitTestWriter junitTestWriter = 
+    	new ConcreteJUnitTestWriter(Loadee.Inner.class, "bla");
     assertEquals(
         "/**"+            NL+
         " * Hello"+       NL+
@@ -102,7 +125,9 @@ public class AbstractJUnitTestWriterTest extends TestCase {
 
   
   public class ConcreteJUnitTestWriter extends AbstractJUnitTestWriter {
-    /* Empty */
+  	ConcreteJUnitTestWriter(Class testeeClass, String comment) {
+  		super(testeeClass, comment);
+  	}
   }
 
 }
