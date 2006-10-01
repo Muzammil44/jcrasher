@@ -258,8 +258,8 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
     notNull(testeeClass);
     notNull(blocks);
     
-    final String simpleTestName = testeeClass.getSimpleName()+"Test";
-    final File outFile = CreateFileUtil.createOutFile(testeeClass, simpleTestName);    
+    final File outFile = 
+    	CreateFileUtil.createOutFile(testeeClass, getSimpleTestName());    
     final FileWriter outWriter = createFileWriter(outFile);
     if (outWriter==null) {
       return null;
