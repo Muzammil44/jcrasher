@@ -4,101 +4,170 @@
 Copyright (C) 2006 Christoph Csallner and Yannis Smaragdakis.
 -->
 
-<project basedir="." default="release" name="jcrasher">
-	
-	<property name="version" value="2.0"/> <!--inc for major change-->
-	
-		<path id="project.classpath">
-        <pathelement location="bin"/>
-        <pathelement location="lib/java-getopt-1.0.10.jar"/>
-		</path>
-	
-	
-    <target name="init">
-				<buildnumber/>
-        <mkdir dir="bin"/>
-				<mkdir dir="test-bin"/>
-    </target>
+<project basedir="." default="jcrasher.all.release.bin" name="jcrasher">
 
-	
-		<target name="getopt.lib" depends="init">
-				<unzip src="lib/java-getopt-1.0.10.jar" dest="bin" overwrite="false">
-						<patternset>
-								<include name="**/*.class"/>
-								<include name="**/*.properties"/>
-						</patternset>
-				</unzip>
-		</target>
-	
-	
-    <target name="build" depends="getopt.lib">
-        <javac destdir="bin" debug="true">
-						<src path="jcrasher-core"/>
-            <src path="jcrasher-textui"/>
-            <classpath refid="project.classpath"/>
-        </javac>
-    </target>
-	
-		
-	<target name="jar" depends="build" description="make jcrasher.jar">
-		<jar destfile="jcrasher-${version}.${build.number}.jar">
-			<fileset dir="${basedir}">
-				<include name="LICENSE*.txt"/>
-			</fileset>
-			<fileset dir="bin">
-				<include name="**/*.class"/>
-				<include name="**/*.properties"/>
-			</fileset>
-		</jar>
-	</target>
-	
-	
-    <target name="test" depends="build">
-        <javac destdir="test-bin" debug="true">
-            <src path="jcrasher-core-tests"/>
-            <classpath refid="project.classpath"/>
-        </javac>
-    	
-        <junit fork="yes" printsummary="on" dir="test-bin">
-            <formatter type="plain"/>
-            <classpath>
-            	<path refid="project.classpath"/>
-            	<pathelement location="test-bin"/>
-          	</classpath>
-        	<batchtest>
-        		<fileset dir="test-bin">
-					<include name="**/*Test.class"/>
-        	    </fileset>
-			</batchtest>
-        </junit>
-    </target>
+  <!-- inc for major change -->
+  <property name="version" value="2.0" />    
+  <property name="license-jcrasher" value="LICENSE.txt"/>  
+  <property name="license-fb-crasher" value="LICENSE-fb-crasher.txt"/>  
+  <property name="license-gnu-getopt" value="LICENSE-gnu-getopt.txt"/>  
+  <property name="lib" value="lib"/>    
+  <property name="src-jcrasher-core" value="jcrasher-core"/>
+  <property name="src-jcrasher-core-tests" value="jcrasher-core-tests"/>  
+  <property name="src-jcrasher-textui" value="jcrasher-textui"/>  
+  <property name="bin-jcrasher-core" value="bin-jcrasher-core"/>
+  <property name="bin-jcrasher-core-tests" value="bin-jcrasher-core-tests"/>  
+  <property name="bin-jcrasher-textui" value="bin-jcrasher-textui"/>
 
-	
-	<target name="release" depends="test,jar" description="make jcrasher-src.tar.gz">
-		<tar destfile="jcrasher-${version}.${build.number}-src.tar">
-			<tarfileset dir="${basedir}">
-				<include name="jcrasher-core/"/>
-				<include name="jcrasher-core-tests/"/>
-				<include name="jcrasher-textui/"/>				
-				<include name="lib/"/>
-				<include name="index.html"/>
-				<include name="build.number"/>
-				<include name="LICENSE*.txt"/>
-				<include name="build.xml"/>
-			</tarfileset>
-		</tar>
-		
-		<gzip 
-				src="jcrasher-${version}.${build.number}-src.tar" 
-				destfile="jcrasher-${version}.${build.number}-src.tar.gz"/>
-	</target>	
-	
-	
-    <target name="clean">
-        <delete dir="bin"/>
-    	<delete dir="test-bin"/>
-    	<delete>
-			<fileset dir="." includes="TEST-*.txt,*.tar"/>
-		</delete>    		
-    </target>	
+  <path id="project.classpath">
+    <pathelement location="${bin-jcrasher-core}" />
+    <pathelement location="${bin-jcrasher-textui}" />
+    <pathelement location="${lib}/java-getopt-1.0.10.jar" />
+  </path>
+
+
+ <!-- Init --> 
+  <target name="init">
+    <buildnumber />
+  </target>
+
+ 
+  <!-- JCrasher core: Init --> 
+  <target name="jcrasher.core.init" depends="init">
+    <mkdir dir="${bin-jcrasher-core}" />
+    <mkdir dir="${bin-jcrasher-core-tests}" /> 
+  </target>  
+
+  
+ <!-- JCrasher core: Build --> 
+  <target name="jcrasher.core.build" depends="jcrasher.core.init">
+    <javac destdir="${bin-jcrasher-core}" debug="true">
+      <src path="${src-jcrasher-core}" />
+      <classpath refid="project.classpath" />
+    </javac>
+  </target>
+
+  
+  <!-- JCrasher core: Test -->
+  <target name="jcrasher.core.test" depends="jcrasher.core.build">
+    <javac destdir="${bin-jcrasher-core-tests}" debug="true">
+      <src path="${src-jcrasher-core-tests}" />
+      <classpath refid="project.classpath" />
+    </javac>
+
+    <junit fork="yes" printsummary="on" dir="${bin-jcrasher-core-tests}">
+      <formatter type="plain" />
+      <classpath>
+        <path refid="project.classpath" />
+        <pathelement location="${bin-jcrasher-core-tests}" />
+      </classpath>
+      <batchtest>
+        <fileset dir="${bin-jcrasher-core-tests}">
+          <include name="**/*Test.class" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target> 
+  
+  
+  <!-- JCrasher core: Release binary -->
+  <target name="jcrasher.core.release.bin" depends="jcrasher.core.test"
+      description="make jcrasher-core.jar">
+    <jar destfile="jcrasher-core-${version}.${build.number}.jar">
+      <fileset dir="${basedir}">
+        <include name="${license-jcrasher}" />
+        <include name="${license-fb-crasher}" />        
+      </fileset>
+      <fileset dir="${bin-jcrasher-core}">
+        <include name="**/*.class" />        
+      </fileset>      
+    </jar>
+  </target>
+
+
+  <!-- JCrasher textui: Init --> 
+  <target name="jcrasher.textui.init" depends="init">
+    <mkdir dir="${bin-jcrasher-textui}" /> 
+  </target>
+  
+  
+  <!-- GNU GetOpt -->
+  <target name="lib.gnu.getopt" depends="jcrasher.textui.init">
+    <unzip src="${lib}/java-getopt-1.0.10.jar" dest="${bin-jcrasher-textui}" 
+        overwrite="false">
+      <patternset>
+        <include name="**/*.class" />
+        <include name="**/*.properties" />
+      </patternset>
+    </unzip>
+  </target>
+
+  
+  <!-- JCrasher textui: Build --> 
+  <target name="jcrasher.textui.build"
+      depends="jcrasher.core.build,lib.gnu.getopt">
+    <javac destdir="${bin-jcrasher-textui}" debug="true">
+      <src path="${src-jcrasher-textui}" />
+      <classpath refid="project.classpath" />
+    </javac>
+  </target>
+
+
+  <!-- JCrasher all: Release binary -->  
+  <target name="jcrasher.all.release.bin"
+      depends="jcrasher.core.test,jcrasher.textui.build"
+      description="make jcrasher.jar">
+    <jar destfile="jcrasher-${version}.${build.number}.jar">
+      <fileset dir="${basedir}">
+        <include name="LICENSE*.txt" />
+      </fileset>
+      <fileset dir="${bin-jcrasher-core}">
+        <include name="**/*.class" />
+        <include name="**/*.properties" />
+      </fileset>
+        <fileset dir="${bin-jcrasher-textui}">
+          <include name="**/*.class" />
+          <include name="**/*.properties" />
+        </fileset>      
+    </jar>
+  </target>
+
+
+  <!-- Jar binaries: Produce jcrasher.jar and jcrasher-core.jar -->
+  <target name="jar" 
+      depends="jcrasher.core.release.bin,jcrasher.all.release.bin"
+      description="make jcrasher-src.tar.gz">
+  </target> 
+       
+        
+  <!-- JCraher all: Release source -->
+  <target name="jcrasher.all.release.src" depends="jar"
+      description="make jcrasher-src.tar.gz">
+    <tar destfile="jcrasher-${version}.${build.number}-src.tar">
+      <tarfileset dir="${basedir}">
+        <include name="${src-jcrasher-core}/" />
+        <include name="${src-jcrasher-core-tests}/" />
+        <include name="${src-jcrasher-textui}/" />
+        <include name="${lib}/" />
+        <include name="index.html" />
+        <include name="build.number" />
+        <include name="LICENSE*.txt" />
+        <include name="build.xml" />
+      </tarfileset>
+    </tar>
+
+    <gzip src="jcrasher-${version}.${build.number}-src.tar" 
+        destfile="jcrasher-${version}.${build.number}-src.tar.gz" />
+  </target>
+
+  
+  <!-- Clean: Delete generated files --> 
+  <target name="clean">
+    <delete dir="${bin-jcrasher-core}" />
+    <delete dir="${bin-jcrasher-core-tests}" />
+    <delete dir="${bin-jcrasher-textui}" /> 
+    <delete>
+      <fileset dir="." includes="TEST-*.txt,*.tar" />
+    </delete>
+  </target>
 </project>
