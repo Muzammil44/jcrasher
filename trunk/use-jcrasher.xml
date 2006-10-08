@@ -1,0 +1,125 @@
+<!--
+use-jcrasher.xml
+Copyright 2004, 2005,2006 Christoph Csallner and Yannis Smaragdakis.
+
+2006-10-08 Adapted from jcrasher.xml that is packaged with Check 'n' Crash.
+2005-11-04 JCrasher requires Java 1.5 (version 0.8.7 and later).
+2005-06-28 Requires Ant 1.6.3 or later.
+
+====================================================================
+Ant file for using JCrasher: generate, compile, run, and archive tests.
+This file must be called parameterized from the testee's Ant build file.
+Note that properties of the calling project override properties defined here.
+====================================================================
+-->
+
+<project name="JCrasher" default="test.archive">
+	<!--basedir overriden by calling target's dir-->
+  <description>
+		JCrasher--generate, compile, run, and archive tests.
+	</description>
+	
+	<path id="test.classpath">
+		<pathelement location="${jcrasher.jar}"/>		
+		<pathelement path="${classpath}"/>
+		<pathelement location="${bin}"/>
+	</path>
+
+	
+	<!-- Define naming of generated files -->
+	<target name="init">
+		<mkdir dir="${bin}"/>
+		<mkdir dir="${src.generated.tests}"/>
+		<mkdir dir="${bin.generated.tests}"/>
+		<tstamp>
+			<format property="DSTAMP" pattern="yyyy-MM-dd"/>
+		</tstamp>
+		<basename property="basedir.basename" file="${basedir}"/>
+		<property name="run.id" value="${basedir.basename}-jcrasher-${jcrasher.version}-${DSTAMP}-${TSTAMP}"/>
+		<property name="jcrasher.out" value="${run.id}.jcrasher.txt"/>
+		<property name="test.zip" value="${run.id}.zip"/>
+		
+    <!--package/Testee.java package/Testee.java-->  
+    <loadfile property="testee.list.ws" srcFile="${testee.list.filename}">
+      <filterchain>
+        <tokenfilter>
+          <filetokenizer/>
+          <trim/>
+          <replaceregex pattern="(\s)+(\S)" replace=" \2" flags="g"/>
+        </tokenfilter>
+      </filterchain>
+    </loadfile>
+    <filelist id="testee.filelist" dir="${basedir}" files="${testee.list.ws}"/>
+	</target>
+	
+		
+	<!-- Compile testee (JCrasher works on Java Bytecode) -->
+	<target name="testee.compile" depends="init">
+		<javac classpath="${classpath}" debug="true"
+				srcdir="${src}" destdir="${bin}"
+        includes="${testee.list.ws}" />
+	</target>
+	
+	
+	
+	<!-- Let JCrasher generate test cases -->
+	<target name="test.generate" depends="testee.compile">
+		<pathconvert property="testee.list.type" refid="testee.filelist" pathsep=" ">
+			<packagemapper from="${basedir}${file.separator}*.java" to="*"/>
+		</pathconvert> <!--package.Testee package.Testee-->
+		<java classname="edu.gatech.cc.jcrasher.JCrasher" fork="true"
+	 			dir="${src}" output="${jcrasher.out}" maxmemory="128m">
+			<classpath refid="test.classpath"/>
+			<arg value="-o"/>
+			<arg file="${src.generated.tests}"/>
+			<arg line="${jcrasher.params}"/>  <!--for example, "-d=2"-->
+			<arg line="${testee.list.type}"/>
+		</java>
+	</target>
+	
+
+  <!-- Compile JCrasher-generated test cases -->
+	<target name="test.compile" depends="test.generate">
+    <javac 
+        srcdir="${src.generated.tests}"
+        destdir="${bin.generated.tests}"
+        classpathref="test.classpath"
+        debug="true"/>
+	</target>
+
+
+	<!-- Run JCrasher-generated test cases -->
+	<target name="test.run" depends="test.compile">
+    <junit dir="${bin.generated.tests}" fork="yes" 
+        printsummary="on">
+      <formatter type="plain" />
+      <classpath>
+        <pathelement location="${bin.generated.tests}" /> 
+        <pathelement location="${bin}"/> 
+        <pathelement path="${classpath}"/> 
+      </classpath>
+      <batchtest>
+        <fileset dir="${bin.generated.tests}">
+          <include name="**/*Test.class" />
+        </fileset>
+      </batchtest>
+      <assertions>  <!--assertions enabled for testing-->
+        <enable/>
+      </assertions> 
+    </junit>
+	</target>
+
+
+
+	<!--test.archive
+	Zip this file, the generated test cases, and the results-->
+	<target name="test.archive" depends="test.run">				
+		<zip destfile="${test.zip}">
+			<fileset dir="." includes="jcrasher.xml"/>
+      <fileset dir="." includes="${testee.list.filename}"/>
+			<fileset dir="." includes="${jcrasher.out}"/>
+      <fileset dir="." includes="TEST-*.txt"/>
+			<fileset dir="." includes="${src.generated.tests}/"/>
+		</zip>		
+	</target>	
+</project>

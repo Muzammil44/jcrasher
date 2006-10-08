@@ -7,18 +7,52 @@
 <h1>JCrasher-2</h1>
 
 <p>
-<strong>Last modified on:</strong> 24 September 2006<br>
+<strong>Last modified on:</strong> 8 October 2006<br>
 <strong>Author:</strong> Christoph Csallner
 </p>
 
 <h4><a name="_Contents">Contents</a></h4>
 
 <ul>
+<li><a href="#Usage">Usage</a>
 <li><a href="#Dependencies">Dependencies</a>
 </li>
 </ul>
 
 
+<h2><a name="Usage">Usage</a></h2>
+
+The following describes two options for how to run JCrasher.
+
+<h3>JCrasher automated with <a href="http://ant.apache.org/">Ant</a></h3>
+
+The <code>jcrasher.xml</code> Ant script compiles the testee sources,
+runs JCrasher on the testee,
+compiles the generated <a href="http://www.junit.org/index.htm">JUnit</a> test files,
+runs JUnit on the generated test cases,
+and packages the results into a zip file,
+for example:
+<a href="examples/examples-jcrasher-2.0.18-2006-10-08-1609.zip">
+<code>examples-jcrasher-2.0.18-2006-10-08-1609.zip</code></a>.
+
+The Ant script reads the textfile <code>testees.txt</code> and interprets
+every line as the location of a Java source file,
+relative to the <code>src</code> property in <code>jcrasher.xml</code>.
+
+<h5>Example</h5>
+<pre>cd examples</pre>
+<pre>ant -f jcrasher.xml</pre>
+<pre>ant -f jcrasher.xml clean</pre>
+
+<h3>JCrasher directly from the command line</h3>
+
+JCrasher expects fully qualified class names or package names as input parameters.
+
+<h5>Example</h5>
+<pre>cd examples</pre>
+<pre>javac src\trivia\*.java -d .</pre>
+<pre>java -cp ..\jcrasher-2.0.18.jar;. edu.gatech.cc.jcrasher.JCrasher trivia.DivByZero trivia.NullDeref</pre>
+Now you need to compile and run the generated JUnit test cases.
 
 <h2><a name="Dependencies">Dependencies</a></h2>
 
