@@ -1,0 +1,52 @@
+<!--
+jcrasher.xml
+Author: Christoph Csallner
+
+====================================================================
+Testee Ant build file, located in testee root directory
+Compiles testee, calls use-jcrasher.xml to generate, compile, run, and archive tests.
+Adapt properties below to your project and environment settings.
+====================================================================
+-->
+
+<project name="JCrasher examples" default="jcrasher" basedir=".">
+  <description>
+		Build and run JCrasher on testee.
+	</description>
+	
+  <!--Environment-->
+	<property name="jcrasher.version" value="2.0.18"/>
+	<property name="jcrasher.jar" value="..\jcrasher-${jcrasher.version}.jar"/>
+	
+  <!--Project-->
+	<property name="classpath" value=""/>		<!--Libraries required by the testee-->
+  <property name="src" value="src"/> <!--no backslashes as used as pattern-->
+  <property name="bin" value="bin"/>
+	<property name="src.generated.tests" value="jcrasher-generated-tests-src"/> 
+	<property name="bin.generated.tests" value="jcrasher-generated-tests-bin"/>
+	<property name="testee.list.filename" value="testees.txt"/>
+	<property name="jcrasher.params" value="--depth=3"/>  <!--JCrasher specific-->
+
+
+	<!--jcrasher-->
+	<target name="jcrasher">
+		<unjar src="${jcrasher.jar}" dest=".">
+			<patternset includes="use-jcrasher.xml"/>
+		</unjar>
+		<ant antfile="use-jcrasher.xml" dir="." target="test.archive"/>
+		<delete file="use-jcrasher.xml"/>
+	</target>
+
+	
+	<!--clean-->
+	<target name="clean"	description="delete all generated files except the archive-bundle">
+		<delete dir="${bin}"/>
+		<delete dir="${src.generated.tests}"/>
+		<delete dir="${bin.generated.tests}"/>
+		<delete>
+	  	<fileset dir="${basedir}">  <!--deletes . if nested patternsets omitted-->
+	  		<patternset includes="*.jcrasher.txt,TEST-*.txt"/>
+	  	</fileset>		
+		</delete>
+	</target>			
+</project>

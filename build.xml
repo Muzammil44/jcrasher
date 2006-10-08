@@ -119,6 +119,7 @@ Copyright (C) 2006 Christoph Csallner and Yannis Smaragdakis.
       description="make jcrasher.jar">
     <jar destfile="jcrasher-${version}.${build.number}.jar">
       <fileset dir="${basedir}">
+				<include name="use-jcrasher.xml" />
         <include name="LICENSE*.txt" />
       </fileset>
       <fileset dir="${bin-jcrasher-core}">
@@ -153,6 +154,7 @@ Copyright (C) 2006 Christoph Csallner and Yannis Smaragdakis.
         <include name="build.number" />
         <include name="LICENSE*.txt" />
         <include name="build.xml" />
+				<include name="use-jcrasher.xml" />
       </tarfileset>
     </tar>
 
