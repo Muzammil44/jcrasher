@@ -94,8 +94,8 @@ public class ExecutingGenerator implements Generator {
     
     /* Try tests */
     for (int i=0; i<testsTried; i++) {
-      final int testIndex = (testsTried<MAX_TEST_CASES_TRIED_CLASS? i :
-      	random.nextInt(testsAvailable));
+      final int testIndex = (testsTried<MAX_TEST_CASES_TRIED_CLASS? 
+      		i : random.nextInt(testsAvailable));
       Block testCase = null;
       try {
         testCase = classNode.getBlock(testIndex);

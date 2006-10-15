@@ -114,12 +114,14 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
         " extends "+qualSuperClassName+" {"+                                NL+
         TAB+                                                                NL+
         getJavaDocComment("Executed before each testXXX().", TAB)+
+        TAB+"@Override"+                                     								NL+
         TAB+"protected void setUp() {"+                                     NL+
         reinitCode+
         TAB+TAB+"//TODO: my setup code goes here."+                         NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
         getJavaDocComment("Executed after each testXXX().", TAB)+
+        TAB+"@Override"+                                     								NL+
         TAB+"protected void tearDown() throws Exception {"+                 NL+
         TAB+TAB+"super.tearDown();"+                                        NL+
         TAB+TAB+"//TODO: my tear down code goes here."+                     NL+
