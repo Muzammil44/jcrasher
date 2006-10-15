@@ -7,6 +7,8 @@ package edu.gatech.cc.jcrasher;
 
 import static edu.gatech.cc.jcrasher.Constants.FS;
 import static edu.gatech.cc.jcrasher.Constants.PS;
+import static edu.gatech.cc.jcrasher.Assertions.check;
+import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 import java.io.File;
 import java.util.Enumeration;
@@ -14,6 +16,9 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
+import java.util.logging.Handler;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import gnu.getopt.Getopt;
 import gnu.getopt.LongOpt;
@@ -32,53 +37,81 @@ public class JCrasher {
 		"Example: java edu.gatech.cc.jcrasher.JCrasher p1.C p2\n\n" +
 		
 		"  -d, --depth=INT      maximal depth of method chaining (default 3)\n" +
-		"  -h, --help           print these instructions\n"+
+		"  -h, --help           print these instructions\n" +
 		"  -j, --junitFiltering make generated test cases extend FilteringTestCase\n" +
+		"  -l, --log            generate detailed log\n" +		
 		"  -o, --outdir=DIR     where JCrasher writes test case sources to (default .)\n" +
-		"  -v, --version        print version number\n"
-	;
+		"  -v, --version        print version number\n";
 
-	protected final static String name = "JCrasher 2";	
+	protected final static String name = "JCrasher 2 (http://www.cc.gatech.edu/jcrasher)";
+	protected final static String copyright = 
+		"(C) Copyright 2002-2006 Christoph Csallner and Yannis Smaragdakis.";
 	protected final static String hint =
-		"Try `java edu.gatech.cc.jcrasher.JCrasher --help' for more information."
-	;
+		"Try `java edu.gatech.cc.jcrasher.JCrasher --help' for more information.";
 
+	/* TODO(csallner): evaluate the Java logging framework. */
+	private final static Logger log =
+		 Logger.getLogger(JCrasher.class.getName());
 	
-	/*
+	/**
+	 * Set the log level globally.
+	 */
+	protected static void setLogLevel(Level level) {
+		final Logger rootLogger = Logger.getLogger("");
+		rootLogger.setLevel(level);
+		for (Handler handler: rootLogger.getHandlers())
+			handler.setLevel(level); 
+	}
+	
+	/**
 	 * Print out cause of termination, hint and terminate
 	 */
 	protected static void die(String cause) {
   	System.err.println(
-  			name +": " +cause +"\n" +
+  			cause+"\n" +
 				hint +"\n");
-  	System.exit(0);
+  	exit();
 	}
 
-	/*
+	
+	/**
 	 * Print out hint and terminate
 	 */
 	protected static void die() {
   	System.err.println(hint +"\n");
-  	System.exit(0);
+  	exit();
 	}	
 	
+	
+	/**
+	 * Terminate JCrasher.
+	 */
+	protected static void exit() {
+		System.exit(0);
+	}
 	
 	/**
 	 * Load all classes from the jar file that are in one of the
 	 * defined packages or their sub-packages.
 	 * 
-	 * @param packages ::= (package name)*
+	 * @param packages ::= (package name)+
 	 */
-	protected static Set<Class> loadFromJar(String jarName, Set<String> packages) {
-		assert jarName!=null;
-		assert packages!=null;
-		Set<Class> res = new HashSet<Class>();
+	protected static Set<Class> loadFromJar(
+			final String jarName,
+			final Set<String> packages) {
+		notNull(jarName);
+		notNull(packages);
+		check(packages.size()>0);
+		
+		log.fine("Searching " + jarName + " for classes in user-specified packages.");
+		final Set<Class> res = new HashSet<Class>();
 		
 		try {
-			Enumeration<JarEntry> entries = (new JarFile(jarName)).entries();			
+			final Enumeration<JarEntry> entries = (new JarFile(jarName)).entries();			
 			while (entries.hasMoreElements()) {
-				JarEntry entry = entries.nextElement();
-				if (!entry.getName().endsWith(".class")) {  
+				final JarEntry entry = entries.nextElement();
+				if (!entry.getName().endsWith(".class")) {
+					log.finer(entry + " is not a class.");
 					continue;  //ignore entries that are not class files
 				}
 				String entryName = entry.getName().replace('/','.').replace('\\','.');
@@ -88,9 +121,12 @@ public class JCrasher {
 					if (entryName.startsWith(pack+".")) {
 						try {
 							res.add(Class.forName(entryName));
+							log.fine("Loaded "+entryName+" from "+jarName 
+									+ " as a class belonging to user-specified " +pack+".");
 						}
 						catch (Throwable t) {
-							/* ignore misnamed class */
+							log.fine("Could not load "+entryName+" from "+jarName 
+									+ " (for user-specified " +pack+").");							
 						}
 					}
 				}
@@ -98,6 +134,8 @@ public class JCrasher {
 		}
 		catch (Exception e) {
 			/* ignore unusable classpath element */
+			log.fine("Error reading " + jarName + ":");
+			log.fine(e.toString());
 		}
 		return res;
 	}
@@ -109,22 +147,28 @@ public class JCrasher {
 	 * 
 	 * @param pack name of package represented by dir
 	 */
-	protected static Set<Class> loadFromDir(File dir, String pack) {
-		assert dir!=null && dir.exists();
+	protected static Set<Class> loadFromDir(final File dir, final String pack) {
+		notNull(dir);
+		check(dir.exists());
 		
-		Set<Class> res = new HashSet<Class>();
+		log.fine("Loading all classes from " + dir.getAbsolutePath());
+		final Set<Class> res = new HashSet<Class>();
 		
-		File[] elems = dir.listFiles();
+		final File[] elems = dir.listFiles();
 		for (File elem: elems) {
 			
 			if (elem.getName().endsWith(".class")) {	//class file
-				String cName = elem.getName().replace(PS, ".");
-				cName = cName.substring(0,cName.length()-6); 
+				String simpleClassName = elem.getName().replace(PS, ".");
+				simpleClassName = simpleClassName.substring(0,simpleClassName.length()-6);
+				final String qualClassName = pack+"."+simpleClassName;
 				try {
-					res.add(Class.forName(pack+"."+cName));
+					res.add(Class.forName(qualClassName));
+					log.fine("Loaded "+qualClassName+" from "+dir.getAbsolutePath() 
+							+ " as a class belonging to user-specified " +pack+".");
 				}
 				catch (Throwable e) {
-					/* ignore misnamed class */
+					log.fine("Could not load "+qualClassName+" from "+dir.getAbsolutePath() 
+							+ " (for user-specified " +pack+").");	
 				}
 			}
 			
@@ -144,19 +188,22 @@ public class JCrasher {
 	 * 
 	 * @param userSpec ::= (package name)+
 	 */
-	protected static Set<Class> loadFromDir(String dirName, Set<String> packages) {
-		assert dirName!=null;
-		assert packages!=null && packages.size()>0;
+	protected static Set<Class> loadFromDir(
+			final String dirName,
+			final Set<String> packages) {
+		notNull(dirName);
+		notNull(packages);
+		check(packages.size()>0);
 		
-		Set<Class> res = new HashSet<Class>();
+		log.fine("Searching " + dirName + " for classes in user-specified packages.");
+		final Set<Class> res = new HashSet<Class>();
 		
 		for (String pack: packages) {
-			File dir = new File(dirName+FS+pack.replace(".",FS));
-			if (!dir.exists()) {
-				continue;
+			final File dir = new File(dirName+FS+pack.replace(".",FS));
+			if (dir.exists()) {
+				/* Load all class files in dir and its sub-dirs */
+				res.addAll(loadFromDir(dir, pack));
 			}
-			/* Load all class files in dir and its sub-dirs */
-			res.addAll(loadFromDir(dir, pack));
 		}
 		return res;
 	}	
@@ -170,37 +217,43 @@ public class JCrasher {
 	 * package name means that the user wants to load all classes
 	 * found in this package and all its sub-packages.
 	 */
-	protected Class[] parseClasses(String[] userSpecs) {
-		Set<Class> res = new HashSet<Class>();	//avoid multiple entires of same class
+	protected Class[] parseClasses(final String[] userSpecs) {
+		final Set<Class> res = new HashSet<Class>();	//avoid multiple entires of same class
 
-		/* Load all classes specified by the user directly */
-		Set<String> packageSpecs = new HashSet<String>();	//avoid multiple entires
+		/* First interpret each user-provided name as a class name.
+		 * Standard classloader will find class of given name. */
+		final Set<String> packageSpecs = new HashSet<String>();	//avoid multiple entires
 		for (String userSpec: userSpecs) {
 			try {
 				res.add(Class.forName(userSpec));
+				log.fine("Loaded "+userSpec+" directly from the classpath.");
 			}
 			catch (Exception e) {	//Could not be loaded as a class
 				packageSpecs.add(userSpec);
+				log.fine("Could not load "+userSpec+" directly as a class.");
 			}
 		}
 		
 		if (packageSpecs.size()==0) {	//Could load all elements of user spec
+			log.fine("Loaded all user-provided identifiers as classes directly from the classpath.");
 			return res.toArray(new Class[res.size()]);
 		}
 		
 		
-		
-		/* Find all classes that match the user's package specs */
-		String[] cpEntries = System.getProperty("java.class.path").split(PS);
-		for (String cpElement: cpEntries) {
-			if (cpElement.endsWith(".jar")) {	//Load classes from Jar
-				res.addAll(loadFromJar(cpElement, packageSpecs));
+		/* Now interpret each user-provided name as a package name.
+		 * We need to check every classpath entry ourselves for matching classes. */
+		log.fine("Trying to interpret remaining identifiers as package names.");
+		final String[] cpEntries = System.getProperty("java.class.path").split(PS);
+		for (String cpEntry: cpEntries) {
+			if (cpEntry.endsWith(".jar")) {	//Load classes from Jar
+				res.addAll(loadFromJar(cpEntry, packageSpecs));
 				continue;
 			}
 			//Load classes from directory
-			res.addAll(loadFromDir(cpElement, packageSpecs));
+			res.addAll(loadFromDir(cpEntry, packageSpecs));
 		}
 		
+		log.fine("Done loading user-specified classes.");
 		return res.toArray(new Class[res.size()]);
 	}
 	
@@ -209,7 +262,7 @@ public class JCrasher {
 	/** 
 	 * set Constants.MAX_PLAN_RECURSION according to user param 
 	 */
-	protected void parseDepth(String arg) {
+	protected void parseDepth(final String arg) {
 		int maxDepth = 0;
 		try {
 			maxDepth = Integer.parseInt(arg);
@@ -230,7 +283,7 @@ public class JCrasher {
 	/**
 	 * set Constants.OUT_DIR according to user param
 	 */
-	protected void parseOutDir(String arg) {
+	protected void parseOutDir(final String arg) {
 		Constants.OUT_DIR = new File(arg);
 		if (Constants.OUT_DIR.isDirectory()==false) {
 			die(arg +" is not a directory.");
@@ -241,15 +294,16 @@ public class JCrasher {
 	/* 
 	 * Parse command line parameters using GNU GetOpt 
 	 */
-	protected Class[] parse(String[] args){
+	protected Class[] parse(final String[] args){
 		LongOpt[] longopts = new LongOpt[]{
 				new LongOpt("depth", LongOpt.REQUIRED_ARGUMENT, null, 'd'),
 				new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),				
 				new LongOpt("junitFiltering", LongOpt.NO_ARGUMENT, null, 'j'),
+				new LongOpt("log", LongOpt.NO_ARGUMENT, null, 'l'),
 	   		new LongOpt("outdir", LongOpt.REQUIRED_ARGUMENT, null, 'o'),
 				new LongOpt("version", LongOpt.NO_ARGUMENT, null, 'v')
 	  };
-	  Getopt g = new Getopt("JCrasher", args, "d:hjo:v;", longopts);
+	  Getopt g = new Getopt("JCrasher 2", args, "d:hjlo:v;", longopts);
 	  int opt = 0;
 	  while ((opt = g.getopt()) != -1) {
 	  	switch (opt) {
@@ -260,7 +314,11 @@ public class JCrasher {
 	  			
 	  		case 'j':  //--junitFiltering .. FilteringTestCase.
 	  			Constants.JUNIT_FILTERING = true;
-	  			break;	  			
+	  			break;
+	  			
+	  		case 'l':	//--log
+	  			setLogLevel(Level.FINE); 
+	  			break;
 	      
 	      case 'o':  //--outdir .. write test sources to.
 	      	parseOutDir(g.getOptarg());
@@ -268,12 +326,13 @@ public class JCrasher {
 
 	      case 'h':  //--help .. print usage instructions.
 	      	System.out.println(usage);
-	      	System.exit(0);
+	      	exit();
 	      	break;	//TODO(csallner): dead code.
 	      
 	      case 'v':  //--version .. print version number.
-	      	System.out.println(name);
-	      	System.exit(0);
+	      	//TODO(csallner): get version from jar file name.
+	      	//System.out.println(name);
+	      	exit();
 	      	break;	//TODO(csallner): dead code.
 	      
 	      case '?': 
@@ -281,7 +340,8 @@ public class JCrasher {
 	      	break;	//TODO(csallner): dead code.
 	      	
 	      default : //should not happen.
-	      	die("getopt() returned " +opt);
+	      	log.severe("getopt() returned " +opt);
+	      	die();
 	  	}
 	  }
 	  
@@ -295,29 +355,35 @@ public class JCrasher {
 	}
 	
 	
-	
-	/*************************************************************************
+	/**
 	 * Main - called via jvm if started as an application
 	 */
-	public static void main(String[] args) {
-				
+	public static void main(final String[] args) {
+		setLogLevel(Level.SEVERE);	//only things that sould never occur.		
+		System.out.println(name);
+		System.out.println(copyright);
+		
 		/* Test planning time measurement. */
-		long startTime= System.currentTimeMillis();
+		final long startTime= System.currentTimeMillis();
 
 		/* Load classes of given name with system class-loader */
-		JCrasher main = new JCrasher();
-		Class[] classes = main.parse(args);
+		final JCrasher main = new JCrasher();
+		final Class[] classes = main.parse(args);
 			
 		/* Crash loaded class */
 		if (classes!=null && classes.length>0) {
-			Crasher crasher = new CrasherImpl();
+			final Crasher crasher = new CrasherImpl();
 			crasher.crashClasses(classes);
+		}
+		else { 
+			log.fine("Could not load any classes.");
 		}
 		
 		/* Test planning time measurement. */
-		long endTime= System.currentTimeMillis();
-		long runTime= endTime-startTime;
-		System.out.println("Run time: " +runTime +" ms.");
+		final long endTime= System.currentTimeMillis();
+		final long runTime= endTime-startTime;
+		
+		System.out.println("Run time: " + runTime + " ms.");
 		//System.out.println(";" +runTime);		//for structured logging.
 	}
 }

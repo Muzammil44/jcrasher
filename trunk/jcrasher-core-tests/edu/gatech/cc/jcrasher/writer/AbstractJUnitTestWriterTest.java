@@ -39,17 +39,15 @@ public class AbstractJUnitTestWriterTest extends TestCase {
   
 
   public void testConstructor() {
-    try {
-    	AbstractJUnitTestWriter junitTestWriter = 
-      	new ConcreteJUnitTestWriter(null, "No comment");
+    try { 
+      new ConcreteJUnitTestWriter(null, "No comment");
       fail("Constructor(null, ..) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
   	
     try {
-    	AbstractJUnitTestWriter junitTestWriter = 
-      	new ConcreteJUnitTestWriter(inDefaultPackage, null);
+    	new ConcreteJUnitTestWriter(inDefaultPackage, null);
       fail("Constructor(.., null) not allowed");
     }
     catch(RuntimeException e) {  //expected

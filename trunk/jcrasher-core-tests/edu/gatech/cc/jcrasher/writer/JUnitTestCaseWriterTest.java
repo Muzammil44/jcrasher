@@ -87,24 +87,21 @@ public class JUnitTestCaseWriterTest extends TestCase {
   
   public void testConstructor() {
     try {
-    	JUnitTestCaseWriter junitTestCaseWriter =
-    		new JUnitTestCaseWriter(null, "", true, new Block[0]);
+    	new JUnitTestCaseWriter(null, "", true, new Block[0]);
       fail("Constructor(null, ..) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }  	
 
     try {
-    	JUnitTestCaseWriter junitTestCaseWriter =
-    		new JUnitTestCaseWriter(inDefaultPackage, null, true, new Block[0]);
+    	new JUnitTestCaseWriter(inDefaultPackage, null, true, new Block[0]);
       fail("Constructor(.., null, ..) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
-    	JUnitTestCaseWriter junitTestCaseWriter =
-    		new JUnitTestCaseWriter(inDefaultPackage, "", true, null);
+    	new JUnitTestCaseWriter(inDefaultPackage, "", true, null);
       fail("Constructor(.., null) not allowed");
     }
     catch(RuntimeException e) {  //expected
@@ -174,13 +171,15 @@ public class JUnitTestCaseWriterTest extends TestCase {
         TAB+"/**"+                                                          NL+
         TAB+" * Executed before each testXXX()."+                           NL+ 
         TAB+" */"+                                                          NL+
+        TAB+"@Override"+                                                    NL+
         TAB+"protected void setUp() {"+                                     NL+
         TAB+TAB+"//TODO: my setup code goes here."+                         NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
         TAB+"/**"+                                                          NL+
         TAB+" * Executed after each testXXX()."+                            NL+ 
-        TAB+" */"+                                                          NL+      
+        TAB+" */"+                                                          NL+
+        TAB+"@Override"+                                                    NL+
         TAB+"protected void tearDown() throws Exception {"+                 NL+
         TAB+TAB+"super.tearDown();"+                                        NL+
         TAB+TAB+"//TODO: my tear down code goes here."+                     NL+
@@ -196,13 +195,15 @@ public class JUnitTestCaseWriterTest extends TestCase {
         TAB+"/**"+                                                          NL+
         TAB+" * Executed before each testXXX()."+                           NL+ 
         TAB+" */"+                                                          NL+
+        TAB+"@Override"+                                                    NL+
         TAB+"protected void setUp() {"+                                     NL+
         TAB+TAB+"//TODO: my setup code goes here."+                         NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
         TAB+"/**"+                                                          NL+
         TAB+" * Executed after each testXXX()."+                            NL+ 
-        TAB+" */"+                                                          NL+      
+        TAB+" */"+                                                          NL+
+        TAB+"@Override"+                                                    NL+
         TAB+"protected void tearDown() throws Exception {"+                 NL+
         TAB+TAB+"super.tearDown();"+                                        NL+
         TAB+TAB+"//TODO: my tear down code goes here."+                     NL+
@@ -219,6 +220,7 @@ public class JUnitTestCaseWriterTest extends TestCase {
         TAB+"/**"+                                                          NL+
         TAB+" * Executed before each testXXX()."+                           NL+ 
         TAB+" */"+                                                          NL+
+        TAB+"@Override"+                                                    NL+
         TAB+"protected void setUp() {"+                                     NL+
         TAB+TAB+"/* Re-initialize static fields of loaded classes. */"+     NL+
         TAB+TAB+"edu.gatech.cc.junit.reinit.ClassRegistry.resetClasses();"+ NL+
@@ -227,7 +229,8 @@ public class JUnitTestCaseWriterTest extends TestCase {
         TAB+                                                                NL+
         TAB+"/**"+                                                          NL+
         TAB+" * Executed after each testXXX()."+                            NL+ 
-        TAB+" */"+                                                          NL+      
+        TAB+" */"+                                                          NL+
+        TAB+"@Override"+                                                    NL+
         TAB+"protected void tearDown() throws Exception {"+                 NL+
         TAB+TAB+"super.tearDown();"+                                        NL+
         TAB+TAB+"//TODO: my tear down code goes here."+                     NL+
