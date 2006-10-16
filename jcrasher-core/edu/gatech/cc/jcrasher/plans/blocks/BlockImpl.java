@@ -83,7 +83,7 @@ public class BlockImpl implements Block {
    * }
    * </pre>
    */
-  public String toString(final String pIdent, final Class pClass) {
+  public String toString(final String pIdent, final Class<?> pClass) {
     StringBuilder sb = new StringBuilder("{");
 
     /* Get sequence of stmt strings */
@@ -117,18 +117,18 @@ public class BlockImpl implements Block {
    * @return an unused local var encoding pClass, e.g. (i1, s2, i3) for a
    *         sequence like: (int, String[], Integer)
    */
-  public Variable getNextID(final Class pClass) {
+  public <V> Variable<V> getNextID(final Class<V> pClass) {
     notNull(pClass);
-    Variable res = null;
+    Variable<V> res = null;
     localIDcount += 1; // new id
 
     if (pClass.equals(Void.class)) { // added 2004-08-03
-      return new Variable(pClass, "<void"
+      return new Variable<V>(pClass, "<void"
         + Integer.toString(localIDcount) + ">");
     }
 
     /* Leaf type represents array */
-    Class leafType = pClass;
+    Class<?> leafType = pClass;
     while (leafType.isArray() == true) {
       leafType = leafType.getComponentType();
     }
@@ -152,7 +152,7 @@ public class BlockImpl implements Block {
       }
     }
 
-    res = new Variable(pClass, leafName.toLowerCase().charAt(0)
+    res = new Variable<V>(pClass, leafName.toLowerCase().charAt(0)
       + Integer.toString(localIDcount));
 
     return notNull(res);
@@ -162,12 +162,12 @@ public class BlockImpl implements Block {
   /**
    * Executes all statements of this block.
    */
-  public Object execute() throws InstantiationException,
+  public Boolean execute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException {
     
     for (Statement stmt : blockStmts) {
       stmt.execute();
     }
-    return true;
+    return Boolean.TRUE;
   }
 }

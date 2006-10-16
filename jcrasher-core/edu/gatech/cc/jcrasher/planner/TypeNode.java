@@ -21,7 +21,7 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public abstract class TypeNode implements PlanSpaceNode {
+public abstract class TypeNode<T> implements PlanSpaceNode<T> {
 
   /**
    * Child types, i.e. victim and param types up to our max depth - 1
@@ -85,7 +85,7 @@ public abstract class TypeNode implements PlanSpaceNode {
   /**
    * Sets the children. To be called by extending classes only.
    * 
-   * @param children The children to set
+   * @param parameters The children to set
    */
   protected void setChildren(final PlanSpaceNode[] pChildren) {
     this.children = pChildren;
@@ -141,7 +141,7 @@ public abstract class TypeNode implements PlanSpaceNode {
    *          order, taken from [0..getPlanSpaceSize()-1]
    * @return childrens' plans according to the ordering semantics, never null
    */
-  public Expression getPlan(int planIndex) {
+  public Expression<?> getPlan(int planIndex) {
     check(planIndex >= 0);
     check(planIndex < getPlanSpaceSize());
 
@@ -185,7 +185,7 @@ public abstract class TypeNode implements PlanSpaceNode {
   /**
    * Retrieve child plan space node
    */
-  protected PlanSpaceNode getChild(int childIndex) {
+  protected PlanSpaceNode<?> getChild(int childIndex) {
     check(childIndex >= 0);
     check(childIndex < children.length);
 

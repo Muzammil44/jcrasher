@@ -30,27 +30,27 @@ import edu.gatech.cc.jcrasher.types.ClassWrapper;
 public class PlannerImpl implements Planner {
 
   /* Cache constructed nodes */
-  final protected Map<Class, ClassUnderTestImpl> plans = 
-    new Hashtable<Class, ClassUnderTestImpl>();
+  final protected Map<Class<?>, ClassUnderTestImpl<?>> plans = 
+    new Hashtable<Class<?>, ClassUnderTestImpl<?>>();
 
 
   protected StringBuilder flushRules(boolean isTypeNeeded) {
     final StringBuilder sb = new StringBuilder();
     final ClassWrapper[] wrappers = typeGraph.getWrappers();
     
-    for (ClassWrapper wrapper: wrappers) {
+    for (ClassWrapper<?> wrapper: wrappers) {
       if (wrapper.isNeeded() != isTypeNeeded) {
         continue; // not interested in printing
       }
 
       sb.append(NL + NL + wrapper.getWrappedClass().getCanonicalName());
-      for (Expression value : wrapper.getPresetPlans(PlanFilter.ALL)) { // preset
+      for (Expression<?> value : wrapper.getPresetPlans(PlanFilter.ALL)) { // preset
                                                                   // values
         sb.append(NL + "\t" + value.toString(wrapper.getWrappedClass()));
       }
       if (!wrapper.isLibraryType()) { // not interested in JDK-defined
                                       // constructors
-        for (Constructor con : wrapper.getConstrsVisGlobal()) {
+        for (Constructor<?> con : wrapper.getConstrsVisGlobal()) {
           sb.append(NL + "\t" + con.toString()); // methods that return this
                                                   // type
         }
@@ -83,13 +83,13 @@ public class PlannerImpl implements Planner {
     /* Each constructor/ method to be crashed = non-private, non-abstract */
     StringBuilder sb = new StringBuilder(
       "*** Methods and constructors under test:");
-    for (ClassUnderTestImpl cPlan : plans.values()) {
+    for (ClassUnderTestImpl<?> cPlan : plans.values()) {
       sb.append(NL + NL + cPlan.getWrappedClass().getCanonicalName()); // qualified
                                                                         // class
                                                                         // name
 
-      for (PlanSpaceNode pNode : cPlan.getChildren()) {
-        FunctionNode fNode = (FunctionNode) pNode;
+      for (PlanSpaceNode<?> pNode : cPlan.getChildren()) {
+        FunctionNode<?> fNode = (FunctionNode) pNode;
         sb.append(NL + "\t" + fNode.toString()); // method or constructor under
                                                   // test
       }

@@ -38,8 +38,8 @@ import edu.gatech.cc.jcrasher.plans.expr.literals.IntLiteral;
  */
 public class BlockImplTest extends TestCase {
   
-  protected FunctionCall testeeCall = null;
-  protected FunctionCall testeeCrash = null;
+  protected FunctionCall<Loadee> testeeCall = null;
+  protected FunctionCall<Void> testeeCrash = null;
   protected Statement testeeCallStmt = null;
   protected Statement testeeCrashStmt = null;
   protected Block blockEmpty = null;
@@ -57,13 +57,14 @@ public class BlockImplTest extends TestCase {
     Method loadeeStaticMeth =
         Loadee.class.getMethod("staticMeth", new Class[]{int.class});
     
-    testeeCall = new ConstructorCall(loadeeConstructor, new Expression[0]);    
-    testeeCrash = new MethodCall(
+    testeeCall = new ConstructorCall<Loadee>(
+    		loadeeConstructor, new Expression[0]);    
+    testeeCrash = new MethodCall<Void>(
         loadeeStaticMeth,
         new Expression[]{new IntLiteral(3)});
     
-    testeeCallStmt = new ExpressionStatement(testeeCall);
-    testeeCrashStmt = new ExpressionStatement(testeeCrash);
+    testeeCallStmt = new ExpressionStatement<Loadee>(testeeCall);
+    testeeCrashStmt = new ExpressionStatement<Void>(testeeCrash);
     
     blockEmpty = new BlockImpl(loadeeConstructor);
     blockCall = new BlockImpl(loadeeConstructor);
@@ -73,7 +74,7 @@ public class BlockImplTest extends TestCase {
     blockCrash.setBlockStmts(new Statement[]{testeeCrashStmt});
   }
   
-
+  /***/
   public void testBlockImpl() {
     try {
       new BlockImpl(null);
@@ -83,7 +84,7 @@ public class BlockImplTest extends TestCase {
     }
   }
 
-
+  /***/
   public void testSetBlockStmts() {
     try {
       blockEmpty.setBlockStmts(null);
@@ -93,7 +94,7 @@ public class BlockImplTest extends TestCase {
     }    
   }
 
-
+  /***/
   public void testToStringStringClassEmpty() {
     String res0 =
       "{"+NL+
@@ -111,7 +112,7 @@ public class BlockImplTest extends TestCase {
     assertEquals(res2, blockEmpty.toString(TAB+TAB, Loadee.class));    
   }
   
-  
+  /***/
   public void testToStringStringClassCall() {
     String res0 =
       "{"+NL+
@@ -138,7 +139,7 @@ public class BlockImplTest extends TestCase {
     assertEquals(res2Object, blockCall.toString(TAB+TAB, Object.class));    
   }
   
-
+  /***/
   public void testGetNextID() { 
     try {
       blockCall.getNextID(null);
@@ -147,17 +148,17 @@ public class BlockImplTest extends TestCase {
     catch(RuntimeException e) {  //expected
     }
     
-    Variable v1 = blockCall.getNextID(int.class);
-    Variable v2 = blockCall.getNextID(int.class);
+    Variable<Integer> v1 = blockCall.getNextID(int.class);
+    Variable<Integer> v2 = blockCall.getNextID(int.class);
     assertTrue(v1.toString(Object.class).equals(v1.toString(Object.class))); 
     assertFalse(v1.toString(Object.class).equals(v2.toString(Object.class)));
   }
 
-
+  /***/
   public void testExecute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException {
     
-    assertEquals(true, blockCall.execute());
+    assertEquals(Boolean.TRUE, blockCall.execute());
 
     try {
       blockCrash.execute();

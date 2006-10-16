@@ -32,11 +32,15 @@ import edu.gatech.cc.jcrasher.plans.expr.Variable;
  * non-abstract methods and constructors currently 1:1 mapping from function
  * plan to block.
  * 
+ * @param <T> wrapped class.
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class ClassUnderTestImpl extends TypeNode implements ClassUnderTest {
+public class ClassUnderTestImpl<T> 
+extends TypeNode<T> 
+implements ClassUnderTest<T> {
 
-  protected Class wrappedClass = null;
+  protected Class<T> wrappedClass = null;
 
   /**
    * Constructor to be used from outside JCrasher---to just use the
@@ -51,7 +55,7 @@ public class ClassUnderTestImpl extends TypeNode implements ClassUnderTest {
    * Gives more flexibility - supportes non-public functions under test.
    */
   public ClassUnderTestImpl(
-      final Class c,
+      final Class<T> c,
       int remainingRecursion,
       final Visibility visTested,
       final Visibility visUsed) {
@@ -64,21 +68,21 @@ public class ClassUnderTestImpl extends TypeNode implements ClassUnderTest {
     wrappedClass = c;
 
     /* collect sub plan spaces */
-    List<FunctionNode> childSpaces = new ArrayList<FunctionNode>();
+    List<FunctionNode<?>> childSpaces = new ArrayList<FunctionNode<?>>();
 
     /* Crash any declared public constructor iff class non-abstract */
     if (Modifier.isAbstract(c.getModifiers()) == false) {
-      for (Constructor con : c.getDeclaredConstructors()) {// all declared
+      for (Constructor<T> con : c.getDeclaredConstructors()) {// all declared
         //TODO align with Java semantics
         if (Visibility.PACKAGE.equals(visTested) &&
             !Modifier.isPrivate(con.getModifiers())) {
-          childSpaces.add(new ConstructorNode(con, remainingRecursion,
+          childSpaces.add(new ConstructorNode<T>(con, remainingRecursion,
             PlanFilter.ALL, visUsed));          
         }
         
         if (Visibility.GLOBAL.equals(visTested) &&
             Modifier.isPublic(con.getModifiers())) {
-          childSpaces.add(new ConstructorNode(con, remainingRecursion,
+          childSpaces.add(new ConstructorNode<T>(con, remainingRecursion,
             PlanFilter.ALL, visUsed));
         }
       }
@@ -108,7 +112,7 @@ public class ClassUnderTestImpl extends TypeNode implements ClassUnderTest {
   }
   
 
-  protected Class getWrappedClass() {
+  protected Class<T> getWrappedClass() {
     return wrappedClass;
   }
 
@@ -127,16 +131,17 @@ public class ClassUnderTestImpl extends TypeNode implements ClassUnderTest {
                                                                     // child
                                                                     // plan
                                                                     // space
-    FunctionNode node = (FunctionNode) getChild(childIndex);
-    Expression[] plans = node.getChildrenPlans(childPlanIndex); // get params' plans
+    FunctionNode<?> node = (FunctionNode) getChild(childIndex);
+    Expression[] paramPlans = node.getParamPlans(childPlanIndex); // get params' plans
 
-    /* check of which kind the child is: hack */
-    if (ConstructorNode.class.isAssignableFrom(node.getClass())) {
-      ConstructorNode conNode = (ConstructorNode) node;
-      res = getTestBlockForCon(conNode.getCon(), plans);
-    } else {
-      MethodNode methNode = (MethodNode) node;
-      res = getTestBlockForMeth(methNode.getMeth(), plans);
+    /* TODO(csallner): hack, check of which kind the child is */
+    if (node instanceof ConstructorNode) {
+      ConstructorNode<T> conNode = (ConstructorNode<T>) node;
+      res = getTestBlockForCon(conNode.getCon(), paramPlans);
+    } 
+    else {
+      MethodNode<?> methNode = (MethodNode<?>) node;
+      res = getTestBlockForMeth(methNode.getMeth(), paramPlans);
     }
 
     return notNull(res);
@@ -153,8 +158,8 @@ public class ClassUnderTestImpl extends TypeNode implements ClassUnderTest {
    * 2004-04-22 changed to public to allow access from ESC extension.
    */
   public Block getTestBlockForCon(
-      final Constructor pCon,
-      final Expression[] curPlans)
+      final Constructor<T> pCon,
+      final Expression<?>[] curPlans)
   {
     notNull(pCon);
     notNull(curPlans);
@@ -162,11 +167,11 @@ public class ClassUnderTestImpl extends TypeNode implements ClassUnderTest {
     final Block b = new BlockImpl(pCon); // context for this combination
 
     /* Simple version: one stmt for each instance and exec fct */
-    Statement[] bs = new Statement[curPlans.length + 1];
+    final Statement[] bs = new Statement[curPlans.length + 1];
 
     /* Keep track of new created local instances: all needed */
-    Variable[] ids = new Variable[curPlans.length];
-    Class[] paramsTypes = pCon.getParameterTypes();
+    final Variable<?>[] ids = new Variable[curPlans.length];
+    Class<?>[] paramsTypes = pCon.getParameterTypes();
 
     /* Generate local variable for each needed instance (-plan) */
     for (int i = 0; i < curPlans.length; i++) {
@@ -178,28 +183,29 @@ public class ClassUnderTestImpl extends TypeNode implements ClassUnderTest {
      * Statement for constructor under test
      */
     /* Generate identifer to execute the con under test */
-    Variable returnID = b.getNextID(pCon.getDeclaringClass()); // A a =
+    Variable<T> returnID = b.getNextID(pCon.getDeclaringClass()); // A a =
                                                                       // ...
 
     /*
      * Generate conPlan for con under test, which references all local
      * identifiers
      */
-    ConstructorCall conPlan = null;
+    ConstructorCall<T> conPlan = null;
     if (typeGraph.getWrapper(pCon.getDeclaringClass()).isInnerClass()) {
       /* first dim is enclosing instance */                              
       Expression[] paramPlans = new Expression[curPlans.length - 1];
       for (int j = 0; j < paramPlans.length; j++) {
         paramPlans[j] = ids[j + 1];
       }
-      conPlan = new ConstructorCall(pCon, paramPlans, ids[0]);
-    } else { // Non-inner class constructor with >=1 arguments
-      conPlan = new ConstructorCall(pCon, ids);
+      conPlan = new ConstructorCall<T>(pCon, paramPlans, ids[0]);
+    } 
+    else { // Non-inner class constructor with >=1 arguments
+      conPlan = new ConstructorCall<T>(pCon, ids);
     }
 
     /* Last statement */
-    bs[curPlans.length] = new LocalVariableDeclarationStatement(returnID,
-      conPlan);
+    bs[curPlans.length] = 
+    	new LocalVariableDeclarationStatement<T>(returnID, conPlan);
 
     /*
      * Assemble and append generated block
@@ -240,8 +246,8 @@ public class ClassUnderTestImpl extends TypeNode implements ClassUnderTest {
       paramPlans = curPlans;
     }
 
-    Class[] paramsTypes = pMeth.getParameterTypes();
-    Variable[] paramIDs = new Variable[paramPlans.length];
+    Class<?>[] paramsTypes = pMeth.getParameterTypes();
+    Variable<?>[] paramIDs = new Variable[paramPlans.length];
 
     /* Generate local variable for each needed param instance (-plan) */
     for (int i = 0; i < paramIDs.length; i++) {

@@ -32,22 +32,24 @@ public class IntLiteralTest extends TestCase {
   protected final IntLiteral oneLit = new IntLiteral(one);
   
   
+  /***/
   public void testGetReturnType() {
     assertEquals(Integer.TYPE, _oneLit.getReturnType());
     assertEquals(Integer.TYPE, zeroLit.getReturnType());
     assertEquals(Integer.TYPE, oneLit.getReturnType());
   }
 
+  /***/
   public void testExecute() {
-    assertEquals(_one, _oneLit.execute());
-    assertEquals(zero, zeroLit.execute());
-    assertEquals(one, oneLit.execute());
+    assertEquals(Integer.valueOf(_one), _oneLit.execute());
+    assertEquals(Integer.valueOf(zero), zeroLit.execute());
+    assertEquals(Integer.valueOf(one), oneLit.execute());
   }
 
+  /***/
   public void testToStringClass() {
     assertEquals("-1", _oneLit.toString(Loadee.class));
     assertEquals("0", zeroLit.toString(Loadee.class));
     assertEquals("1", oneLit.toString(Loadee.class));
   }
-
 }

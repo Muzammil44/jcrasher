@@ -47,13 +47,13 @@ public class TypeGraphImpl extends AbstractTypeGraph {
   /**
    * Queue super, enclosing, and enclosed types of cw
    */
-  protected void queueFamily(final ClassWrapper cw) {
+  protected void queueFamily(final ClassWrapper<?> cw) {
     /*
      * Child-of-relation: Store and queue parents for search Class X: For each
      * interface S with "X implements S" do Interface X: For each interface S
      * with "X extends S" do
      */   
-    for (Class superInterface: cw.getWrappedClass().getInterfaces()) {
+    for (Class<?> superInterface: cw.getWrappedClass().getInterfaces()) {
       if (!ClassSourceImpl.instance().initializeDeep(superInterface)) {
         continue;   //skip super interface we cannot fully initialize.
       }
@@ -63,7 +63,7 @@ public class TypeGraphImpl extends AbstractTypeGraph {
     // Q: Are transitive implemented interfaces returned as well?
     // A: No, gladly not [Class.getInterfaces()]
     // For class R with X extends R do
-    Class superClass = cw.getWrappedClass().getSuperclass();
+    Class<?> superClass = cw.getWrappedClass().getSuperclass();
     if (ClassSourceImpl.instance().initializeDeep(superClass)) {
       ClassWrapperImpl superCW = (ClassWrapperImpl) getWrapper(superClass);
       superCW.addChild(cw.getWrappedClass());
@@ -81,7 +81,7 @@ public class TypeGraphImpl extends AbstractTypeGraph {
       /* Java reflection crashed. */
     }
     
-    for (Class nestedClass: nestedClasses) {
+    for (Class<?> nestedClass: nestedClasses) {
       if (ClassSourceImpl.instance().initializeDeep(nestedClass)) {
         getWrapper(nestedClass);
       }
@@ -90,7 +90,7 @@ public class TypeGraphImpl extends AbstractTypeGraph {
     
     /* Queue nesting class for search */
     
-    Class nestingClass = null; 
+    Class<?> nestingClass = null; 
     
     try {
       nestingClass = cw.getWrappedClass().getDeclaringClass();
@@ -109,7 +109,7 @@ public class TypeGraphImpl extends AbstractTypeGraph {
    * implements the rule: JCrasher uses for any simple type (int, boolean, etc.)
    * only predefined values for test generation.
    */
-  protected void queueMethParams(final ClassWrapper cw, final Visibility visUsed) {
+  protected <T> void queueMethParams(final ClassWrapper<T> cw, final Visibility visUsed) {
     /*
      * Methods: store and queue params, return types for search for each
      * non-abstract declared (incl. overridden) method do
@@ -123,7 +123,7 @@ public class TypeGraphImpl extends AbstractTypeGraph {
     }
     
     for (Method meth: methods) {
-      Class returnType = meth.getReturnType();        
+      Class<?> returnType = meth.getReturnType();        
       if (!ClassSourceImpl.instance().initializeDeep(returnType)) {
         continue;   //skip class we cannot fully initialize.
       }     
@@ -135,7 +135,7 @@ public class TypeGraphImpl extends AbstractTypeGraph {
         rW.addConstrMeth(meth, visUsed); //found rule for return type
       }
 
-      for (Class paramType : meth.getParameterTypes()) {
+      for (Class<?> paramType : meth.getParameterTypes()) {
         
         if (ClassSourceImpl.instance().initializeDeep(paramType)) {
           getWrapper(paramType); // Queue param types even for non-public meths
@@ -154,8 +154,8 @@ public class TypeGraphImpl extends AbstractTypeGraph {
       /* reflection crashed as some class is not loadable */
     }
     
-    for (Constructor con: constructors) {
-      for (Class paramType : con.getParameterTypes()) {
+    for (Constructor<T> con: constructors) {
+      for (Class<?> paramType : con.getParameterTypes()) {
         
         if (ClassSourceImpl.instance().initializeDeep(paramType)) {
           getWrapper(paramType); // Create wrapper for each param-type
@@ -175,7 +175,7 @@ public class TypeGraphImpl extends AbstractTypeGraph {
    * Store functions, Store child-of relation, Queue all reachable types to
    * exhaust search-space (process non-public methods as well)
    */
-  protected void findRules(final ClassWrapper cw, final Visibility vis) {
+  protected void findRules(final ClassWrapper<?> cw, final Visibility vis) {
     notNull(cw);
     notNull(vis);
     
@@ -193,7 +193,7 @@ public class TypeGraphImpl extends AbstractTypeGraph {
   /**
    * @param visUsed visibility of methods used to generate test cases.
    */
-  public void crawl(final Set<Class> pClasses, final Visibility visUsed) {
+  public void crawl(final Set<Class<?>> pClasses, final Visibility visUsed) {
     notNull(pClasses);
     notNull(visUsed);
     
@@ -207,7 +207,7 @@ public class TypeGraphImpl extends AbstractTypeGraph {
     while (maybeMore) {
       maybeMore = false;
 
-      for (ClassWrapper wrapper : getWrappers()) {
+      for (ClassWrapper<?> wrapper : getWrappers()) {
         ClassWrapperImpl cw = (ClassWrapperImpl) wrapper;
         if (cw.isSearched() == false) {
           // add meths localy and to other (empty) wrappers

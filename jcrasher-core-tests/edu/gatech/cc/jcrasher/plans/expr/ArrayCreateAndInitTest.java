@@ -33,27 +33,27 @@ import edu.gatech.cc.jcrasher.types.ClassWrapper;
  */
 public class ArrayCreateAndInitTest extends TestCase {
 
-  protected final ArrayCreateAndInit int1_fieldsSetToNull = 
-    new ArrayCreateAndInit(int[].class);
-  protected final ArrayCreateAndInit int2_fieldsSetToNull = 
-    new ArrayCreateAndInit(int[][].class);
-  protected final ArrayCreateAndInit int10_fieldsSetToNull = 
-    new ArrayCreateAndInit(int[][][][][][][][][][].class);  
+  protected final ArrayCreateAndInit<int[]> int1_fieldsSetToNull = 
+    new ArrayCreateAndInit<int[]>(int[].class);
+  protected final ArrayCreateAndInit<int[][]> int2_fieldsSetToNull = 
+    new ArrayCreateAndInit<int[][]>(int[][].class);
+  protected final ArrayCreateAndInit<int[][][][][][][][][][]> int10_fieldsSetToNull = 
+    new ArrayCreateAndInit<int[][][][][][][][][][]>(int[][][][][][][][][][].class);  
 
-  protected final ArrayCreateAndInit int10 = 
-    new ArrayCreateAndInit(int[][][][][][][][][][].class);
+  protected final ArrayCreateAndInit<int[][][][][][][][][][]> int10 = 
+    new ArrayCreateAndInit<int[][][][][][][][][][]>(int[][][][][][][][][][].class);
   
-  protected final ArrayCreateAndInit string3 = 
-    new ArrayCreateAndInit(String[][][].class);
+  protected final ArrayCreateAndInit<String[][][]> string3 = 
+    new ArrayCreateAndInit<String[][][]>(String[][][].class);
   
-  protected final ArrayCreateAndInit set2 = 
-    new ArrayCreateAndInit(Set[][].class);
+  protected final ArrayCreateAndInit<Set[][]> set2 = 
+    new ArrayCreateAndInit<Set[][]>(Set[][].class);
   
-  protected final ArrayCreateAndInit int1_length3 = 
-    new ArrayCreateAndInit(int[].class);
+  protected final ArrayCreateAndInit<int[]> int1_length3 = 
+    new ArrayCreateAndInit<int[]>(int[].class);
 
-  protected final ArrayCreateAndInit int2_length2 = 
-    new ArrayCreateAndInit(int[][].class);  
+  protected final ArrayCreateAndInit<int[][]> int2_length2 = 
+    new ArrayCreateAndInit<int[][]>(int[][].class);  
   
   protected final int[] int1_length2_val = new int[]{0,1};
   protected final int[] int1_length3_val = new int[]{0,1,2};
@@ -64,8 +64,8 @@ public class ArrayCreateAndInitTest extends TestCase {
       int1_length3_val, int1_length3_val};
   
   protected final String[] string1_length3_val = new String[]{null,"","hallo"};
-  protected final ArrayCreateAndInit string1_length3 =
-      new ArrayCreateAndInit(String[].class);
+  protected final ArrayCreateAndInit<String[]> string1_length3 =
+      new ArrayCreateAndInit<String[]>(String[].class);
   
   @Override
   protected void setUp() throws Exception {
@@ -88,12 +88,13 @@ public class ArrayCreateAndInitTest extends TestCase {
         int1_length3, int1_length3});
     
     string1_length3.setComponentPlans(new Expression[] {
-        new NullLiteral(String.class),
+        new NullLiteral<String>(String.class),
         new StringLiteral(""),
         new StringLiteral("hallo")});
   }
 
 
+  /***/
   public void testDiscoverLeafLevel() {
     int1_fieldsSetToNull.discoverLeafLevel();
     assertEquals(1, int1_fieldsSetToNull.dimensionality);
@@ -108,27 +109,27 @@ public class ArrayCreateAndInitTest extends TestCase {
     assertEquals(int.class, int10_fieldsSetToNull.leafType);
   }
 
-  
+  /***/
   public void testArrayCreateAndInitClassWrapperNull() {
     try {
-      new ArrayCreateAndInit((ClassWrapper)null);
+      new ArrayCreateAndInit<Object>((ClassWrapper<Object>)null);
       fail("ArrayCreateAndInit(null) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
   }
 
-  
+  /***/
   public void testArrayCreateAndInitClassNull() {
     try {
-      new ArrayCreateAndInit((Class)null);
+      new ArrayCreateAndInit<Object>((Class<Object>)null);
       fail("ArrayCreateAndInit(null) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
   }
 
-
+  /***/
   public void testArrayCreateAndInitClass() {
     assertEquals(10, int10.dimensionality);
     assertEquals(int.class, int10.leafType);
@@ -140,7 +141,7 @@ public class ArrayCreateAndInitTest extends TestCase {
     assertEquals(Set.class, set2.leafType);    
   }  
   
-  
+  /***/
   public void testGetReturnType() {
     assertEquals(int[][][][][][][][][][].class, int10.getReturnType());    
     assertEquals(String[][][].class, string3.getReturnType());    
@@ -148,29 +149,27 @@ public class ArrayCreateAndInitTest extends TestCase {
     assertEquals(int[].class, int1_length3.getReturnType());
   }
 
-
+  /***/
   public void testExecute() throws InvocationTargetException,
       IllegalAccessException, InstantiationException
   {
     assertTrue(Arrays.equals(
-        int1_length3_val, (int[])int1_length3.execute()));
+        int1_length3_val, int1_length3.execute()));
     assertFalse(Arrays.equals(
-        int1_length4_val, (int[])int1_length3.execute()));
+        int1_length4_val, int1_length3.execute()));
     assertFalse(Arrays.equals(
-        new int[]{0,1,1}, (int[])int1_length3.execute()));
+        new int[]{0,1,1}, int1_length3.execute()));
     assertFalse(Arrays.equals(
-        int1_length2_val, (int[])int1_length3.execute()));
+        int1_length2_val, int1_length3.execute()));
       
     assertTrue(Arrays.equals(
-        string1_length3_val, 
-        (String[])string1_length3.execute()));
+        string1_length3_val, string1_length3.execute()));
       
     assertTrue(Arrays.deepEquals(
-        int2_length2_val,
-        (int[][])int2_length2.execute()));
+        int2_length2_val, int2_length2.execute()));
   }
 
-  
+  /***/
   public void testToStringClass() {
     assertEquals(
       "new String[]{(String)null, \"\", \"hallo\"}",

@@ -22,7 +22,7 @@ import edu.gatech.cc.jcrasher.plans.Executable;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/statements.html#14.5
  */
-public interface Statement extends Executable {
+public interface Statement extends Executable<Boolean> {
 
   /**
    * @return a specialized representation of the statement like:
@@ -30,5 +30,5 @@ public interface Statement extends Executable {
    *   <li>A a = new A(null);
    *   <li>b.m(0);
    */
-  public String toString(final Class testeeType);
+  public String toString(final Class<?> testeeType);
 }

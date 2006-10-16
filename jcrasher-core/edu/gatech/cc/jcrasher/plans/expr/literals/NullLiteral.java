@@ -16,28 +16,30 @@ import edu.gatech.cc.jcrasher.writer.CodeGenFct;
  * Each reference parameter of every method must be non-null.
  * Each reference return value must be non-null.
  * 
+ * @param <T> type of null literal.
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.7
  */
-public class NullLiteral implements Expression {
+public class NullLiteral<T> implements Expression<T> {
 
-  protected Class returnType = null; // type of instance created by this plan
+  protected Class<T> returnType = null; // type of instance created by this plan
 
-  public Class getReturnType() {
+  public Class<T> getReturnType() {
     return notNull(returnType);
   }
 
   /**
    * Constructor, to be called from outside the inheritance hierarchy
    */
-  public NullLiteral(final Class type) {
+  public NullLiteral(final Class<T> type) {
     returnType = notNull(type);
   }
 
   /**
    * @return null.
    */
-  public Object execute() {
+  public T execute() {
     return null;
   }  
 
@@ -57,7 +59,7 @@ public class NullLiteral implements Expression {
   /**
    * How to reproduce this value=object? (Type) null
    */
-  public String toString(final Class testee) {
+  public String toString(final Class<?> testee) {
     notNull(testee);
     notNull(returnType);
     return notNull(getString(CodeGenFct.getName(returnType, testee)));

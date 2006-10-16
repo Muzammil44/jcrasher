@@ -9,6 +9,7 @@ import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 import java.lang.reflect.Constructor;
 import java.util.Hashtable;
+import java.util.Vector;
 
 import edu.gatech.cc.jcrasher.plans.expr.ArrayCreateAndInit;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
@@ -77,15 +78,15 @@ public class PresetValues {
    * new Object()
    */
   protected static Expression[] getObject() {
-    Constructor new_Object = null;
+    Constructor<Object> new_Object = null;
     try {
       new_Object = Object.class.getDeclaredConstructor(new Class[0]);
     } catch (Exception e) {
       e.printStackTrace();
     }
     notNull(new_Object);
-
-    return new Expression[]{new ConstructorCall(new_Object, new Expression[0])};
+    return new ConstructorCall[] {
+    		new ConstructorCall<Object>(new_Object, new Expression[0])};
   }
 
 
@@ -93,7 +94,7 @@ public class PresetValues {
    * new java.util.Hashtable() --implements java.util.Map
    */
   protected static Expression[] getHashtable() {
-    Constructor con = null;
+    Constructor<Hashtable> con = null;
     try {
       con = Hashtable.class.getDeclaredConstructor(new Class[0]);
     } catch (Exception e) {
@@ -101,7 +102,7 @@ public class PresetValues {
     }
     notNull(con);
 
-    return new Expression[]{new ConstructorCall(con, new Expression[0])};
+    return new Expression[]{new ConstructorCall<Hashtable>(con, new Expression[0])};
   }
 
 
@@ -109,7 +110,7 @@ public class PresetValues {
    * new java.util.Vector() --implements java.util.List
    */
   protected static Expression[] getVector() {
-    Constructor con = null;
+    Constructor<Vector> con = null;
     try {
       con = java.util.Vector.class.getDeclaredConstructor(new Class[0]);
     } catch (Exception e) {
@@ -117,7 +118,7 @@ public class PresetValues {
     }
     notNull(con);
 
-    return new Expression[]{new ConstructorCall(con, new Expression[0])};
+    return new Expression[]{new ConstructorCall<Vector>(con, new Expression[0])};
   }
 
 
@@ -125,12 +126,12 @@ public class PresetValues {
    * int[]
    */
   protected static Expression[] getIntArray1() {
-    Class c = int[].class;
+    Class<int[]> c = int[].class;
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[2];
 
-    plans[0] = new ArrayCreateAndInit(c); // {}
+    plans[0] = new ArrayCreateAndInit<int[]>(c); // {}
     plans[0].setComponentPlans(new PrimitiveLiteral[0]);
-    plans[1] = new ArrayCreateAndInit(c); // {0}
+    plans[1] = new ArrayCreateAndInit<int[]>(c); // {0}
     plans[1].setComponentPlans(new PrimitiveLiteral[]{new IntLiteral(0)});
     return plans;
   }
@@ -140,12 +141,12 @@ public class PresetValues {
    * String[]
    */
   protected static Expression[] getStringArray1() {
-    Class c = String[].class;
+    Class<String[]> c = String[].class;
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[2];
 
-    plans[0] = new ArrayCreateAndInit(c); // {}
+    plans[0] = new ArrayCreateAndInit<String[]>(c); // {}
     plans[0].setComponentPlans(new StringLiteral[0]);
-    plans[1] = new ArrayCreateAndInit(c); // {""}
+    plans[1] = new ArrayCreateAndInit<String[]>(c); // {""}
     plans[1].setComponentPlans(new StringLiteral[]{new StringLiteral("")});
     return plans;
   }
@@ -154,10 +155,10 @@ public class PresetValues {
   /*
    * T[]
    */
-  protected static Expression[] getEmptyArray(final Class c) {
+  protected static <T> Expression[] getEmptyArray(final Class<T> c) {
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[1];
 
-    plans[0] = new ArrayCreateAndInit(c); // {}
+    plans[0] = new ArrayCreateAndInit<T>(c); // {}
     plans[0].setComponentPlans(new Expression[0]);
 
     return plans;
@@ -166,7 +167,7 @@ public class PresetValues {
   /**
    * @return possibly empty list of preset plans, but never null.
    */
-  public static Expression[] getPreset(final Class pClass) {
+  public static Expression[] getPreset(final Class<?> pClass) {
     /* Primitive */
     if (pClass.equals(boolean.class)) {
       return booleanPlans;

@@ -5,7 +5,6 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 /**
  * Holds Java-syntax of how to define a float value.
@@ -17,7 +16,7 @@ import static edu.gatech.cc.jcrasher.Assertions.notNull;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.2
  */
-public class FloatLiteral extends PrimitiveLiteral {
+public class FloatLiteral extends PrimitiveLiteral<Float> {
 
   /**
    * Constructor
@@ -25,10 +24,10 @@ public class FloatLiteral extends PrimitiveLiteral {
    * @param val hardcoded primitive value, not via java-wrapper-constructor
    */
   public FloatLiteral(final float val) {
-    super(notNull(val));
+    super(Float.valueOf(val));
   }
 
-  public Class getReturnType() {
+  public Class<Float> getReturnType() {
     return Float.TYPE;
   }
 

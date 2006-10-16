@@ -32,18 +32,21 @@ public class ByteLiteralTest extends TestCase {
   protected final ByteLiteral zeroLit = new ByteLiteral(zero);
   protected final ByteLiteral oneLit = new ByteLiteral(one);
   
+  /***/
   public void testGetReturnType() {
     assertEquals(Byte.TYPE, _oneLit.getReturnType());
     assertEquals(Byte.TYPE, zeroLit.getReturnType());
     assertEquals(Byte.TYPE, oneLit.getReturnType());
   }
 
+  /***/
   public void testExecute() {
-    assertEquals(_one, _oneLit.execute());
-    assertEquals(zero, zeroLit.execute());
-    assertEquals(one, oneLit.execute());
+    assertEquals(Byte.valueOf(_one), _oneLit.execute());
+    assertEquals(Byte.valueOf(zero), zeroLit.execute());
+    assertEquals(Byte.valueOf(one), oneLit.execute());
   }
 
+  /***/
   public void testToStringClass() {
     assertEquals("(byte)-1", _oneLit.toString(Loadee.class));
     assertEquals("(byte)0", zeroLit.toString(Loadee.class));

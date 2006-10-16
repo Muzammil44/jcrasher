@@ -20,9 +20,10 @@ import edu.gatech.cc.jcrasher.plans.blocks.Block;
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
-    TestCaseWriter {
-	
+public class JUnitTestCaseWriter<T>
+extends AbstractJUnitTestWriter<T>
+implements TestCaseWriter 
+{
 	protected final boolean doFilter;
 	protected final int fileNr;					//-1 = no number.
 	protected final Block[] blocks;
@@ -37,7 +38,7 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
    * thrown exception to JCrasher's runtime filters.
 	 */
 	public JUnitTestCaseWriter(
-			final Class testeeClass,
+			final Class<T> testeeClass,
 			final String comment,
       boolean doFilter,
       final Block[] blocks,
@@ -57,7 +58,7 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
 	 * Creates a unnumbered test class.
 	 */
 	public JUnitTestCaseWriter(
-			final Class testeeClass,
+			final Class<T> testeeClass,
       final String comment,
       boolean doFilter,
       final Block[] blocks) {
@@ -157,15 +158,18 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
         TAB+                                                                NL);
     }
     sb.append(
+    		getJavaDocComment("Constructor", TAB)+
         TAB+"public "+simpleTestName+"(String pName) {"+                    NL+
         TAB+TAB+"super(pName);"+                                            NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
+        getJavaDocComment("Easy access for aggregating test suite.", TAB)+
         TAB+"public static junit.framework.Test suite() {"+                 NL+
         TAB+TAB+"return new " +
                 "junit.framework.TestSuite("+simpleTestName+".class);"+     NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
+        getJavaDocComment("Main", TAB)+
         TAB+"public static void main(String[] args) {"+                     NL+    
         TAB+TAB+"junit.textui.TestRunner.run("+simpleTestName+".class);"+   NL+
         TAB+"}"+                                                            NL);
@@ -232,6 +236,7 @@ public class JUnitTestCaseWriter extends AbstractJUnitTestWriter implements
 
     for (int i = 0; i < blocks.length; i++) {
       sb.append(                                                        NL+
+      		getJavaDocComment("JCrasher-generated test case.", TAB)+
           TAB+"public void test"+i+"() throws Throwable ");
       if(doFilter) {
         sb.append("{"+                                                  NL+

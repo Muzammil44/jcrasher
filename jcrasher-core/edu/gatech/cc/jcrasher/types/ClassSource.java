@@ -38,7 +38,7 @@ public interface ClassSource {
    * <li>Implemented or extended interfaces
    * <li>Static member types
    */
-  public boolean initializeDeep(final Class c);
+  public boolean initializeDeep(final Class<?> c);
   
   /**
    * @param pClassName JVM-internal name as defined in 
@@ -51,5 +51,5 @@ public interface ClassSource {
    * locate, load, link, or initialize the class (and all its enclosing classes
    * if it is an inner class).
    */
-  public Class initializeDeep(final String pClassName); 
+  public Class<?> initializeDeep(final String pClassName); 
 }

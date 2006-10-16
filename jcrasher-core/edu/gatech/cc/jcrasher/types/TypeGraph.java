@@ -32,13 +32,13 @@ public interface TypeGraph {
    * While (new wrapper added, which are potentially not yet processed) do:
    * Process added wrappers as above.
    */
-  public void crawl(final Set<Class> pClasses, final Visibility vis);
+  public void crawl(final Set<Class<?>> pClasses, final Visibility vis);
 
 
   /**
    * @return wrapper of class: fresh one created & inserted if not done yet
    */
-  public ClassWrapper getWrapper(final Class pClass);
+  public ClassWrapper<?> getWrapper(final Class<?> pClass);
 
 
   /**

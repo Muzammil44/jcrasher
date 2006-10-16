@@ -37,9 +37,9 @@ import edu.gatech.cc.jcrasher.plans.expr.literals.NullLiteral;
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class ClassWrapperImpl implements ClassWrapper {
+public class ClassWrapperImpl<T> implements ClassWrapper<T> {
 
-  protected Class wrappedClass = null; // Wrapped Class object
+  protected Class<T> wrappedClass = null; // Wrapped Class object
 
   /**
    * Methods declared anywhere as non-abstract that return the wrapped type
@@ -50,14 +50,15 @@ public class ClassWrapperImpl implements ClassWrapper {
   /**
    * Some preset plans, e.g., {0, 1, -1}. NullLiteral is never included.
    */
-  protected final List<Expression> presetPlans = new ArrayList<Expression>();
+  protected final List<Expression<T>> presetPlans = new ArrayList<Expression<T>>();
 
 
   /**
    * Child-classes of X: Class.getName() --> Class Holds all tupels (name,
    * class) where: (XImpl implements X) or (Y extends X)
    */
-  protected final Hashtable<String, Class> children = new Hashtable<String, Class>();
+  protected final Hashtable<String, Class<? extends T>> children = 
+  	new Hashtable<String, Class<? extends T>>();
 
 
   /**
@@ -83,11 +84,11 @@ public class ClassWrapperImpl implements ClassWrapper {
   /**
    * Constructor
    */
-  public ClassWrapperImpl(final Class pClass) {
+  public ClassWrapperImpl(final Class<T> pClass) {
     wrappedClass = notNull(pClass);
     check(presetPlans.isEmpty());
 
-    presetPlans.addAll(Arrays.asList(PresetValues.getPreset(pClass)));
+    presetPlans.addAll(Arrays.asList((Expression<T>[]) PresetValues.getPreset(pClass)));
   }
 
 
@@ -171,7 +172,7 @@ public class ClassWrapperImpl implements ClassWrapper {
   /**
    * @return the wrapped class
    */
-  public Class getWrappedClass() {
+  public Class<T> getWrappedClass() {
     return wrappedClass;
   }
 
@@ -202,9 +203,9 @@ public class ClassWrapperImpl implements ClassWrapper {
    * @return each constuctor X(P*) according to pVisibility or an empty list if
    *         abstract class.
    */
-  public List<Constructor> getConstrs(final Visibility visUsed) {
+  public List<Constructor<T>> getConstrs(final Visibility visUsed) {
     notNull(visUsed);    
-    List<Constructor> res = new ArrayList<Constructor>();
+    List<Constructor<T>> res = new ArrayList<Constructor<T>>();
 
     if (Modifier.isAbstract(wrappedClass.getModifiers())) {
       /* Abstract type does not have any constructors. */
@@ -221,7 +222,7 @@ public class ClassWrapperImpl implements ClassWrapper {
     }
 
     
-    for (Constructor con : constructors) { // Filter for visibility
+    for (Constructor<T> con : constructors) { // Filter for visibility
       
       /* public-public */
       if ((Visibility.GLOBAL.equals(visUsed))
@@ -248,7 +249,7 @@ public class ClassWrapperImpl implements ClassWrapper {
    * 
    * @return each public constuctor X(P*) or an empty list if abstract class.
    */
-  public List<Constructor> getConstrsVisGlobal() {
+  public List<Constructor<T>> getConstrsVisGlobal() {
     return getConstrs(Visibility.GLOBAL);
   }
 
@@ -259,7 +260,7 @@ public class ClassWrapperImpl implements ClassWrapper {
    * @param planFilter can exclude null for reference types
    * @return List of preset plans of wrapped type (= userdefined database).
    */
-  public List<Expression> getPresetPlans(final PlanFilter planFilter) {
+  public List<Expression<T>> getPresetPlans(final PlanFilter planFilter) {
     if (wrappedClass.isPrimitive()) { // no null for primitive
       return presetPlans;
     }
@@ -268,9 +269,9 @@ public class ClassWrapperImpl implements ClassWrapper {
     if (!Constants.isNullIncluded(planFilter)) { // null not desired
       return presetPlans;
     }
-    final List<Expression> withNull = 
-        new ArrayList<Expression>(presetPlans); // null desired
-    withNull.add(new NullLiteral(wrappedClass));
+    final List<Expression<T>> withNull = 
+        new ArrayList<Expression<T>>(presetPlans); // null desired
+    withNull.add(new NullLiteral<T>(wrappedClass));
     return withNull;
   }
 
@@ -282,9 +283,9 @@ public class ClassWrapperImpl implements ClassWrapper {
    * @return all classes S with (S implements X) or (S extends X) or an empty
    *         list.
    */
-  public List<Class> getChildren() {
-    final List<Class> res = new ArrayList<Class>();
-    for (Enumeration<Class> e = children.elements(); e.hasMoreElements();) {
+  public List<Class<? extends T>> getChildren() {
+    final List<Class<? extends T>> res = new ArrayList<Class<? extends T>>();
+    for (Enumeration<Class<? extends T>> e = children.elements(); e.hasMoreElements();) {
       res.add(e.nextElement());
     }
     return res;
@@ -326,7 +327,7 @@ public class ClassWrapperImpl implements ClassWrapper {
   /**
    * Add implementing/ extending child
    */
-  protected void addChild(final Class pClass) {
+  protected void addChild(final Class<? extends T> pClass) {
     children.put(pClass.getName(), pClass);
   }
 

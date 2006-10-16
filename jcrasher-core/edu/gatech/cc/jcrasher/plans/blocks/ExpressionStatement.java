@@ -27,22 +27,25 @@ import edu.gatech.cc.jcrasher.plans.expr.FunctionCall;
  * Each reference parameter of every method must be non-null.
  * Each reference return value must be non-null.
  * 
+ * @param <T> type of the wrapped expression, which may differ
+ * from the type (Boolean) of the value of executing a statement (true).  
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/statements.html#14.8
  */
-public class ExpressionStatement implements Statement {
+public class ExpressionStatement<T> implements Statement {
 
   /**
    * Expression to invoke the wrapped fct
    */
-  protected Expression fctPlan = null;
+  protected Expression<T> fctPlan = null;
 
   /**
    * Constructor
    * 
    * Postcond: (fctPlan != null)
    */
-  public ExpressionStatement(final FunctionCall pFctPlan) {
+  public ExpressionStatement(final FunctionCall<T> pFctPlan) {
     fctPlan = notNull(pFctPlan);
   }
 
@@ -50,11 +53,11 @@ public class ExpressionStatement implements Statement {
   /**
    * @return true.
    */
-  public Object execute() throws InstantiationException,
+  public Boolean execute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException
   {
     fctPlan.execute(); //ok if nobody messed with fctPlan
-    return true;  //only reach here if execution went through okay. 
+    return Boolean.TRUE;  //only reach here if execution went through okay. 
   }  
   
   
@@ -64,7 +67,7 @@ public class ExpressionStatement implements Statement {
    * <li>b.m(0);
    * <li>new A();
    */
-  public String toString(final Class testeeType) {
+  public String toString(final Class<?> testeeType) {
     notNull(testeeType);
     
     final String res = fctPlan.toString(testeeType)+";";

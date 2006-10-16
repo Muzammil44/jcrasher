@@ -5,7 +5,6 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 /**
  * Holds Java-syntax of how to define a byte.
@@ -17,7 +16,7 @@ import static edu.gatech.cc.jcrasher.Assertions.notNull;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.1 
  */
-public class ByteLiteral extends PrimitiveLiteral {
+public class ByteLiteral extends PrimitiveLiteral<Byte> {
 
   /**
    * Constructor
@@ -25,11 +24,11 @@ public class ByteLiteral extends PrimitiveLiteral {
    * @param val hardcoded primitive value, not via java-wrapper-constructor
    */
   public ByteLiteral(final byte val) {
-    super(notNull(val));
+    super(Byte.valueOf(val));
   }
 
   
-  public Class getReturnType() {
+  public Class<Byte> getReturnType() {
     return Byte.TYPE;
   }
   

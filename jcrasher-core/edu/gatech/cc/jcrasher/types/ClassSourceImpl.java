@@ -66,7 +66,7 @@ public class ClassSourceImpl implements ClassSource {
   /**
    * @return if we do not want to use the class (for being anonymous).
    */
-  protected boolean isAnonymous(Class in) {
+  protected boolean isAnonymous(Class<?> in) {
     if (in==null) {
       return true;
     }
@@ -89,7 +89,7 @@ public class ClassSourceImpl implements ClassSource {
    * @param c having a non-null Class object does not imply that the underlying
    * class has been initialized!
    */
-  protected boolean initializeDeep(final Class c, boolean isUserClass) {
+  protected boolean initializeDeep(final Class<?> c, boolean isUserClass) {
   	if (c==null)
   		return false;
   	
@@ -123,7 +123,7 @@ public class ClassSourceImpl implements ClassSource {
         return true;
       }
       
-      final Class enclosingClass = c.getEnclosingClass();
+      final Class<?> enclosingClass = c.getEnclosingClass();
       if (enclosingClass==null) {               //top-level type does not need.
         return true;
       }
@@ -138,7 +138,7 @@ public class ClassSourceImpl implements ClassSource {
   /**
    * Logs if a class could not be initialized.
    */
-  public boolean initializeDeep(final Class c) {
+  public boolean initializeDeep(final Class<?> c) {
     if (c==null)
     	return false;
   	
@@ -154,7 +154,7 @@ public class ClassSourceImpl implements ClassSource {
   }
   
   
-  public Class initializeDeep(final String pClassName) {
+  public Class<?> initializeDeep(final String pClassName) {
     /* Remember each class name that we could not initialize deep.
      * This allows us to return fast if a class name has not worked before. */
     
@@ -166,7 +166,7 @@ public class ClassSourceImpl implements ClassSource {
       return null;
     }    
     
-    Class res = null;    
+    Class<?> res = null;    
     try {
       res = Class.forName(className);   //attempts to initialize class!
     } 

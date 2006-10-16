@@ -22,8 +22,8 @@ public class CodeGenFct {
    * 
    * @return name of class to be accepted by javac like A[][], A.I
    */
-  public static String getName(final Class pClass) {
-    Class myClass = notNull(pClass);
+  public static String getName(final Class<?> pClass) {
+    Class<?> myClass = notNull(pClass);
     String res = null;
 
     /* Leaf type represents array */
@@ -57,8 +57,8 @@ public class CodeGenFct {
   /*
    * If array, convert to leaf type. Return top-most enclosing type.
    */
-  protected static Class getLeafTopLevelName(final Class pType) {
-    Class type = notNull(pType);
+  protected static Class<?> getLeafTopLevelName(final Class<?> pType) {
+    Class<?> type = notNull(pType);
 
     while (type.isArray()) {
       type = type.getComponentType(); // leaf type of interest
@@ -78,7 +78,7 @@ public class CodeGenFct {
    *         
    * TODO(csallner) test this for nested testee type.
    */
-  public static String getName(final Class type, final Class testee) {
+  public static String getName(final Class<?> type, final Class<?> testee) {
     notNull(type);
     notNull(testee);
 

@@ -18,12 +18,14 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  * <li>Each reference parameter of every method must be non-null.
  * <li>Each reference return value must be non-null.
  * 
+ * @param <T> boxed version of this literal's type.
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10
  */
-public abstract class PrimitiveLiteral implements Expression {
+public abstract class PrimitiveLiteral<T> implements Expression<T> {
 
-  protected Object value = null;     // result of plan execution
+  protected T value = null;     // result of plan execution
   
   /**
    * Constructor
@@ -31,12 +33,12 @@ public abstract class PrimitiveLiteral implements Expression {
    * @param pValue hardcoded primitive value, not via java-wrapper-constructor -
    *          never null
    */
-  public PrimitiveLiteral(final Object pValue) {   
+  public PrimitiveLiteral(final T pValue) {   
     value = notNull(pValue);
   }
 
   
-  public Object execute() { // never returns null
+  public T execute() { // never returns null
     return notNull(value);
   }
   
@@ -48,7 +50,8 @@ public abstract class PrimitiveLiteral implements Expression {
   /**
    * How to reproduce this value=object?
    */
-  public String toString(final Class testee) {
+  public String toString(final Class<?> testee) {
+  	notNull(testee);
     return toString();
   }
 }

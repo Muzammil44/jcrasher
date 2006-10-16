@@ -27,7 +27,7 @@ import edu.gatech.cc.jcrasher.Loadee;
  */
 public class AbstractJUnitTestWriterTest extends TestCase {
 
-  protected Class inDefaultPackage = null;
+  protected Class<?> inDefaultPackage = null;
 
   
   @Override
@@ -38,6 +38,9 @@ public class AbstractJUnitTestWriterTest extends TestCase {
   }
   
 
+  /***
+   *
+   */
   public void testConstructor() {
     try { 
       new ConcreteJUnitTestWriter(null, "No comment");
@@ -55,19 +58,23 @@ public class AbstractJUnitTestWriterTest extends TestCase {
   	
   }
   
+  
+  /**
+   *
+   */
   public void testGetPackageHeader() {
-  	AbstractJUnitTestWriter junitTestWriter = 
+  	AbstractJUnitTestWriter<?> junitTestWriter = 
     	new ConcreteJUnitTestWriter(inDefaultPackage, "No comment");
     assertEquals("", junitTestWriter.getPackageHeader());
     
     junitTestWriter = 
-    	new ConcreteJUnitTestWriter(Loadee.class, "No comment");
+    	new ConcreteJUnitTestWriter<Loadee>(Loadee.class, "No comment");
     assertEquals(
         "package edu.gatech.cc.jcrasher;"+NL+NL,
         junitTestWriter.getPackageHeader());
     
     junitTestWriter = 
-    	new ConcreteJUnitTestWriter(Loadee.StaticMember.class, "No comment");
+    	new ConcreteJUnitTestWriter<Loadee.StaticMember>(Loadee.StaticMember.class, "No comment");
     assertEquals(
         "package edu.gatech.cc.jcrasher;"+NL+NL,
         junitTestWriter.getPackageHeader());
@@ -80,9 +87,12 @@ public class AbstractJUnitTestWriterTest extends TestCase {
   }
 
 
+  /**
+   *
+   */
   public void testJavadocComment() {
-  	AbstractJUnitTestWriter junitTestWriter = 
-    	new ConcreteJUnitTestWriter(Loadee.Inner.class, "bla");
+  	AbstractJUnitTestWriter<Loadee.Inner> junitTestWriter = 
+    	new ConcreteJUnitTestWriter<Loadee.Inner>(Loadee.Inner.class, "bla");
     assertEquals(
         "/**"+            NL+
         " * Hello"+       NL+
@@ -122,8 +132,11 @@ public class AbstractJUnitTestWriterTest extends TestCase {
   }
 
   
-  public class ConcreteJUnitTestWriter extends AbstractJUnitTestWriter {
-  	ConcreteJUnitTestWriter(Class testeeClass, String comment) {
+  /**
+   * Mock
+   */
+  public class ConcreteJUnitTestWriter<T> extends AbstractJUnitTestWriter<T> {
+  	ConcreteJUnitTestWriter(Class<T> testeeClass, String comment) {
   		super(testeeClass, comment);
   	}
   }

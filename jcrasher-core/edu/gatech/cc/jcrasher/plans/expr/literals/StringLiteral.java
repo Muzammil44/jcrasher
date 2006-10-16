@@ -19,7 +19,7 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.5
  */
-public class StringLiteral implements Expression {
+public class StringLiteral implements Expression<String> {
 
   protected String value = null;
 
@@ -33,7 +33,7 @@ public class StringLiteral implements Expression {
   }
   
   
-  public Class getReturnType() {
+  public Class<String> getReturnType() {
     return String.class;
   }
 
@@ -45,11 +45,12 @@ public class StringLiteral implements Expression {
   /**
    * @param testee ignored.
    */
-  public String toString(Class testee) {
+  public String toString(Class<?> testee) {
+  	notNull(testee);
     return toString();
   }
   
-  public Object execute() {
+  public String execute() {
     return notNull(value);
   }  
 }

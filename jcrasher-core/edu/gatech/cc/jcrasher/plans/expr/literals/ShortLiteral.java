@@ -16,7 +16,7 @@ package edu.gatech.cc.jcrasher.plans.expr.literals;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.1
  */
-public class ShortLiteral extends PrimitiveLiteral {
+public class ShortLiteral extends PrimitiveLiteral<Short> {
 
   /**
    * Constructor
@@ -24,10 +24,10 @@ public class ShortLiteral extends PrimitiveLiteral {
    * @param val hardcoded primitive value, not via java-wrapper-constructor
    */
   public ShortLiteral(final short val) {
-    super(val);
+    super(Short.valueOf(val));
   }
   
-  public Class getReturnType() {
+  public Class<Short> getReturnType() {
     return Short.TYPE;
   }
 

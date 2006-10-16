@@ -26,16 +26,19 @@ public class BooleanLiteralTest extends TestCase {
   protected final BooleanLiteral trueLit = new BooleanLiteral(true);
   protected final BooleanLiteral falseLit = new BooleanLiteral(false);
 
+  /***/
   public void testGetReturnType() {
     assertEquals(Boolean.TYPE, trueLit.getReturnType());
     assertEquals(Boolean.TYPE, falseLit.getReturnType());
   }
 
+  /***/
   public void testExecute() {
-    assertEquals(true, trueLit.execute());
-    assertEquals(false, falseLit.execute());
+    assertEquals(Boolean.TRUE, trueLit.execute());
+    assertEquals(Boolean.FALSE, falseLit.execute());
   }
 
+  /***/
   public void testToStringClass() {
     assertEquals("true", trueLit.toString(Loadee.class));
     assertEquals("false", falseLit.toString(Loadee.class));

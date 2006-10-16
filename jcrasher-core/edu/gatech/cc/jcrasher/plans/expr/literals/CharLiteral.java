@@ -5,7 +5,6 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 /**
  * Holds Java-syntax of how to define a char value.
@@ -17,7 +16,7 @@ import static edu.gatech.cc.jcrasher.Assertions.notNull;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.4
  */
-public class CharLiteral extends PrimitiveLiteral {
+public class CharLiteral extends PrimitiveLiteral<Character> {
 
   /**
    * Constructor
@@ -25,11 +24,11 @@ public class CharLiteral extends PrimitiveLiteral {
    * @param val hardcoded primitive value, not via java-wrapper-constructor
    */
   public CharLiteral(final char val) {
-    super(notNull(val));
+    super(Character.valueOf(val));
   }
   
   
-  public Class getReturnType() {
+  public Class<Character> getReturnType() {
     return Character.TYPE;
   }
 

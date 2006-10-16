@@ -17,15 +17,16 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class ValueNode implements PlanSpaceNode {
+public class ValueNode<T> implements PlanSpaceNode<T> {
 
-  protected final List<Expression> plans = new ArrayList<Expression>();
+  protected final List<Expression<T>> plans = 
+  	new ArrayList<Expression<T>>();
 
 
   /**
    * Constructor
    */
-  public ValueNode(final List<Expression> pPlans) {
+  public ValueNode(final List<Expression<T>> pPlans) {
     notNull(pPlans);
     plans.addAll(pPlans);
   }
@@ -35,7 +36,7 @@ public class ValueNode implements PlanSpaceNode {
     return plans.size();
   }
 
-  public Expression getPlan(int planIndex) {
+  public Expression<T> getPlan(int planIndex) {
     return plans.get(planIndex);
   }
 

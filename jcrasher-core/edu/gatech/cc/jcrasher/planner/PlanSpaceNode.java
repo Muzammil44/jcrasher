@@ -16,7 +16,7 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public interface PlanSpaceNode {
+public interface PlanSpaceNode<T> {
 
   /**
    * Precond: true Postcond: cached sizes of all sub plan spaces to speed up
@@ -34,5 +34,5 @@ public interface PlanSpaceNode {
    *          order, taken from [0..getPlanSpaceSize()-1]
    * @return plan according to the ordering semantics, never null
    */
-  public Expression getPlan(int planIndex);
+  public Expression<?> getPlan(int planIndex);
 }
