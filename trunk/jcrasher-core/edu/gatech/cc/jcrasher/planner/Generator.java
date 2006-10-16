@@ -19,5 +19,5 @@ public interface Generator {
 	/**
 	 * Get test cases for c.
 	 */
-	public List<Block> getBlocks(Class c);
+	public <T> List<Block> getBlocks(Class<T> c);
 }

@@ -8,6 +8,6 @@ package edu.gatech.cc.jcrasher.planner;
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public interface ClassUnderTest extends PlanSpaceNode, BlockNode {
+public interface ClassUnderTest<T> extends PlanSpaceNode<T>, BlockNode {
   /* Empty */
 }

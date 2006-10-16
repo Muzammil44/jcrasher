@@ -16,20 +16,22 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  * <li>Child plan spaces are all TypeNode.
  * <li>Knows how to transfer an index in a certain combination of child-plans.
  * 
+ * @param <T> return type.
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public abstract class FunctionNode implements PlanSpaceNode {
+public abstract class FunctionNode<T> implements PlanSpaceNode<T> {
 
   /**
    * Child types, i.e. victim and param types up to our max depth - 1
    */
-  protected TypeNode[] children = null;
+  protected TypeNode<?>[] parameters = null;
 
   /**
    * Size of each child's plan space (given their max depth), e.g.: - (3, 5, 2)
    * --> own size = 30 - (0, 10, 10, 5) --> 0
    */
-  protected int[] childSizes = null;
+  protected int[] paramSizes = null;
   protected int[] canonicalSubSapceSizes = null; // (5*2*1, 2*1, 1) for (3, 5,
                                                   // 2)
   protected int planSpaceSize = -1; // own plan space size = product of
@@ -47,31 +49,31 @@ public abstract class FunctionNode implements PlanSpaceNode {
    *         can return via getPlan(int)
    */
   public int getPlanSpaceSize() {
-    notNull(children);
+    notNull(parameters);
 
     /* Compute childrens' and own plan space sizes */
-    if (childSizes == null) { // first call
-      childSizes = new int[children.length];
+    if (paramSizes == null) { // first call
+      paramSizes = new int[parameters.length];
 
       /* Compute child sizes recursively */
-      for (int i = 0; i < children.length; i++) {
-        childSizes[i] = children[i].getPlanSpaceSize();
+      for (int i = 0; i < parameters.length; i++) {
+        paramSizes[i] = parameters[i].getPlanSpaceSize();
       }
 
       /* Multiply childrens' plan space sizes */
       int res = 1; // no children: one plan for static non-arg meth
-      for (int childSize : childSizes) {
+      for (int childSize : paramSizes) {
         res *= childSize; // first zero will zero the entire result
       }
       planSpaceSize = res;
 
       /* Compute canonical sub space sizes for each dimesion */
-      canonicalSubSapceSizes = new int[children.length];
-      for (int i = children.length - 1; i >= 0; i--) {
-        if (i == children.length - 1) {
+      canonicalSubSapceSizes = new int[parameters.length];
+      for (int i = parameters.length - 1; i >= 0; i--) {
+        if (i == parameters.length - 1) {
           canonicalSubSapceSizes[i] = 1;
         } else {
-          canonicalSubSapceSizes[i] = childSizes[i + 1]
+          canonicalSubSapceSizes[i] = paramSizes[i + 1]
             * canonicalSubSapceSizes[i + 1];
         }
       }
@@ -98,32 +100,27 @@ public abstract class FunctionNode implements PlanSpaceNode {
    *          order, taken from [0..getPlanSpaceSize()-1]
    * @return childrens' plans according to the ordering semantics, never null
    */
-  public Expression[] getChildrenPlans(int planIndex) {
+  public Expression<?>[] getParamPlans(int planIndex) {
     check(planIndex >= 0); // enforce precondition
     check(planIndex < getPlanSpaceSize()); // terminate here iff any
                                           // canonicalSubSapceSizes[i] == 0
 
     /* Make sure children and own sizes are cached */
-    if (childSizes == null) {
+    if (paramSizes == null) {
       getPlanSpaceSize();
     }
 
-    Expression[] res = new Expression[children.length]; // no children --> empty list
+    Expression<?>[] res = new Expression[parameters.length]; // no children --> empty list
 
     /* Determine index in each child dimension */
     int currentIndex = planIndex; // index into remaining sub spaces
     for (int i = 0; i < res.length; i++) {
-      int childIndex = currentIndex / canonicalSubSapceSizes[i]; // division,
-                                                                  // lower
-                                                                  // bounded,
-                                                                  // index in
-                                                                  // child's
-                                                                  // dimension
-      currentIndex = currentIndex - (childIndex * canonicalSubSapceSizes[i]); // left
-                                                                              // over
-                                                                              // from
-                                                                              // division
-      res[i] = children[i].getPlan(childIndex);
+    	/* division, lower bounded index in child's dimension. */
+      int childIndex = currentIndex / canonicalSubSapceSizes[i];
+      
+      /* leftover from division */
+      currentIndex = currentIndex - (childIndex * canonicalSubSapceSizes[i]);
+      res[i] = parameters[i].getPlan(childIndex);
     }
 
     return res;
@@ -132,12 +129,13 @@ public abstract class FunctionNode implements PlanSpaceNode {
 
 
   /**
-   * Sets the children. To be called by extending classes only.
+   * Sets the function parameters.
+   * To be called by extending classes only.
    * 
-   * @param children The children to set
+   * @param parameters The children to set
    */
-  protected void setChildren(final TypeNode[] pChildren) {
-    this.children = pChildren;
+  protected void setParams(final TypeNode<?>[] pChildren) {
+    this.parameters = pChildren;
   }
 
 }

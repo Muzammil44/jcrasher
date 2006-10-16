@@ -15,7 +15,6 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 /**
  * Hides a boolean literal. Either true or false.
@@ -27,16 +26,16 @@ import static edu.gatech.cc.jcrasher.Assertions.notNull;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.3
  */
-public class BooleanLiteral extends PrimitiveLiteral {
+public class BooleanLiteral extends PrimitiveLiteral<Boolean> {
 
 	/**
 	 * Constructor
 	 */
   public BooleanLiteral(final boolean val) {
-    super(notNull(val));
+    super(Boolean.valueOf(val));
   }
   
-  public Class getReturnType() {
+  public Class<Boolean> getReturnType() {
     return Boolean.TYPE;
   }
 

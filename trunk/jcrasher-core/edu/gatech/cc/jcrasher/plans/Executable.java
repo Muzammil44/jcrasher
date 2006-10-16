@@ -21,9 +21,11 @@ import java.lang.reflect.InvocationTargetException;
  * Allows to execute this code junk via Java reflection
  * (before exporting it to the file system).
  * 
+ * @param <T> result type.
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public interface Executable {
+public interface Executable<T> {
   
   /**
    * To be called from above, like TestCaseGenerator.
@@ -33,6 +35,6 @@ public interface Executable {
    * 
    * @return maybe null.
    */
-  public Object execute() throws InstantiationException,
+  public T execute() throws InstantiationException,
       IllegalAccessException, InvocationTargetException; 
 }

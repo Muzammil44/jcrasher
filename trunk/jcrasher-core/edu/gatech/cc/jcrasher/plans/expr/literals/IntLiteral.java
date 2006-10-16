@@ -15,7 +15,6 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 /**
  * Hides an int literal.
@@ -27,16 +26,16 @@ import static edu.gatech.cc.jcrasher.Assertions.notNull;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.1
  */
-public class IntLiteral extends PrimitiveLiteral {
+public class IntLiteral extends PrimitiveLiteral<Integer> {
 
 	/**
 	 * Constructor
 	 */
   public IntLiteral(final int val) {
-    super(notNull(val));
+    super(Integer.valueOf(val));
   }
   
-  public Class getReturnType() {
+  public Class<Integer> getReturnType() {
     return Integer.TYPE;
   }
 }

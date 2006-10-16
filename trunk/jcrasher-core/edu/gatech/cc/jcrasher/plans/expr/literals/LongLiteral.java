@@ -25,16 +25,16 @@ package edu.gatech.cc.jcrasher.plans.expr.literals;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.1
  */
-public class LongLiteral extends PrimitiveLiteral {
+public class LongLiteral extends PrimitiveLiteral<Long> {
 
 	/**
 	 * Constructor
 	 */
   public LongLiteral(final long val) {
-    super(val);
+    super(Long.valueOf(val));
   }
   
-  public Class getReturnType() {
+  public Class<Long> getReturnType() {
     return Long.TYPE;
   }
 

@@ -18,17 +18,17 @@ import edu.gatech.cc.jcrasher.writer.CodeGenFct;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/expressions.html#15.8.2
  */
-public class DotClass implements Expression {
+public class DotClass implements Expression<Class> {
 
-  public Class getReturnType() {
+  public Class<Class> getReturnType() {
     return Class.class;
   }
 
-  public Object execute() {
+  public Class<Object> execute() {
     return Object.class;
   }
   
-  public String toString(final Class testee) {
+  public String toString(final Class<?> testee) {
     notNull(testee);
     return notNull(CodeGenFct.getName(Object.class, testee)+".class");
   }

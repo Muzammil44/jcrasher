@@ -23,28 +23,34 @@ import edu.gatech.cc.jcrasher.Loadee;
  */
 public class NullLiteralTest extends TestCase {
 
-  protected final NullLiteral nullString = new NullLiteral(String.class);
-  protected final NullLiteral nullLoadee = new NullLiteral(Loadee.class);
+  protected final NullLiteral<String> nullString = 
+  	new NullLiteral<String>(String.class);
+  protected final NullLiteral<Loadee> nullLoadee = 
+  	new NullLiteral<Loadee>(Loadee.class);
   
+  /***/
   public void testGetReturnType() {
     assertEquals(String.class, nullString.getReturnType());
     assertEquals(Loadee.class, nullLoadee.getReturnType());
   }
 
+  /***/
   public void testNullLiteralNull() {
     try {
-      new NullLiteral(null);
+      new NullLiteral<String>(null);
       fail("NullLiteral(null) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
   }
 
+  /***/
   public void testExecute() {
     assertEquals(null, nullString.execute());
     assertEquals(null, nullLoadee.execute());
   }
 
+  /***/
   public void testToStringClass() {
     assertEquals("(String)null", nullString.toString(String.class));
     assertEquals("(java.lang.String)null", nullString.toString(Loadee.class));
@@ -52,5 +58,4 @@ public class NullLiteralTest extends TestCase {
     assertEquals("(Loadee)null", nullLoadee.toString(Loadee.class));
     assertEquals("(edu.gatech.cc.jcrasher.Loadee)null", nullLoadee.toString(String.class));
   }
-
 }

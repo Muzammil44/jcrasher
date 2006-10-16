@@ -24,11 +24,13 @@ import edu.gatech.cc.jcrasher.types.ClassWrapperImpl;
  * Node to access the plans of a constructor (sub-) plan space up to a given
  * maximal chaining depth. Knows how to generate a concrete ConstructorCall
  * 
+ * @param <T> type that declares the wrapped constructor.
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class ConstructorNode extends FunctionNode {
+public class ConstructorNode<T> extends FunctionNode<T> {
 
-  protected Constructor con = null; // wrapped constructor
+  protected Constructor<T> con = null; // wrapped constructor
 
 
   /**
@@ -40,7 +42,7 @@ public class ConstructorNode extends FunctionNode {
    * @param filter Are we allowed to use null?
    */
   public ConstructorNode(
-      final Constructor pCon, 
+      final Constructor<T> pCon, 
       int pMaxRecursion,
       final PlanFilter filter,
       final Visibility vis) {
@@ -50,7 +52,7 @@ public class ConstructorNode extends FunctionNode {
     notNull(pCon);
 
     con = pCon;
-    List<TypeNode> depNodes = new ArrayList<TypeNode>();
+    List<TypeNode<T>> depNodes = new ArrayList<TypeNode<T>>();
 
     /*
      * First, .. n-th dimesion: Add each parameter Inner class: Reflection
@@ -58,7 +60,7 @@ public class ConstructorNode extends FunctionNode {
      */
     Class[] paramsTypes = con.getParameterTypes();
     for (int j = 0; j < paramsTypes.length; j++) {
-      ClassWrapperImpl pW = (ClassWrapperImpl) typeGraph.getWrapper(paramsTypes[j]);
+      ClassWrapperImpl<?> pW = (ClassWrapperImpl) typeGraph.getWrapper(paramsTypes[j]);
 
       /* Filter (null): First param might be the enclosing type */
       PlanFilter planFilter = filter;
@@ -68,7 +70,7 @@ public class ConstructorNode extends FunctionNode {
       }
       depNodes.add(new TypeNeededNode(pW, pMaxRecursion - 1, planFilter, vis));
     }
-    setChildren(depNodes.toArray(new TypeNode[depNodes.size()]));
+    setParams(depNodes.toArray(new TypeNode[depNodes.size()]));
   }
 
 
@@ -79,8 +81,8 @@ public class ConstructorNode extends FunctionNode {
    * @return concrete method plan according to index.
    * @see PlanSpaceNode#getPlan(int)
    */
-  public Expression getPlan(int planIndex) {
-    Expression[] depPlans = getChildrenPlans(planIndex); // enforces our precondition
+  public Expression<T> getPlan(int planIndex) {
+    Expression[] depPlans = getParamPlans(planIndex); // enforces our precondition
 
     /* distinguish inner class from params */
     if (typeGraph.getWrapper(con.getDeclaringClass()).isInnerClass()) {
@@ -92,18 +94,18 @@ public class ConstructorNode extends FunctionNode {
       for (int j = 0; j < paramPlans.length; j++) {
         paramPlans[j] = depPlans[j + 1];
       }
-      return new ConstructorCall(con, paramPlans, depPlans[0]);
+      return new ConstructorCall<T>(con, paramPlans, depPlans[0]);
     } 
     
     /* Non-inner class constructor with >=0 arguments */
-    return new ConstructorCall(con, depPlans);
+    return new ConstructorCall<T>(con, depPlans);
   }
 
 
   /**
    * @return the wrapped constructor
    */
-  Constructor getCon() {
+  Constructor<T> getCon() {
     return con;
   }
 

@@ -25,17 +25,19 @@ public class DotClassTest extends TestCase {
 
   protected final DotClass dotClass = new DotClass();
   
+  /***/
   public void testGetReturnType() {
     assertEquals(Class.class, dotClass.getReturnType());
   }
 
+  /***/
   public void testExecute() {
     assertEquals(Object.class, dotClass.execute());
   }
 
+  /***/
   public void testToStringClass() {
     assertEquals("Object.class", dotClass.toString(String.class));
     assertEquals("java.lang.Object.class", dotClass.toString(Loadee.class));
   }
-
 }

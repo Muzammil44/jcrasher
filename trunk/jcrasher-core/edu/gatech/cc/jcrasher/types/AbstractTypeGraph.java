@@ -23,8 +23,8 @@ public abstract class AbstractTypeGraph implements TypeGraph {
    * 
    * e.g. "java.util.Vector" --> {Vector Z.foo(), Vector(), etc}
    */
-  protected final Hashtable<String, ClassWrapper> class2wrapper = 
-      new Hashtable<String, ClassWrapper>();
+  protected final Hashtable<String, ClassWrapper<?>> class2wrapper = 
+      new Hashtable<String, ClassWrapper<?>>();
 
 
   /**
@@ -32,8 +32,8 @@ public abstract class AbstractTypeGraph implements TypeGraph {
    * 
    * @param classes types specified by user to be crashed.
    */
-  protected void init(final Set<Class> classes) {
-    for (Class c : classes) { // put empty wrapper in mapping
+  protected void init(final Set<Class<?>> classes) {
+    for (Class<?> c : classes) { // put empty wrapper in mapping
       if (ClassSourceImpl.instance().initializeDeep(c)) {
         getWrapper(c);
       }         
@@ -45,7 +45,7 @@ public abstract class AbstractTypeGraph implements TypeGraph {
    * @return all class-wrappers
    */
   public ClassWrapper[] getWrappers() {
-    Collection<ClassWrapper> wrappers = class2wrapper.values();
+    Collection<ClassWrapper<?>> wrappers = class2wrapper.values();
     return wrappers.toArray(new ClassWrapper[wrappers.size()]);
   }
 
@@ -54,8 +54,8 @@ public abstract class AbstractTypeGraph implements TypeGraph {
   /**
    * @return wrapper of class: create & insert if not done yet
    */
-  public ClassWrapper getWrapper(final Class pClass) {
-    ClassWrapper wrapper = null;
+  public ClassWrapper<?> getWrapper(final Class<?> pClass) {
+    ClassWrapper<?> wrapper = null;
     wrapper = class2wrapper.get(pClass.getName());
 
     if (wrapper == null) { // create & insert if not done yet

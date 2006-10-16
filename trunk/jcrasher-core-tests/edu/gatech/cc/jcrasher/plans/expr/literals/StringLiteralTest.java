@@ -29,22 +29,25 @@ public class StringLiteralTest extends TestCase {
   protected final StringLiteral emptyLit = new StringLiteral(empty);
   protected final StringLiteral funkyLit = new StringLiteral(funky);
   
-  
+  /***/
   public void testGetReturnType() {
     assertEquals(String.class, emptyLit.getReturnType());
     assertEquals(String.class, funkyLit.getReturnType());
   }
   
+  /***/
   public void testToStringClass() {
     assertEquals("\"\"", emptyLit.toString(Loadee.class));
     assertEquals("\""+funky+"\"", funkyLit.toString(Loadee.class));
   }
 
+  /***/
   public void testExecute() {
     assertEquals(empty, emptyLit.execute());
     assertEquals(funky, funkyLit.execute());
   }
 
+  /***/
   public void testStringLiteralNull() {
     try {
       new StringLiteral(null);
@@ -53,5 +56,4 @@ public class StringLiteralTest extends TestCase {
     catch(RuntimeException e) {  //expected
     }
   }
-
 }

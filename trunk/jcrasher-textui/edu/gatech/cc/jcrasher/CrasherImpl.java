@@ -50,14 +50,14 @@ public class CrasherImpl implements Crasher {
 		/* Build up needs-type-for-construction relation.
 		 * How to (transitively) construct user-specified types:
 		 * A(B(C()), -1) and only A user-specified */
-		final Set<Class> classSet = new HashSet<Class>();
-		for (Class c : classes) {
+		final Set<Class<?>> classSet = new HashSet<Class<?>>();
+		for (Class<?> c : classes) {
 			classSet.add(c);
 		}
 		
 		typeSpace.crawl(classSet, Constants.VIS_USED);
 		
-		for (Class c: classes) {			
+		for (Class<?> c: classes) {			
 			final List<Block> blockList = generator.getBlocks(c);
 			final Block[] blocks = blockList.toArray(new Block[blockList.size()]);
 			final TestCaseWriter testCaseWriter = new JUnitTestCaseWriter(

@@ -26,13 +26,15 @@ import edu.gatech.cc.jcrasher.types.ClassWrapperImpl;
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class TypeNeededNode extends TypeNode {
+public class TypeNeededNode<T> extends TypeNode<T> {
 
   protected final String name;
 
   /**
-   * Constructor: - Grab all (predefined) values - Grab all constructing
-   * functions iff maxRecursion >= 1
+   * Constructor
+   * <ol>
+   * <li>Grab all (predefined) values
+   * <li>Grab all constructing functions iff maxRecursion >= 1
    * 
    * Precond: maxRecursion >= 0
    * 
@@ -41,7 +43,7 @@ public class TypeNeededNode extends TypeNode {
    * @param filter is the invoking function interested i.e. in null?
    */
   public TypeNeededNode(
-      final ClassWrapper pCW, 
+      final ClassWrapper<T> pCW, 
       int remainingRecursion,
       final PlanFilter filter,
       final Visibility visUsed) {
@@ -53,26 +55,26 @@ public class TypeNeededNode extends TypeNode {
     ((ClassWrapperImpl) pCW).setIsNeeded();
 
     name = pCW.getWrappedClass().getName();
-    List<PlanSpaceNode> childSpaces = new ArrayList<PlanSpaceNode>();
-    childSpaces.add(new ValueNode(pCW.getPresetPlans(filter)));
+    final List<PlanSpaceNode<T>> childSpaces = new ArrayList<PlanSpaceNode<T>>();
+    childSpaces.add(new ValueNode<T>(pCW.getPresetPlans(filter)));
 
     /* NON_NULL enforced above, transitively used values may be null */
-    PlanFilter newFilter = Constants.addNull(filter);
+    final PlanFilter newFilter = Constants.addNull(filter);
 
     /* functions only iff wanted and additional chaining allowed */
     if (remainingRecursion > 0) {
 
       /* same for class and all its implementing/ extending children */
-      List<Class> classes = new ArrayList<Class>(pCW.getChildren());
+      final List<Class<? extends T>> classes = new ArrayList<Class<? extends T>>(pCW.getChildren());
       classes.add(pCW.getWrappedClass());
 
-      for (Class c : classes) {
-        ClassWrapper cw = typeGraph.getWrapper(c);
+      for (Class<? extends T> c : classes) {
+        ClassWrapper<?> cw = typeGraph.getWrapper(c);
         notNull(cw);
 
         if (!cw.isLibraryType()) { // not interested in JDK-defined
                                     // constructors
-          for (Constructor con : cw.getConstrs(visUsed)) {
+          for (Constructor<?> con : cw.getConstrs(visUsed)) {
             childSpaces.add(new ConstructorNode(
                 con, remainingRecursion, newFilter, visUsed));
           }

@@ -34,44 +34,44 @@ import edu.gatech.cc.jcrasher.plans.expr.literals.IntLiteral;
  */
 public class ExpressionStatementTest extends TestCase {
 
-  protected ConstructorCall loadeeConstructorCall = null;
-  protected ConstructorCall innerConstructorCall = null;
-  protected MethodCall innerMethodCall = null;    
-  protected MethodCall loadeeMethodCallInt = null;
+  protected ConstructorCall<Loadee> loadeeConstructorCall = null;
+  protected ConstructorCall<Loadee.Inner> innerConstructorCall = null;
+  protected MethodCall<Integer> innerMethodCall = null;    
+  protected MethodCall<Void> loadeeMethodCallInt = null;
   
-  protected ExpressionStatement innerMethodCallStmt = null;
-  protected ExpressionStatement loadeeMethodCallIntStmt = null;
+  protected ExpressionStatement<Integer> innerMethodCallStmt = null;
+  protected ExpressionStatement<Void> loadeeMethodCallIntStmt = null;
   
   @Override
   protected void setUp() throws Exception {
     super.setUp();
      
-    loadeeConstructorCall = new ConstructorCall(
+    loadeeConstructorCall = new ConstructorCall<Loadee>(
         Loadee.class.getConstructor(new Class[0]), 
         new Expression[0]);
-    innerConstructorCall = new ConstructorCall(
+    innerConstructorCall = new ConstructorCall<Loadee.Inner>(
         Loadee.Inner.class.getConstructor(new Class[]{Loadee.class}), 
         new Expression[0],
         loadeeConstructorCall);
-    innerMethodCall = new MethodCall(
+    innerMethodCall = new MethodCall<Integer>(
         Loadee.Inner.class.getMethod("innerMeth", new Class[0]),
         new Expression[0],
         innerConstructorCall);    
-    loadeeMethodCallInt = new MethodCall(
+    loadeeMethodCallInt = new MethodCall<Void>(
         Loadee.class.getMethod("meth", new Class[]{int.class}),
         new Expression[]{new IntLiteral(5)},
         loadeeConstructorCall);
     
     innerMethodCallStmt =
-        notNull(new ExpressionStatement(innerMethodCall));
+        notNull(new ExpressionStatement<Integer>(innerMethodCall));
     loadeeMethodCallIntStmt =
-        notNull(new ExpressionStatement(loadeeMethodCallInt));    
+        notNull(new ExpressionStatement<Void>(loadeeMethodCallInt));    
   }
   
-  
+  /***/
   public void testExpressionStatement() {
     try {
-      new ExpressionStatement(null);
+      new ExpressionStatement<Integer>(null);
       fail("ExpressionStatement(null) not allowed");
     }
     catch(RuntimeException e) {  //expected
@@ -79,10 +79,11 @@ public class ExpressionStatementTest extends TestCase {
   }
 
 
+  /***/
   public void testExecute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException {
     
-    assertEquals(true, innerMethodCallStmt.execute());
+    assertEquals(Boolean.TRUE, innerMethodCallStmt.execute());
     
     try {
       loadeeMethodCallIntStmt.execute();
@@ -92,7 +93,7 @@ public class ExpressionStatementTest extends TestCase {
     }  
   }
 
-
+  /***/
   public void testToStringClass() {
     assertEquals(
       innerMethodCall.toString(Object.class)+";",

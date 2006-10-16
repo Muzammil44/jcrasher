@@ -39,14 +39,14 @@ public class ConstructorCallTest extends TestCase {
   protected Constructor<Loadee.Inner> innerConstructorInt = null;
   protected Constructor<Loadee.StaticMember> staticMemberConstructor = null;
   protected Constructor<Loadee.StaticMember> staticMemberConstructorInt = null;
-  protected ConstructorCall loadeeConstructorCall = null;
-  protected ConstructorCall loadeeConstructorCallInt = null;
-  protected ConstructorCall loadeeConstructorCallTrue = null;
-  protected ConstructorCall loadeeConstructorCallFalse = null;
-  protected ConstructorCall innerConstructorCall = null;
-  protected ConstructorCall innerConstructorCallInt = null;
-  protected ConstructorCall staticMemberConstructorCall = null;
-  protected ConstructorCall staticMemberConstructorCallInt = null;
+  protected ConstructorCall<Loadee> loadeeConstructorCall = null;
+  protected ConstructorCall<Loadee> loadeeConstructorCallInt = null;
+  protected ConstructorCall<Loadee> loadeeConstructorCallTrue = null;
+  protected ConstructorCall<Loadee> loadeeConstructorCallFalse = null;
+  protected ConstructorCall<Loadee.Inner> innerConstructorCall = null;
+  protected ConstructorCall<Loadee.Inner> innerConstructorCallInt = null;
+  protected ConstructorCall<Loadee.StaticMember> staticMemberConstructorCall = null;
+  protected ConstructorCall<Loadee.StaticMember> staticMemberConstructorCallInt = null;
   
   @Override
   protected void setUp() throws Exception {
@@ -66,83 +66,83 @@ public class ConstructorCallTest extends TestCase {
     staticMemberConstructorInt =
         Loadee.StaticMember.class.getConstructor(new Class[]{int.class});
     
-    loadeeConstructorCall = new ConstructorCall(
+    loadeeConstructorCall = new ConstructorCall<Loadee>(
         loadeeConstructor, 
         new Expression[0]);
 
-    loadeeConstructorCallInt = new ConstructorCall(
+    loadeeConstructorCallInt = new ConstructorCall<Loadee>(
         loadeeConstructorInt,
         new Expression[]{new IntLiteral(5)});
     
-    loadeeConstructorCallTrue = new ConstructorCall(
+    loadeeConstructorCallTrue = new ConstructorCall<Loadee>(
         loadeeConstructorBoolean,
         new Expression[]{new BooleanLiteral(true)});    
 
-    loadeeConstructorCallFalse = new ConstructorCall(
+    loadeeConstructorCallFalse = new ConstructorCall<Loadee>(
         loadeeConstructorBoolean,
         new Expression[]{new BooleanLiteral(false)});
     
-    innerConstructorCall = new ConstructorCall(
+    innerConstructorCall = new ConstructorCall<Loadee.Inner>(
         innerConstructor,
         new Expression[0],
         loadeeConstructorCall);
     
-    innerConstructorCallInt = new ConstructorCall(
+    innerConstructorCallInt = new ConstructorCall<Loadee.Inner>(
         innerConstructorInt,
         new Expression[]{new IntLiteral(7)},
         loadeeConstructorCallInt);
     
-    staticMemberConstructorCall = new ConstructorCall(
+    staticMemberConstructorCall = new ConstructorCall<Loadee.StaticMember>(
         staticMemberConstructor,
         new Expression[0]);
   
-    staticMemberConstructorCallInt = new ConstructorCall(
+    staticMemberConstructorCallInt = new ConstructorCall<Loadee.StaticMember>(
         staticMemberConstructorInt,
         new Expression[]{new IntLiteral(9)});        
   }
   
-  
+  /***/
   public void testConstructorCallConstructorExpressionArray() {
     try {
-      new ConstructorCall(innerConstructor, new Expression[0]);
+      new ConstructorCall<Loadee.Inner>(innerConstructor, new Expression[0]);
       fail("Inner type not allowed for this constructor");
     }
     catch(RuntimeException e) {  //expected
     }    
     
     try {
-      new ConstructorCall(null, null);
+      new ConstructorCall<Loadee.Inner>(null, null);
       fail("ConstructorCall(null, null) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
-      new ConstructorCall(loadeeConstructor, null);
+      new ConstructorCall<Loadee>(loadeeConstructor, null);
       fail("ConstructorCall(.., null) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
-      new ConstructorCall(null, new Expression[0]);
+      new ConstructorCall<Loadee.Inner>(null, new Expression[0]);
       fail("ConstructorCall(null, ..) not allowed");
     }
     catch(RuntimeException e) {  //expected
     } 
   }
  
-  
+  /***/
   public void testConstructorCallConstructorExpressionArrayExpression() {
     try {
-      new ConstructorCall(loadeeConstructor, new Expression[0], null);
+      new ConstructorCall<Loadee>(loadeeConstructor, new Expression[0], null);
       fail("ConstructorCall(.., .., null) not allowed");
     }    
     catch(RuntimeException e) {  //expected
     }    
     
     try {
-      new ConstructorCall(
+      new ConstructorCall<Loadee.StaticMember>(
           staticMemberConstructor, new Expression[0], loadeeConstructorCall);
       fail("Static type not allowed for this constructor");
     }
@@ -150,7 +150,7 @@ public class ConstructorCallTest extends TestCase {
     }
 
     try {
-      new ConstructorCall(
+      new ConstructorCall<Loadee>(
           loadeeConstructor, new Expression[0], loadeeConstructorCall);
       fail("Top-level type not allowed for this constructor");
     }
@@ -158,7 +158,7 @@ public class ConstructorCallTest extends TestCase {
     }    
     
     try {
-      new ConstructorCall(
+      new ConstructorCall<Loadee.Inner>(
           innerConstructor, new Expression[0], innerConstructorCall);
       fail("Enclosing type plan should match enclosing type of constructor");
     }
@@ -166,7 +166,7 @@ public class ConstructorCallTest extends TestCase {
     }
   }
 
-  
+  /***/
   public void testGetReturnType() {
     assertEquals(Loadee.class, loadeeConstructorCall.getReturnType());
     assertEquals(Loadee.class, loadeeConstructorCallInt.getReturnType());
@@ -174,12 +174,12 @@ public class ConstructorCallTest extends TestCase {
     assertEquals(Loadee.Inner.class, innerConstructorCallInt.getReturnType());
   }
 
-  
+  /***/
   public void testExecute() throws InstantiationException,
       IllegalAccessException, InvocationTargetException 
   {
-    notNull((Loadee) loadeeConstructorCall.execute());
-    Loadee loadee5 = notNull((Loadee) loadeeConstructorCallInt.execute());
+    notNull(loadeeConstructorCall.execute());
+    Loadee loadee5 = notNull(loadeeConstructorCallInt.execute());
     assertEquals(5, loadee5.fieldInt);
     
     try {
@@ -191,14 +191,14 @@ public class ConstructorCallTest extends TestCase {
     loadeeConstructorCallFalse.execute();
     
     
-    notNull((Loadee.Inner) innerConstructorCall.execute());
+    notNull(innerConstructorCall.execute());
     Loadee.Inner inner7 = 
-        notNull((Loadee.Inner) innerConstructorCallInt.execute());
+        notNull(innerConstructorCallInt.execute());
     assertEquals(7, inner7.fieldInnerInt);
 
-    notNull((Loadee.StaticMember) staticMemberConstructorCall.execute());
+    notNull(staticMemberConstructorCall.execute());
     Loadee.StaticMember staticMember9 = 
-        notNull((Loadee.StaticMember) staticMemberConstructorCallInt.execute());
+        notNull(staticMemberConstructorCallInt.execute());
     assertEquals(9, staticMember9.fieldStaticMemberInt);    
     
     
@@ -211,7 +211,7 @@ public class ConstructorCallTest extends TestCase {
       ((new Loadee()).new Inner()).getClass().getEnclosingClass());    
   }
 
-
+  /***/
   public void testToStringClass() {
     assertEquals(
         "new edu.gatech.cc.jcrasher.Loadee()",
@@ -234,6 +234,7 @@ public class ConstructorCallTest extends TestCase {
       loadeeConstructorCallInt.toString(Loadee.StaticMember.class));    
   }
   
+  /***/
   public void testToStringClassInner() {    
     assertEquals(
         "(new edu.gatech.cc.jcrasher.Loadee()).new Inner()",
@@ -256,6 +257,7 @@ public class ConstructorCallTest extends TestCase {
       innerConstructorCallInt.toString(Loadee.StaticMember.class));    
   }
   
+  /***/
   public void testToStringClassStaticMember() {    
     assertEquals(
         "new edu.gatech.cc.jcrasher.Loadee.StaticMember()",

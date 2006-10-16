@@ -31,7 +31,7 @@ public class ExecutingGenerator implements Generator {
   /**
    * @return if we want to keep (export) a testCase.
    */
-  protected boolean shouldExport(final Executable testCase) {    
+  protected boolean shouldExport(final Executable<?> testCase) {    
     notNull(testCase);
     
     try {
@@ -73,10 +73,10 @@ public class ExecutingGenerator implements Generator {
 	/**
 	 * 
 	 */
-	public List<Block> getBlocks(Class classUnderTest) {
+	public <T> List<Block> getBlocks(final Class<T> classUnderTest) {
     notNull(classUnderTest);
     
-    final ClassUnderTest classNode = new ClassUnderTestImpl(
+    final ClassUnderTest<T> classNode = new ClassUnderTestImpl<T>(
       classUnderTest,
       Constants.MAX_PLAN_RECURSION,
       Constants.VIS_TESTED,

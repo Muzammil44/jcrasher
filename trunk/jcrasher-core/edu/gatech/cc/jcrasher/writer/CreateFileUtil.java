@@ -21,7 +21,7 @@ public class CreateFileUtil {
   /*
    * package/hierarchy
    */
-  protected static String getPackagePath(final Class pClass) {
+  protected static String getPackagePath(final Class<?> pClass) {
     notNull(pClass);
 
     StringBuilder sb = new StringBuilder(""); // default package
@@ -42,7 +42,7 @@ public class CreateFileUtil {
    * @return null iff class is in a jar; path to binary directory
    * /c:/my/project/bin else.
    */
-  protected static String getBinRoot(final Class pClass) {
+  protected static String getBinRoot(final Class<?> pClass) {
     notNull(pClass);
 
     /* package/hierarchy/T.class */
@@ -75,7 +75,7 @@ public class CreateFileUtil {
    * 
    * @return /c:/my/project/bin
    */
-  public static String getTestRoot(final Class pClass) {
+  public static String getTestRoot(final Class<?> pClass) {
     notNull(pClass);
     String testRoot = null; // /c:/my/project/test-root/
 
@@ -132,7 +132,7 @@ public class CreateFileUtil {
    * @return handle to /abspath/<package>.<Class>Test.java
    */
   public static File createOutFile(
-      final Class pClass, 
+      final Class<?> pClass, 
       final String simpleTypeName) {
     
     notNull(pClass);

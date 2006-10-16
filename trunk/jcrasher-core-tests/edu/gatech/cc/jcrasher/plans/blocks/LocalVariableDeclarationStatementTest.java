@@ -27,6 +27,8 @@ import edu.gatech.cc.jcrasher.plans.expr.literals.BooleanLiteral;
 import edu.gatech.cc.jcrasher.plans.expr.literals.IntLiteral;
 import edu.gatech.cc.jcrasher.plans.expr.literals.StringLiteral;
 
+import static java.lang.Boolean.TRUE;
+
 
 /**
  * Tests LocalVariableDeclarationStatement
@@ -35,38 +37,40 @@ import edu.gatech.cc.jcrasher.plans.expr.literals.StringLiteral;
  */
 public class LocalVariableDeclarationStatementTest extends TestCase {
 
-  protected Variable intX = new Variable(int.class, "x");
-  protected Variable stringY = new Variable(String.class, "y");
+  protected Variable<Integer> intX = new Variable<Integer>(int.class, "x");
+  protected Variable<String> stringY = new Variable<String>(String.class, "y");
   
-  protected ConstructorCall loadeeConstructorCallTrue = null;
+  protected ConstructorCall<Loadee> loadeeConstructorCallTrue = null;
   
   @Override
   protected void setUp() throws Exception {
     super.setUp();
     
-    loadeeConstructorCallTrue = new ConstructorCall(
+    loadeeConstructorCallTrue = new ConstructorCall<Loadee>(
         Loadee.class.getConstructor(new Class[]{boolean.class}),
         new Expression[]{new BooleanLiteral(true)});    
   }
   
-  
+  /**
+   * 
+   */
   public void testLocalVariableDeclarationStatement() throws Exception {
     try {
-      new LocalVariableDeclarationStatement(null, null);
+      new LocalVariableDeclarationStatement<Object>(null, null);
       fail("LocalVariableDeclarationStatement(null, null) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
-      new LocalVariableDeclarationStatement(intX, null);
+      new LocalVariableDeclarationStatement<Integer>(intX, null);
       fail("LocalVariableDeclarationStatement(.., null) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
-      new LocalVariableDeclarationStatement(null, new IntLiteral(-1));
+      new LocalVariableDeclarationStatement<Integer>(null, new IntLiteral(-1));
       fail("LocalVariableDeclarationStatement(null, ..) not allowed");
     }
     catch(RuntimeException e) {  //expected
@@ -81,14 +85,17 @@ public class LocalVariableDeclarationStatementTest extends TestCase {
   }
 
   
+  /**
+   * 
+   */
   public void testExecute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException {
     
-    LocalVariableDeclarationStatement stringAssign =
-        new LocalVariableDeclarationStatement(stringY, new StringLiteral("*"));
+    LocalVariableDeclarationStatement<String> stringAssign =
+        new LocalVariableDeclarationStatement<String>(stringY, new StringLiteral("*"));
     assertEquals(null, stringY.execute());
     Object res = stringAssign.execute();
-    assertEquals(true, res);
+    assertEquals(TRUE, res);
     assertEquals("*", stringY.execute());
     
     try {
@@ -100,20 +107,23 @@ public class LocalVariableDeclarationStatementTest extends TestCase {
   }
 
 
+  /**
+   * 
+   */
   public void testToStringClass() {
-    Expression stringLit = new StringLiteral("*");
-    LocalVariableDeclarationStatement stringAssign =
-        new LocalVariableDeclarationStatement(stringY, stringLit);
-    Class testee = Object.class;
+    Expression<String> stringLit = new StringLiteral("*");
+    LocalVariableDeclarationStatement<String> stringAssign =
+        new LocalVariableDeclarationStatement<String>(stringY, stringLit);
+    Class<Object> object = Object.class;
     assertEquals(
-        "String "+stringY.toString(testee)+" = "+stringLit.toString(testee)+";",
-        stringAssign.toString(testee));
+        "String "+stringY.toString(object)+" = "+stringLit.toString(object)+";",
+        stringAssign.toString(object));
     
-    testee = Loadee.class;
+    Class<Loadee> loadee = Loadee.class;
     assertEquals(
-        "java.lang.String "+stringY.toString(testee)+" = "
-            +stringLit.toString(testee)+";",
-        stringAssign.toString(testee));    
+        "java.lang.String "+stringY.toString(loadee)+" = "
+            +stringLit.toString(loadee)+";",
+        stringAssign.toString(loadee));    
   }
 
 }

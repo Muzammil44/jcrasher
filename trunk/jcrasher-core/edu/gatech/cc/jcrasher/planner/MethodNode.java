@@ -27,9 +27,11 @@ import edu.gatech.cc.jcrasher.types.ClassWrapperImpl;
  * 
  * Knows how to concrete MethodCall
  * 
+ * @param <T> return type.
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class MethodNode extends FunctionNode {
+public class MethodNode<T> extends FunctionNode<T> {
 
   protected Method meth = null; // wrapped method
 
@@ -51,24 +53,24 @@ public class MethodNode extends FunctionNode {
     notNull(pMeth);
 
     meth = pMeth;
-    List<TypeNode> depNodes = new ArrayList<TypeNode>();
+    List<TypeNode<?>> depNodes = new ArrayList<TypeNode<?>>();
 
     /* First dimension: victim instance */
     if (Modifier.isStatic(pMeth.getModifiers()) == false) { // non-static method
-      Class decClass = pMeth.getDeclaringClass();
-      ClassWrapperImpl vW = (ClassWrapperImpl) typeGraph.getWrapper(decClass); // victim
+      Class<?> decClass = pMeth.getDeclaringClass();
+      ClassWrapperImpl<?> vW = (ClassWrapperImpl) typeGraph.getWrapper(decClass); // victim
       depNodes.add(new TypeNeededNode(vW, pMaxRecursion - 1, Constants
         .removeNull(filter), vis));
     }
 
     /* Second, .. n-th dimesion: Add each parameter */
-    for (Class paramType : pMeth.getParameterTypes()) {
-      ClassWrapperImpl pW = (ClassWrapperImpl) typeGraph.getWrapper(paramType);
+    for (Class<?> paramType : pMeth.getParameterTypes()) {
+      ClassWrapperImpl<?> pW = (ClassWrapperImpl) typeGraph.getWrapper(paramType);
       depNodes.add(new TypeNeededNode(pW, pMaxRecursion - 1, filter, vis));
     }
 
     /* create iterators for each type dimension and set field in super class */
-    setChildren(depNodes.toArray(new TypeNode[depNodes.size()]));
+    setParams(depNodes.toArray(new TypeNode[depNodes.size()]));
   }
 
 
@@ -79,12 +81,12 @@ public class MethodNode extends FunctionNode {
    * @return concrete method plan according to index.
    * @see PlanSpaceNode#getPlan(int)
    */
-  public Expression getPlan(int planIndex) {
-    Expression[] depPlans = getChildrenPlans(planIndex); // enforces our precondition
+  public Expression<T> getPlan(int planIndex) {
+    Expression<?>[] depPlans = getParamPlans(planIndex); // enforces our precondition
 
     /* Zero-dim ok, iff non-arg static meth */
     if (depPlans.length == 0) {
-      return new MethodCall(meth, new Expression[0]);
+      return new MethodCall<T>(meth, new Expression[0]);
     }// end traversal of zero-dim space
 
 
@@ -98,11 +100,11 @@ public class MethodNode extends FunctionNode {
       for (int j = 0; j < paramPlans.length; j++) {
         paramPlans[j] = depPlans[j + 1];
       }
-      return new MethodCall(meth, paramPlans, depPlans[0]);
+      return new MethodCall<T>(meth, paramPlans, depPlans[0]);
     }
     
     /* Non-static method with >=1 arguments */
-    return new MethodCall(meth, depPlans);
+    return new MethodCall<T>(meth, depPlans);
   }
 
 

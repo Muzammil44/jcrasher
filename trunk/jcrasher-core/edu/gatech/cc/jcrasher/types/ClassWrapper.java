@@ -25,9 +25,11 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  * <li>Methods can return objects of some type: X Z.foo(P*) 
  * <li>Both for each implementing/extending class or interface
  * 
+ * @param <T> wrapped type.
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public interface ClassWrapper {
+public interface ClassWrapper<T> {
 
   /**
    * @return true iff representing an innner class
@@ -57,7 +59,7 @@ public interface ClassWrapper {
   /**
    * @return the wrapped class
    */
-  public Class getWrappedClass();
+  public Class<T> getWrappedClass();
 
 
   /**
@@ -76,12 +78,12 @@ public interface ClassWrapper {
    * 
    * @return each public constuctor X(P*) or an empty list if abstract class.
    */
-  public List<Constructor> getConstrsVisGlobal();
+  public List<Constructor<T>> getConstrsVisGlobal();
   
   /**
    * @return constructors that have minimum visibility vis.
    */
-  public List<Constructor> getConstrs(Visibility vis);
+  public List<Constructor<T>> getConstrs(Visibility vis);
 
   /**
    * Get user-predefined standard representative plans like 0, 1, -1, null
@@ -89,7 +91,7 @@ public interface ClassWrapper {
    * @param planFilter can exclude null for reference types
    * @return List of preset plans of wrapped type (= userdefined database).
    */
-  public List<Expression> getPresetPlans(final PlanFilter planFilter);
+  public List<Expression<T>> getPresetPlans(final PlanFilter planFilter);
 
   /**
    * Get all implementing or extending child-classes.
@@ -97,5 +99,5 @@ public interface ClassWrapper {
    * @return all classes S with (S implements X) or (S extends X) or an empty
    *         list.
    */
-  public List<Class> getChildren();
+  public List<Class<? extends T>> getChildren();
 }

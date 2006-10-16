@@ -28,29 +28,32 @@ import edu.gatech.cc.jcrasher.writer.CodeGenFct;
  * Each reference type parameter of each method must be non-null.
  * Each method returns a non-null value.
  * 
+ * @param <V> type of the wrapped variable, which may differ
+ * from the type (Boolean) of the value of executing a statement (true).
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/statements.html#14.4
  */
-public class LocalVariableDeclarationStatement implements Statement {
+public class LocalVariableDeclarationStatement<V> implements Statement {
   /*
    * var should be unique in the current context if obtained via
    * block.getNextID()
    */
-  protected Variable var = null; // Type VariableDeclaratorId
-  protected Expression varInitPlan = null; // VariableInitializer
+  protected Variable<V> var = null; // Type VariableDeclaratorId
+  protected Expression<? extends V> varInitPlan = null; // VariableInitializer
 
   /**
    * Constructor
    */
   public LocalVariableDeclarationStatement(
-      final Variable pID, 
-      final Expression pPlan) {
+      final Variable<V> pID, 
+      final Expression<? extends V> pPlan) {
     
     notNull(pID);
     notNull(pPlan);
 
-    final Class idType = pID.getReturnType();
-    final Class planType = pPlan.getReturnType();
+    final Class<V> idType = pID.getReturnType();
+    final Class<? extends V> planType = pPlan.getReturnType();
     check(idType.isAssignableFrom(planType) //TODO(csallner) unknown statically
       ||  idType.isPrimitive()); //
 
@@ -62,11 +65,11 @@ public class LocalVariableDeclarationStatement implements Statement {
   /**
    * @return true.
    */
-  public Object execute() throws InstantiationException,
+  public Boolean execute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException {
-    Object value = varInitPlan.execute();
+    V value = varInitPlan.execute();
     var.assign(value);
-    return true;  //successfully executed assignment operation
+    return Boolean.TRUE;  //successfully executed assignment operation
   }  
   
   
@@ -76,7 +79,7 @@ public class LocalVariableDeclarationStatement implements Statement {
    * <li>A a = new A(null);
    * <li>B b = a.m(0);
    */
-  public String toString(final Class testee) {
+  public String toString(final Class<?> testee) {
     notNull(testee);
     
     final String className =

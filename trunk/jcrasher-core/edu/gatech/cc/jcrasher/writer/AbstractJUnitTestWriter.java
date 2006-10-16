@@ -12,23 +12,22 @@ import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
 
-import edu.gatech.cc.jcrasher.plans.blocks.Block;
-
 /**
- * Provides basic JUnit test case writing functions.
+ * Provides basic JUnit test case writing functions
+ * for the wrapped type.
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public abstract class AbstractJUnitTestWriter {
+public abstract class AbstractJUnitTestWriter<T> {
   
-	protected final Class testeeClass;
+	protected final Class<T> testeeClass;
 	protected final String comment;
   
 	/**
 	 * Constructor
 	 */
 	protected AbstractJUnitTestWriter(
-			final Class testeeClass,
+			final Class<T> testeeClass,
 			final String comment) {
 		
 		this.testeeClass = notNull(testeeClass);

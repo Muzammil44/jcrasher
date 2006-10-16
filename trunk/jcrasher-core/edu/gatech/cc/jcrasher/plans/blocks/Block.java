@@ -25,7 +25,7 @@ import edu.gatech.cc.jcrasher.plans.expr.Variable;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/statements.html#14.2
  */
-public interface Block extends Executable {
+public interface Block extends Executable<Boolean> {
 
   /**
    * To be called from above, like CodeWriter
@@ -35,7 +35,7 @@ public interface Block extends Executable {
    * @return a specialized representation of the test block like:
    *  { A.m(null); }
    */
-  public String toString(final String pIdent, final Class testee);
+  public String toString(final String pIdent, final Class<?> testee);
 
 
   /**
@@ -47,14 +47,14 @@ public interface Block extends Executable {
   /**
    * To be called from below, like Statement
    * 
+   * @param pClass type for which we need a new id.
+   * 
    * @return an unused local var encoding pClass, e.g. (i1, s2, i3) for a
    *         sequence like: (int, String[], Integer)
    */
-  public Variable getNextID(final Class pClass);
+  public <V> Variable<V> getNextID(final Class<V> pClass);
 
   /**
-   * setty
-   * 
    * @param pBlockStmts (empty) list, but never null
    */
   public void setBlockStmts(final Statement[] pBlockStmts);

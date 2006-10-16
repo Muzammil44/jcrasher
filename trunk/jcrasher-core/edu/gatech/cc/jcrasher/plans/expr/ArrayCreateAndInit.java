@@ -24,24 +24,26 @@ import edu.gatech.cc.jcrasher.writer.CodeGenFct;
  * Each reference type parameter of each method must be non-null.
  * Each method returns a non-null value.
  * 
+ * @param <T> type of created array.
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/arrays.html#10.3
  */
-public class ArrayCreateAndInit implements Expression {
+public class ArrayCreateAndInit<T> implements Expression<T> {
 
-  protected Class returnType = null; // type of instance created by this plan
+  protected Class<T> returnType = null; // type of instance created by this plan
 
   /**
    * Which plans generate array's components to initialize this value? -
    * zero-elem-array --> empty array - list of params in order to initialize
    * araray
    */
-  protected Expression[] componentPlans = null;
+  protected Expression<?>[] componentPlans = null;
 
   /**
    * Type of leaf component, which is not an array e.g. int
    */
-  protected Class leafType = null;
+  protected Class<?> leafType = null;
 
   /**
    * Depth of array-tree
@@ -66,7 +68,7 @@ public class ArrayCreateAndInit implements Expression {
   /*****************************************************************************
    * Constructor
    */
-  public ArrayCreateAndInit(final ClassWrapper pCW) {
+  public ArrayCreateAndInit(final ClassWrapper<T> pCW) {
     this(notNull(pCW.getWrappedClass()));
   }
 
@@ -74,13 +76,13 @@ public class ArrayCreateAndInit implements Expression {
   /**
    * Constructor added for extending ESC Java, Christoph Csallner 2004-06-08
    */
-  public ArrayCreateAndInit(final Class type) {
+  public ArrayCreateAndInit(final Class<T> type) {
     returnType = notNull(type);
     discoverLeafLevel();
   }
 
   
-  public Class getReturnType() {
+  public Class<T> getReturnType() {
     return notNull(returnType);
   }
   
@@ -99,10 +101,10 @@ public class ArrayCreateAndInit implements Expression {
   }
 
   
-  public Object execute() throws InstantiationException,
+  public T execute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException
   {
-    Object array = Array.newInstance(
+    T array = (T) Array.newInstance(
       getReturnType().getComponentType(),
       componentPlans.length
     );
@@ -119,7 +121,7 @@ public class ArrayCreateAndInit implements Expression {
    * initializer-chain for user-output after some mehtod-call crashed using this
    * object as param. - Example: {{11,12}, {21,22}}
    */
-  public String toString(final Class testee) {
+  public String toString(final Class<?> testee) {
     notNull(testee);
     
     /* Constructor */

@@ -15,7 +15,6 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 /**
  * Hides a double literal.
@@ -27,16 +26,16 @@ import static edu.gatech.cc.jcrasher.Assertions.notNull;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.2
  */
-public class DoubleLiteral extends PrimitiveLiteral {
+public class DoubleLiteral extends PrimitiveLiteral<Double> {
 
 	/**
 	 * Constructor
 	 */
   public DoubleLiteral(final double val) {
-    super(notNull(val));
+    super(Double.valueOf(val));
   }
   
-  public Class getReturnType() {
+  public Class<Double> getReturnType() {
     return Double.TYPE;
   }
 

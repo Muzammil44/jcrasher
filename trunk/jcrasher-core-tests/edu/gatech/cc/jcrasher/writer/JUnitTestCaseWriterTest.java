@@ -55,8 +55,8 @@ public class JUnitTestCaseWriterTest extends TestCase {
     inDefaultPackage = Class.forName("InDefaultPackage");    
     
     
-    FunctionCall testeeCall = null;
-    FunctionCall testeeCrash = null;
+    FunctionCall<Loadee> testeeCall = null;
+    FunctionCall<Void> testeeCrash = null;
     Statement testeeCallStmt = null;
     Statement testeeCrashStmt = null;
     
@@ -66,13 +66,13 @@ public class JUnitTestCaseWriterTest extends TestCase {
     Method loadeeStaticMeth =
         Loadee.class.getMethod("staticMeth", new Class[]{int.class});
     
-    testeeCall = new ConstructorCall(loadeeConstructor, new Expression[0]);    
-    testeeCrash = new MethodCall(
+    testeeCall = new ConstructorCall<Loadee>(loadeeConstructor, new Expression[0]);    
+    testeeCrash = new MethodCall<Void>(
         loadeeStaticMeth,
         new Expression[]{new IntLiteral(3)});
     
-    testeeCallStmt = new ExpressionStatement(testeeCall);
-    testeeCrashStmt = new ExpressionStatement(testeeCrash);
+    testeeCallStmt = new ExpressionStatement<Loadee>(testeeCall);
+    testeeCrashStmt = new ExpressionStatement<Void>(testeeCrash);
     
     blockCall = new BlockImpl(loadeeConstructor);
     blockCrash = new BlockImpl(loadeeStaticMeth);
@@ -84,7 +84,7 @@ public class JUnitTestCaseWriterTest extends TestCase {
     blocks2 = new Block[] {blockCall, blockCrash};
   }
   
-  
+  /***/
   public void testConstructor() {
     try {
     	new JUnitTestCaseWriter(null, "", true, new Block[0]);
@@ -108,61 +108,61 @@ public class JUnitTestCaseWriterTest extends TestCase {
     }  	    
   }
   
-  
+  /***/
   public void testGetSimpleTestName() {
-  	JUnitTestCaseWriter junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", true, new Block[0]);    
+  	JUnitTestCaseWriter<?> junitTestCaseWriter =
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", true, new Block[0]);    
     assertEquals(
         "LoadeeTest",
         junitTestCaseWriter.getSimpleTestName());
 
     junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", true, new Block[0], -1);    
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", true, new Block[0], -1);    
     assertEquals(
         "LoadeeTest",
         junitTestCaseWriter.getSimpleTestName());    
     
     junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", true, new Block[0], -1256);    
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", true, new Block[0], -1256);    
     assertEquals(
         "LoadeeTest",
         junitTestCaseWriter.getSimpleTestName());        
     
     junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", true, new Block[0], 42);    
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", true, new Block[0], 42);    
     assertEquals(
         "LoadeeTest42",
         junitTestCaseWriter.getSimpleTestName());    
     
     junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.StaticMember.class, "", true, new Block[0]);    
+  		new JUnitTestCaseWriter<Loadee.StaticMember>(Loadee.StaticMember.class, "", true, new Block[0]);    
     assertEquals(
         "StaticMemberTest",
         junitTestCaseWriter.getSimpleTestName());
 
     junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.StaticMember.class, "", true, new Block[0], 17);    
+  		new JUnitTestCaseWriter<Loadee.StaticMember>(Loadee.StaticMember.class, "", true, new Block[0], 17);    
     assertEquals(
         "StaticMemberTest17",
         junitTestCaseWriter.getSimpleTestName());
     
     junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.Inner.class, "", true, new Block[0]);    
+  		new JUnitTestCaseWriter<Loadee.Inner>(Loadee.Inner.class, "", true, new Block[0]);    
     assertEquals(
         "InnerTest",
         junitTestCaseWriter.getSimpleTestName());
     
     junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.Inner.class, "", true, new Block[0], 11);    
+  		new JUnitTestCaseWriter<Loadee.Inner>(Loadee.Inner.class, "", true, new Block[0], 11);    
     assertEquals(
         "InnerTest11",
         junitTestCaseWriter.getSimpleTestName());    
   }
 
-
+  /***/
   public void testGetHeader() {
-  	JUnitTestCaseWriter junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", false, new Block[0]);    
+  	JUnitTestCaseWriter<Loadee> junitTestCaseWriter =
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", false, new Block[0]);    
 
     assertEquals(
         "public class LoadeeTest"+
@@ -187,7 +187,7 @@ public class JUnitTestCaseWriterTest extends TestCase {
         junitTestCaseWriter.getHeader());    
     
     junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", false, new Block[0], 5);    
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", false, new Block[0], 5);    
     assertEquals(
         "public class LoadeeTest5"+
         " extends junit.framework.TestCase {"+                              NL+
@@ -212,7 +212,7 @@ public class JUnitTestCaseWriterTest extends TestCase {
     
     
   	junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", true, new Block[0]);        
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", true, new Block[0]);        
     assertEquals(
         "public class LoadeeTest"+
         " extends edu.gatech.cc.junit.FilteringTestCase {"+                 NL+
@@ -238,81 +238,108 @@ public class JUnitTestCaseWriterTest extends TestCase {
         junitTestCaseWriter.getHeader());
   }
 
-
+  /***/
   public void testGetFooter() {
-  	JUnitTestCaseWriter junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", false, new Block[0]);        
+  	JUnitTestCaseWriter<Loadee> junitTestCaseWriter =
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", false, new Block[0]);        
     assertEquals(
-        TAB+"public LoadeeTest(String pName) {"+                           NL+
+    	  TAB+"/**"+																													NL+
+    	  TAB+" * Constructor"+																								NL+
+    	  TAB+" */"+																													NL+
+        TAB+"public LoadeeTest(String pName) {"+                            NL+
         TAB+TAB+"super(pName);"+                                            NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
+    	  TAB+"/**"+																													NL+
+    	  TAB+" * Easy access for aggregating test suite."+										NL+
+    	  TAB+" */"+																													NL+            
         TAB+"public static junit.framework.Test suite() {"+                 NL+
         TAB+TAB+"return new " +
-                "junit.framework.TestSuite(LoadeeTest.class);"+            NL+
+                "junit.framework.TestSuite(LoadeeTest.class);"+             NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
+    	  TAB+"/**"+																													NL+
+    	  TAB+" * Main"+																											NL+
+    	  TAB+" */"+        																									NL+                        
         TAB+"public static void main(String[] args) {"+                     NL+    
-        TAB+TAB+"junit.textui.TestRunner.run(LoadeeTest.class);"+          NL+
+        TAB+TAB+"junit.textui.TestRunner.run(LoadeeTest.class);"+           NL+
         TAB+"}"+                                                            NL,
         junitTestCaseWriter.getFooter());
     
   	junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", true, blocks1);    
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", true, blocks1);    
     assertEquals(
         TAB+"protected String getNameOfTestedMeth() {"+                     NL+
         TAB+TAB+"return \"edu.gatech.cc.jcrasher.Loadee.staticMeth\";"+     NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
+    	  TAB+"/**"+																													NL+
+    	  TAB+" * Constructor"+																								NL+
+    	  TAB+" */"+																													NL+    		        
         TAB+"public LoadeeTest(String pName) {"+                            NL+
         TAB+TAB+"super(pName);"+                                            NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
+    	  TAB+"/**"+																													NL+
+    	  TAB+" * Easy access for aggregating test suite."+										NL+
+    	  TAB+" */"+        																									NL+        
         TAB+"public static junit.framework.Test suite() {"+                 NL+
         TAB+TAB+"return new " +
                 "junit.framework.TestSuite(LoadeeTest.class);"+             NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
+    	  TAB+"/**"+																													NL+
+    	  TAB+" * Main"+																											NL+
+    	  TAB+" */"+        																									NL+                
         TAB+"public static void main(String[] args) {"+                     NL+    
         TAB+TAB+"junit.textui.TestRunner.run(LoadeeTest.class);"+           NL+
         TAB+"}"+                                                            NL,
         junitTestCaseWriter.getFooter());
 
   	junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", false, blocks2);    
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", false, blocks2);    
     assertEquals(
+    	  TAB+"/**"+																													NL+
+    	  TAB+" * Constructor"+																								NL+
+    	  TAB+" */"+																													NL+    		
         TAB+"public LoadeeTest(String pName) {"+                            NL+
         TAB+TAB+"super(pName);"+                                            NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
+    	  TAB+"/**"+																													NL+
+    	  TAB+" * Easy access for aggregating test suite."+										NL+
+    	  TAB+" */"+        																									NL+
         TAB+"public static junit.framework.Test suite() {"+                 NL+
         TAB+TAB+"return new " +
                 "junit.framework.TestSuite(LoadeeTest.class);"+             NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
+    	  TAB+"/**"+																													NL+
+    	  TAB+" * Main"+																											NL+
+    	  TAB+" */"+        																									NL+                        
         TAB+"public static void main(String[] args) {"+                     NL+    
         TAB+TAB+"junit.textui.TestRunner.run(LoadeeTest.class);"+           NL+
         TAB+"}"+                                                            NL,
         junitTestCaseWriter.getFooter());
     
     assertEquals(
-        (new JUnitTestCaseWriter(Loadee.class, "", true, blocks2)).getFooter(),
-        (new JUnitTestCaseWriter(Loadee.class, "", false, blocks2)).getFooter());
+        (new JUnitTestCaseWriter<Loadee>(Loadee.class, "", true, blocks2)).getFooter(),
+        (new JUnitTestCaseWriter<Loadee>(Loadee.class, "", false, blocks2)).getFooter());
   }
 
-
+  /***/
   public void testGetTestedMethNameBlock() {
     try {
-    	JUnitTestCaseWriter junitTestCaseWriter =
-    		new JUnitTestCaseWriter(Loadee.class, "", false, new Block[0]);        
+    	JUnitTestCaseWriter<Loadee> junitTestCaseWriter =
+    		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", false, new Block[0]);        
       junitTestCaseWriter.getTestedMethName((Block) null);
       fail("getTestedMethName(null) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
     
-  	JUnitTestCaseWriter junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", false, new Block[0]);        
+  	JUnitTestCaseWriter<Loadee> junitTestCaseWriter =
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", false, new Block[0]);        
     assertEquals(
         junitTestCaseWriter.getTestedMethName(blockCrash),
         "staticMeth");
@@ -323,25 +350,29 @@ public class JUnitTestCaseWriterTest extends TestCase {
   }
 
 
+  /***/
   public void testGetTestedMethName() {
-  	JUnitTestCaseWriter junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", false, blocks2);            
+  	JUnitTestCaseWriter<Loadee> junitTestCaseWriter =
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", false, blocks2);            
     assertEquals(
       junitTestCaseWriter.getTestedMethName(),
       null);
 
     junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", false, blocks1);            
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", false, blocks1);            
     assertEquals(
         junitTestCaseWriter.getTestedMethName(),
         "staticMeth");  
   }
 
-
+  /***/
   public void testGetTestCases() {
-  	JUnitTestCaseWriter junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", true, blocks1);            
+  	JUnitTestCaseWriter<Loadee> junitTestCaseWriter =
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", true, blocks1);            
     assertEquals(                                                   NL+
+    	  TAB+"/**"+																									NL+
+    	  TAB+" * JCrasher-generated test case."+											NL+
+    	  TAB+" */"+        																					NL+                    		
         TAB+"public void test0() throws Throwable {"+               NL+
         TAB+TAB+"try"+
                 blocks1[0].toString(TAB+TAB, Loadee.class)+
@@ -351,8 +382,11 @@ public class JUnitTestCaseWriterTest extends TestCase {
         junitTestCaseWriter.getTestCases());
 
     junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", true, blocks2);
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", true, blocks2);
     assertEquals(                                                   NL+
+    	  TAB+"/**"+																									NL+
+    	  TAB+" * JCrasher-generated test case."+											NL+
+    	  TAB+" */"+        																					NL+    		
         TAB+"public void test0() throws Throwable {"+               NL+
         TAB+TAB+"try"+
                 blocks2[0].toString(TAB+TAB, Loadee.class)+
@@ -360,6 +394,9 @@ public class JUnitTestCaseWriterTest extends TestCase {
         TAB+TAB+"catch (Exception e) {dispatchException(e);}"+      NL+
         TAB+"}"+                                                    NL+
                                                                     NL+
+        TAB+"/**"+																									NL+
+        TAB+" * JCrasher-generated test case."+											NL+
+        TAB+" */"+        																					NL+    		       
         TAB+"public void test1() throws Throwable {"+               NL+
         TAB+TAB+"try"+
                 blocks2[1].toString(TAB+TAB, Loadee.class)+
@@ -369,11 +406,17 @@ public class JUnitTestCaseWriterTest extends TestCase {
         junitTestCaseWriter.getTestCases());
     
     junitTestCaseWriter =
-  		new JUnitTestCaseWriter(Loadee.class, "", false, blocks2);
+  		new JUnitTestCaseWriter<Loadee>(Loadee.class, "", false, blocks2);
     assertEquals(                                                   NL+
+    	  TAB+"/**"+																									NL+
+    	  TAB+" * JCrasher-generated test case."+											NL+
+    	  TAB+" */"+        																					NL+    		    		
         TAB+"public void test0() throws Throwable "+
                 blocks2[0].toString(TAB, Loadee.class)+             NL+
-                                                                    NL+
+                                                                    NL+                                                            
+        TAB+"/**"+																									NL+
+        TAB+" * JCrasher-generated test case."+											NL+
+        TAB+" */"+        																					NL+    		               
         TAB+"public void test1() throws Throwable "+
                 blocks2[1].toString(TAB, Loadee.class)+             NL,
         junitTestCaseWriter.getTestCases());        

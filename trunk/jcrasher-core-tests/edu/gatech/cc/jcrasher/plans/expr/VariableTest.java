@@ -27,18 +27,18 @@ import edu.gatech.cc.jcrasher.Loadee;
  */
 public class VariableTest extends TestCase {
 
-  protected final Variable stringX = new Variable(String.class, "x");
-  protected final Variable intY = new Variable(int.class, "y");
-  protected final Variable mapZ = new Variable(Map.class, "z");
+  protected final Variable stringX = new Variable<String>(String.class, "x");
+  protected final Variable<Integer> intY = new Variable<Integer>(int.class, "y");
+  protected final Variable<Map> mapZ = new Variable(Map.class, "z");
   
-  
+  /***/
   public void testGetReturnType() {
     assertEquals(String.class, stringX.getReturnType());
     assertEquals(int.class, intY.getReturnType());
     assertEquals(Map.class, mapZ.getReturnType());
   }
 
-  
+  /***/
   public void testVariableNull() {
     try {
       new Variable(null, null);
@@ -62,7 +62,7 @@ public class VariableTest extends TestCase {
     }    
   }
 
-  
+  /***/
   public void testAssign() {
     stringX.assign(null);    
     assertEquals(null, stringX.assignedValue);
@@ -80,7 +80,7 @@ public class VariableTest extends TestCase {
     catch(RuntimeException e) {  //expected
     }    
     
-    Object one = 1;    
+    Integer one = 1;    
     intY.assign(one);    
     assertEquals(one, intY.assignedValue);
     
@@ -91,7 +91,7 @@ public class VariableTest extends TestCase {
     assertEquals(new HashMap(), mapZ.assignedValue);    
   }
   
-
+  /***/
   public void testExecute() {
     stringX.assign(null);
     assertEquals(null, stringX.execute());
@@ -99,7 +99,7 @@ public class VariableTest extends TestCase {
     assertEquals("_", stringX.execute());
   }
 
-
+  /***/
   public void testToStringClass() {
     assertEquals("x", stringX.toString(Object.class));
     assertEquals("x", stringX.toString(Loadee.class));

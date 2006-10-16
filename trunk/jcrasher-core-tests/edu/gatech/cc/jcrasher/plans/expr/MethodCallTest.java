@@ -38,19 +38,19 @@ public class MethodCallTest extends TestCase {
   protected Method staticMemberMethod = null;
   protected Method staticMemberStaticMethod = null;
   
-  protected MethodCall loadeeMethodCall = null;
-  protected MethodCall loadeeMethodCallInt = null;
-  protected MethodCall loadeeIntMethodCall = null;
-  protected MethodCall staticLoadeeMethodCall = null;
-  protected MethodCall staticLoadeeMethodCallInt = null;  
+  protected MethodCall<Void> loadeeMethodCall = null;
+  protected MethodCall<Void> loadeeMethodCallInt = null;
+  protected MethodCall<Integer> loadeeIntMethodCall = null;
+  protected MethodCall<Void> staticLoadeeMethodCall = null;
+  protected MethodCall<Void> staticLoadeeMethodCallInt = null;  
 
-  protected MethodCall innerMethodCall = null;
-  protected MethodCall staticMemberMethodCall = null;
-  protected MethodCall staticMemberStaticMethodCall = null;  
+  protected MethodCall<Integer> innerMethodCall = null;
+  protected MethodCall<Integer> staticMemberMethodCall = null;
+  protected MethodCall<Integer> staticMemberStaticMethodCall = null;  
   
-  protected ConstructorCall loadeeConstructorCall = null;
-  protected ConstructorCall innerConstructorCall = null;
-  protected ConstructorCall staticMemberConstructorCall = null;
+  protected ConstructorCall<Loadee> loadeeConstructorCall = null;
+  protected ConstructorCall<Loadee.Inner> innerConstructorCall = null;
+  protected ConstructorCall<Loadee.StaticMember> staticMemberConstructorCall = null;
   protected IntLiteral int5Plan = new IntLiteral(5);
   
   @Override
@@ -70,78 +70,79 @@ public class MethodCallTest extends TestCase {
     staticMemberStaticMethod = Loadee.StaticMember.class.getMethod(
         "staticMemberStaticMeth", new Class[0]);
     
-    loadeeConstructorCall = new ConstructorCall(
+    loadeeConstructorCall = new ConstructorCall<Loadee>(
         Loadee.class.getConstructor(new Class[0]), 
         new Expression[0]);
-    innerConstructorCall = new ConstructorCall(
+    innerConstructorCall = new ConstructorCall<Loadee.Inner>(
         Loadee.Inner.class.getConstructor(new Class[]{Loadee.class}), 
         new Expression[0],
         loadeeConstructorCall); 
-    staticMemberConstructorCall = new ConstructorCall(
+    staticMemberConstructorCall = new ConstructorCall<Loadee.StaticMember>(
         Loadee.StaticMember.class.getConstructor(new Class[0]), 
         new Expression[0]);  
     
-    loadeeMethodCall = new MethodCall(
+    loadeeMethodCall = new MethodCall<Void>(
         loadeeMethod, new Expression[0], loadeeConstructorCall);
-    loadeeMethodCallInt = new MethodCall(
+    loadeeMethodCallInt = new MethodCall<Void>(
         loadeeMethodInt, new Expression[]{int5Plan}, loadeeConstructorCall);
-    loadeeIntMethodCall = new MethodCall(
+    loadeeIntMethodCall = new MethodCall<Integer>(
         loadeeIntMethod, new Expression[0], loadeeConstructorCall);
-    staticLoadeeMethodCall = new MethodCall(
+    staticLoadeeMethodCall = new MethodCall<Void>(
         staticLoadeeMethod, new Expression[0]);
-    staticLoadeeMethodCallInt = new MethodCall(
+    staticLoadeeMethodCallInt = new MethodCall<Void>(
         staticLoadeeMethodInt, new Expression[]{int5Plan});
     
-    innerMethodCall = new MethodCall(
+    innerMethodCall = new MethodCall<Integer>(
       innerMethod, new Expression[0], innerConstructorCall);
-    staticMemberMethodCall = new MethodCall(
+    staticMemberMethodCall = new MethodCall<Integer>(
       staticMemberMethod, new Expression[0], staticMemberConstructorCall);
-    staticMemberStaticMethodCall = new MethodCall(
+    staticMemberStaticMethodCall = new MethodCall<Integer>(
       staticMemberStaticMethod, new Expression[0]);    
   }
   
 
+  /***/
   public void testMethodCallMethodExpressionArray() {  
     try {
-      new MethodCall(null, null);
+      new MethodCall<Integer>(null, null);
       fail("MethodCall(null, null) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
-      new MethodCall(staticLoadeeMethod, null);
+      new MethodCall<Integer>(staticLoadeeMethod, null);
       fail("MethodCall(.., null) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }    
     
     try {
-      new MethodCall(null, new Expression[0]);
+      new MethodCall<Integer>(null, new Expression[0]);
       fail("MethodCall(null, ..) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
-      new MethodCall(loadeeMethod, new Expression[0]);
+      new MethodCall<Integer>(loadeeMethod, new Expression[0]);
       fail("Wrong constructor for instance method"); 
     }
     catch(RuntimeException e) {  //expected
     }    
   }
 
-
+  /***/
   public void testMethodCallMethodExpressionArrayExpression() {
     try {
-      new MethodCall(loadeeMethod, new Expression[0], null);
+      new MethodCall<Integer>(loadeeMethod, new Expression[0], null);
       fail("MethodCall(.., .., null) not allowed");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
-      new MethodCall(
+      new MethodCall<Integer>(
           staticLoadeeMethod, new Expression[0], loadeeConstructorCall);
       fail("Wrong constructor for instance method");
     }
@@ -149,7 +150,7 @@ public class MethodCallTest extends TestCase {
     }       
   }
   
-
+  /***/
   public void testGetReturnType() {
     assertEquals(Void.TYPE, loadeeMethodCall.getReturnType());
     assertEquals(Void.TYPE, loadeeMethodCallInt.getReturnType());
@@ -162,7 +163,7 @@ public class MethodCallTest extends TestCase {
     assertEquals(int.class, staticMemberStaticMethodCall.getReturnType());
   }
 
-
+  /***/
   public void testExecute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException {
     loadeeMethodCall.execute();
@@ -173,7 +174,7 @@ public class MethodCallTest extends TestCase {
     catch(InvocationTargetException e) {  //expected
     }          
     Object res3 = loadeeIntMethodCall.execute();
-    assertEquals(1, res3);
+    assertEquals(Integer.valueOf(1), res3);
     
     staticLoadeeMethodCall.execute();
     try {
@@ -183,12 +184,12 @@ public class MethodCallTest extends TestCase {
     catch(InvocationTargetException e) {  //expected
     }  
    
-    assertEquals(1, innerMethodCall.execute());
-    assertEquals(1, staticMemberMethodCall.execute());
-    assertEquals(1, staticMemberStaticMethodCall.execute());
+    assertEquals(Integer.valueOf(1), innerMethodCall.execute());
+    assertEquals(Integer.valueOf(1), staticMemberMethodCall.execute());
+    assertEquals(Integer.valueOf(1), staticMemberStaticMethodCall.execute());
   }
 
-
+  /***/
   public void testToStringClass() {
     assertEquals(
       "(new edu.gatech.cc.jcrasher.Loadee()).meth()",
@@ -216,7 +217,7 @@ public class MethodCallTest extends TestCase {
       staticLoadeeMethodCallInt.toString(Loadee.class));
   }
 
-  
+  /***/
   public void testToStringClassNested() {
     assertEquals(
       "((new Loadee()).new Inner()).innerMeth()",

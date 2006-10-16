@@ -96,7 +96,7 @@ public class JCrasher {
 	 * 
 	 * @param packages ::= (package name)+
 	 */
-	protected static Set<Class> loadFromJar(
+	protected static Set<Class<?>> loadFromJar(
 			final String jarName,
 			final Set<String> packages) {
 		notNull(jarName);
@@ -104,7 +104,7 @@ public class JCrasher {
 		check(packages.size()>0);
 		
 		log.fine("Searching " + jarName + " for classes in user-specified packages.");
-		final Set<Class> res = new HashSet<Class>();
+		final Set<Class<?>> res = new HashSet<Class<?>>();
 		
 		try {
 			final Enumeration<JarEntry> entries = (new JarFile(jarName)).entries();			
@@ -147,12 +147,12 @@ public class JCrasher {
 	 * 
 	 * @param pack name of package represented by dir
 	 */
-	protected static Set<Class> loadFromDir(final File dir, final String pack) {
+	protected static Set<Class<?>> loadFromDir(final File dir, final String pack) {
 		notNull(dir);
 		check(dir.exists());
 		
 		log.fine("Loading all classes from " + dir.getAbsolutePath());
-		final Set<Class> res = new HashSet<Class>();
+		final Set<Class<?>> res = new HashSet<Class<?>>();
 		
 		final File[] elems = dir.listFiles();
 		for (File elem: elems) {
@@ -188,7 +188,7 @@ public class JCrasher {
 	 * 
 	 * @param userSpec ::= (package name)+
 	 */
-	protected static Set<Class> loadFromDir(
+	protected static Set<Class<?>> loadFromDir(
 			final String dirName,
 			final Set<String> packages) {
 		notNull(dirName);
@@ -196,7 +196,7 @@ public class JCrasher {
 		check(packages.size()>0);
 		
 		log.fine("Searching " + dirName + " for classes in user-specified packages.");
-		final Set<Class> res = new HashSet<Class>();
+		final Set<Class<?>> res = new HashSet<Class<?>>();
 		
 		for (String pack: packages) {
 			final File dir = new File(dirName+FS+pack.replace(".",FS));
@@ -218,7 +218,7 @@ public class JCrasher {
 	 * found in this package and all its sub-packages.
 	 */
 	protected Class[] parseClasses(final String[] userSpecs) {
-		final Set<Class> res = new HashSet<Class>();	//avoid multiple entires of same class
+		final Set<Class<?>> res = new HashSet<Class<?>>();	//avoid multiple entires of same class
 
 		/* First interpret each user-provided name as a class name.
 		 * Standard classloader will find class of given name. */
