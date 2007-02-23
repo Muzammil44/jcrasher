@@ -69,10 +69,10 @@ implements ClassUnderTest<T> {
 
     /* collect sub plan spaces */
     List<FunctionNode<?>> childSpaces = new ArrayList<FunctionNode<?>>();
-
+   
     /* Crash any declared public constructor iff class non-abstract */
     if (Modifier.isAbstract(c.getModifiers()) == false) {
-      for (Constructor<T> con : c.getDeclaredConstructors()) {// all declared
+      for (Constructor<T> con : (Constructor<T>[]) c.getDeclaredConstructors()) {// all declared
         //TODO align with Java semantics
         if (Visibility.PACKAGE.equals(visTested) &&
             !Modifier.isPrivate(con.getModifiers())) {
