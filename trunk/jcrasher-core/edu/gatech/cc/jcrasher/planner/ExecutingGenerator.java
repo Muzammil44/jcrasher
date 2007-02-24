@@ -20,7 +20,7 @@ import edu.gatech.cc.jcrasher.plans.blocks.Block;
 /**
  * Executes test cases before returning them.
  * 
- * @author		Christoph Csallner
+ * @author csallner@gatech.edu (Christoph Csallner)
  */
 public class ExecutingGenerator implements Generator {
 	
