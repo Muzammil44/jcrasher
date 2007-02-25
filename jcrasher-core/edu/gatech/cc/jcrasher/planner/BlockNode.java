@@ -5,7 +5,7 @@
  */
 package edu.gatech.cc.jcrasher.planner;
 
-import edu.gatech.cc.jcrasher.plans.blocks.Block;
+import edu.gatech.cc.jcrasher.plans.stmt.Block;
 
 /**
  * Accesses the blocks created from plans.

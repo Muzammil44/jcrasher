@@ -7,7 +7,7 @@ package edu.gatech.cc.jcrasher.planner;
 
 import java.util.List;
 
-import edu.gatech.cc.jcrasher.plans.blocks.Block;
+import edu.gatech.cc.jcrasher.plans.stmt.Block;
 
 /**
  * Generates test cases for a class.
