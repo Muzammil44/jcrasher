@@ -19,10 +19,6 @@ package edu.gatech.cc.jcrasher.plans.expr.literals;
 /**
  * Hides a boolean literal. Either true or false.
  * 
- * <p>
- * Each reference parameter of every method must be non-null.
- * Each reference return value must be non-null.
- * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.3
  */
@@ -31,12 +27,7 @@ public class BooleanLiteral extends PrimitiveLiteral<Boolean> {
 	/**
 	 * Constructor
 	 */
-  public BooleanLiteral(final boolean val) {
-    super(Boolean.valueOf(val));
-  }
-  
-  public Class<Boolean> getReturnType() {
-    return Boolean.TYPE;
-  }
-
+  public BooleanLiteral(boolean value) {
+    super(Boolean.TYPE, Boolean.valueOf(value));
+  }  
 }

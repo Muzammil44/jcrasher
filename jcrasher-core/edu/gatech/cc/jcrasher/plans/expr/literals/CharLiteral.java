@@ -20,24 +20,14 @@ public class CharLiteral extends PrimitiveLiteral<Character> {
 
   /**
    * Constructor
-   * 
-   * @param val hardcoded primitive value, not via java-wrapper-constructor
    */
-  public CharLiteral(final char val) {
-    super(Character.valueOf(val));
+  public CharLiteral(char val) {
+    super(Character.TYPE, Character.valueOf(val));
   }
   
-  
-  public Class<Character> getReturnType() {
-    return Character.TYPE;
-  }
 
-
-  /**
-   * How to reproduce this value=object?
-   */
   @Override
-  public String toString() {
-    return "'" + execute().toString() + "'";
+  public String text() {
+    return "'" + value.toString() + "'";
   }
 }

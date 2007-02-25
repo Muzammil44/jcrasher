@@ -6,7 +6,7 @@
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
-import edu.gatech.cc.jcrasher.plans.expr.Expression;
+import edu.gatech.cc.jcrasher.plans.expr.SimpleExpression;
 
 
 /**
@@ -19,38 +19,18 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.5
  */
-public class StringLiteral implements Expression<String> {
-
-  protected String value = null;
+public class StringLiteral extends SimpleExpression<String> {
 
   /**
    * Constructor
    * 
-   * @param pValue non-null String literal
+   * @param value never null.
    */
-  public StringLiteral(final String pValue) {
-    value = notNull(pValue);
-  }
-  
-  
-  public Class<String> getReturnType() {
-    return String.class;
+  public StringLiteral(String value) {
+    super(String.class, notNull(value));
   }
 
-  @Override
-  public String toString() {
-    return "\"" + value + "\"";
-  }
-
-  /**
-   * @param testee ignored.
-   */
-  public String toString(Class<?> testee) {
-  	notNull(testee);
-    return toString();
-  }
-  
-  public String execute() {
-    return notNull(value);
+  public String text() {
+  	return "\"" + value + "\"";
   }  
 }
