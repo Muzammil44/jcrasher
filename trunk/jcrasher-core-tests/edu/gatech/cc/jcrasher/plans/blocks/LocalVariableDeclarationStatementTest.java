@@ -26,6 +26,7 @@ import edu.gatech.cc.jcrasher.plans.expr.Variable;
 import edu.gatech.cc.jcrasher.plans.expr.literals.BooleanLiteral;
 import edu.gatech.cc.jcrasher.plans.expr.literals.IntLiteral;
 import edu.gatech.cc.jcrasher.plans.expr.literals.StringLiteral;
+import edu.gatech.cc.jcrasher.plans.stmt.LocalVariableDeclarationStatement;
 
 import static java.lang.Boolean.TRUE;
 

@@ -26,9 +26,10 @@ import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.plans.expr.MethodCall;
 import edu.gatech.cc.jcrasher.plans.expr.literals.IntLiteral;
+import edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement;
 
 /**
- * Tests edu.gatech.cc.jcrasher.plans.blocks.ExpressionStatement
+ * Tests edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
