@@ -19,6 +19,7 @@ import edu.gatech.cc.jcrasher.writer.CodeGenFct;
  * <li>ClassWrapper --> Class
  * <li>ClassWrapper --> Expression*
  * <li>Expression --> Instance
+ * </ul>
  * 
  * <p>
  * Each reference type parameter of each method must be non-null.
@@ -29,9 +30,7 @@ import edu.gatech.cc.jcrasher.writer.CodeGenFct;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/arrays.html#10.3
  */
-public class ArrayCreateAndInit<T> implements Expression<T> {
-
-  protected Class<T> returnType = null; // type of instance created by this plan
+public class ArrayCreateAndInit<T> extends ReferenceTypeExpression<T> {
 
   /**
    * Which plans generate array's components to initialize this value? -
@@ -65,27 +64,24 @@ public class ArrayCreateAndInit<T> implements Expression<T> {
   }
 
 
-  /*****************************************************************************
+  /**
    * Constructor
    */
-  public ArrayCreateAndInit(final ClassWrapper<T> pCW) {
-    this(notNull(pCW.getWrappedClass()));
+  public ArrayCreateAndInit(ClassWrapper<T> pCW, Class<?> testeeType) {
+    this(pCW.getWrappedClass(), testeeType);
   }
 
 
   /**
-   * Constructor added for extending ESC Java, Christoph Csallner 2004-06-08
+   * Constructor to be used from Check 'n' Crash.
    */
-  public ArrayCreateAndInit(final Class<T> type) {
-    returnType = notNull(type);
+  public ArrayCreateAndInit(Class<T> returnType, Class<?> testeeType) {
+  	super(returnType, testeeType);
+  	
     discoverLeafLevel();
   }
 
-  
-  public Class<T> getReturnType() {
-    return notNull(returnType);
-  }
-  
+
   /**
    * get plans for all components
    */
@@ -121,12 +117,11 @@ public class ArrayCreateAndInit<T> implements Expression<T> {
    * initializer-chain for user-output after some mehtod-call crashed using this
    * object as param. - Example: {{11,12}, {21,22}}
    */
-  public String toString(final Class<?> testee) {
-    notNull(testee);
+  public String text() {
     
     /* Constructor */
     final StringBuilder res = new StringBuilder();
-    res.append("new " + CodeGenFct.getName(leafType, testee));
+    res.append("new " + CodeGenFct.getName(leafType, testeeType));
 
     /* print dimensionality times [] */
     for (int d = 0; d < dimensionality; d++) {
@@ -140,20 +135,11 @@ public class ArrayCreateAndInit<T> implements Expression<T> {
       if (i > 0) {
         res.append(", ");
       } // separator
-      res.append(componentPlans[i].toString(testee)); // value
+      res.append(componentPlans[i].text()); // value
     }
 
     /* return assembeled String */
     res.append("}");
     return notNull(res.toString());
-  }
-  
-
-  /**
-   * @return a representative example
-   */
-  @Override
-  public String toString() {
-    return toString(getReturnType());
   }
 }

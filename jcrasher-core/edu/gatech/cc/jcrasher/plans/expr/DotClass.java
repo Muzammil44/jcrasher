@@ -5,7 +5,6 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr;
 
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import edu.gatech.cc.jcrasher.writer.CodeGenFct;
 
 /**
@@ -18,26 +17,20 @@ import edu.gatech.cc.jcrasher.writer.CodeGenFct;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/expressions.html#15.8.2
  */
-public class DotClass implements Expression<Class> {
+public class DotClass extends ReferenceTypeExpression<Class> {
 
-  public Class<Class> getReturnType() {
-    return Class.class;
-  }
+	/**
+	 * Constructor
+	 */
+	public DotClass(Class<?> testeeType) {
+		super(Class.class, testeeType);	//FIXME should be Object.class
+	}
 
   public Class<Object> execute() {
     return Object.class;
   }
   
-  public String toString(final Class<?> testee) {
-    notNull(testee);
-    return notNull(CodeGenFct.getName(Object.class, testee)+".class");
-  }
-
-  /**
-   * @return a representative example
-   */
-  @Override
-  public String toString() {
-    return toString(getReturnType());
+  public String text() {
+    return CodeGenFct.getName(Object.class, testeeType)+".class";
   }
 }

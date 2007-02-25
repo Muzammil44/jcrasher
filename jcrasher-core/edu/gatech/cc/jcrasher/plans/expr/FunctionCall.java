@@ -13,6 +13,15 @@ package edu.gatech.cc.jcrasher.plans.expr;
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public interface FunctionCall<T> extends Expression<T> {
-  /* Empty */
+public abstract class FunctionCall<T> extends ReferenceTypeExpression<T> {
+
+	/**
+	 * Constructor
+	 * 
+	 * @param returnType never null.
+	 * @param testeeType never null.
+	 */
+	protected FunctionCall(Class<T> returnType, Class<?> testeeType) {
+		super(returnType, testeeType);
+	}	
 }
