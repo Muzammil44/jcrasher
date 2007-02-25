@@ -38,7 +38,7 @@ public interface TypeGraph {
   /**
    * @return wrapper of class: fresh one created & inserted if not done yet
    */
-  public ClassWrapper<?> getWrapper(final Class<?> pClass);
+  public <T> ClassWrapper<T> getWrapper(final Class<T> pClass);
 
 
   /**

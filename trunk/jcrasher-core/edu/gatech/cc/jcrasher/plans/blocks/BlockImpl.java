@@ -21,6 +21,7 @@ import edu.gatech.cc.jcrasher.plans.expr.Variable;
  * <ul>
  * <li>some statements to generate needed instances
  * <li>some statements to invoke methods/constructors under test
+ * </ul>
  * 
  * <p>
  * Each reference parameter of every method must be non-null.

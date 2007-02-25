@@ -11,16 +11,24 @@ import edu.gatech.cc.jcrasher.plans.Executable;
 import edu.gatech.cc.jcrasher.plans.expr.Variable;
 
 /**
- * Hides a code block intended to crash some method or constructor
- * 
+ * Represents a code block, which is a possibly empty sequence
+ * of block-statements. For JCrasher most blocks look like follows. 
  * <ol>
- * <li>some statements to generate needed instances
- * <li>some statements to invoke methods/constructors under test
+ * <li>Some statements to generate needed instances.
+ * <li>Some statements to invoke methods/constructors under test.
+ * </ol>
+ * 
+ * The block includes its brackets:
+ * {
+ *   int x = 3;
+ *   C.meth(x);
+ * }
  * 
  * Unless otherwise noted:
  * <ul>
  * <li>Each reference parameter of every method must be non-null.
  * <li>Each reference return value must be non-null.
+ * </ul>
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/statements.html#14.2

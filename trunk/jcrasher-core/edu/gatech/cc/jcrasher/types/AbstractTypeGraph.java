@@ -54,12 +54,12 @@ public abstract class AbstractTypeGraph implements TypeGraph {
   /**
    * @return wrapper of class: create & insert if not done yet
    */
-  public ClassWrapper<?> getWrapper(final Class<?> pClass) {
-    ClassWrapper<?> wrapper = null;
-    wrapper = class2wrapper.get(pClass.getName());
+  public <T> ClassWrapper<T> getWrapper(final Class<T> pClass) {
+    ClassWrapper<T> wrapper = null;
+    wrapper = (ClassWrapper<T>) class2wrapper.get(pClass.getName());
 
     if (wrapper == null) { // create & insert if not done yet
-      wrapper = new ClassWrapperImpl(pClass);
+      wrapper = new ClassWrapperImpl<T>(pClass);
       class2wrapper.put(pClass.getName(), wrapper);
     }
 

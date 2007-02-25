@@ -102,7 +102,9 @@ public class PresetValues {
     }
     notNull(con);
 
-    return new Expression[]{new ConstructorCall<Hashtable>(con, new Expression[0])};
+    return new Expression[]{
+    		new ConstructorCall<Hashtable>(con, new Expression[0])
+    };
   }
 
 
