@@ -17,15 +17,16 @@ import java.util.List;
 
 import edu.gatech.cc.jcrasher.Constants.PlanFilter;
 import edu.gatech.cc.jcrasher.Constants.Visibility;
-import edu.gatech.cc.jcrasher.plans.blocks.Block;
-import edu.gatech.cc.jcrasher.plans.blocks.BlockImpl;
-import edu.gatech.cc.jcrasher.plans.blocks.ExpressionStatement;
-import edu.gatech.cc.jcrasher.plans.blocks.LocalVariableDeclarationStatement;
-import edu.gatech.cc.jcrasher.plans.blocks.Statement;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.plans.expr.MethodCall;
 import edu.gatech.cc.jcrasher.plans.expr.Variable;
+import edu.gatech.cc.jcrasher.plans.stmt.Block;
+import edu.gatech.cc.jcrasher.plans.stmt.BlockImpl;
+import edu.gatech.cc.jcrasher.plans.stmt.BlockStatement;
+import edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement;
+import edu.gatech.cc.jcrasher.plans.stmt.LocalVariableDeclarationStatement;
+import edu.gatech.cc.jcrasher.plans.stmt.Statement;
 
 /**
  * Constructs a TypeNode a loaded class under test: extract all public
@@ -167,7 +168,7 @@ implements ClassUnderTest<T> {
     final Block b = new BlockImpl(pCon); // context for this combination
 
     /* Simple version: one stmt for each instance and exec fct */
-    final Statement[] bs = new Statement[curPlans.length + 1];
+    final BlockStatement[] bs = new BlockStatement[curPlans.length + 1];
 
     /* Keep track of new created local instances: all needed */
     final Variable<?>[] ids = new Variable[curPlans.length];
@@ -232,7 +233,7 @@ implements ClassUnderTest<T> {
     final Block b = new BlockImpl(pMeth); // context for this combination
 
     /* Simple version: one stmt for each instance and exec fct */
-    Statement[] bs = new Statement[curPlans.length + 1];
+    BlockStatement[] bs = new BlockStatement[curPlans.length + 1];
 
     /* Keep track of new created local param-instances */
     Expression[] paramPlans = null;
