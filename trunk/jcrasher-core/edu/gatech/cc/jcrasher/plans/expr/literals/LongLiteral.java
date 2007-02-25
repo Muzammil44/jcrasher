@@ -18,10 +18,6 @@ package edu.gatech.cc.jcrasher.plans.expr.literals;
 /**
  * Hides a long literal.
  * 
- * <p>
- * Each reference parameter of every method must be non-null.
- * Each reference return value must be non-null.
- * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.1
  */
@@ -30,12 +26,7 @@ public class LongLiteral extends PrimitiveLiteral<Long> {
 	/**
 	 * Constructor
 	 */
-  public LongLiteral(final long val) {
-    super(Long.valueOf(val));
-  }
-  
-  public Class<Long> getReturnType() {
-    return Long.TYPE;
-  }
-
+  public LongLiteral(long val) {
+    super(Long.TYPE, Long.valueOf(val));
+  }  
 }

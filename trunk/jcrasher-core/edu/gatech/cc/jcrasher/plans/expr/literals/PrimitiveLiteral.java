@@ -6,7 +6,7 @@
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
-import edu.gatech.cc.jcrasher.plans.expr.Expression;
+import edu.gatech.cc.jcrasher.plans.expr.SimpleExpression;
 
 
 /**
@@ -17,41 +17,26 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  * <ul>
  * <li>Each reference parameter of every method must be non-null.
  * <li>Each reference return value must be non-null.
+ * </ul>
  * 
  * @param <T> boxed version of this literal's type.
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10
  */
-public abstract class PrimitiveLiteral<T> implements Expression<T> {
-
-  protected T value = null;     // result of plan execution
+public abstract class PrimitiveLiteral<T> extends SimpleExpression<T> {
   
   /**
    * Constructor
    * 
-   * @param pValue hardcoded primitive value, not via java-wrapper-constructor -
-   *          never null
+   * @parm returnType never null.
+   * @param value never null.
    */
-  public PrimitiveLiteral(final T pValue) {   
-    value = notNull(pValue);
+  protected PrimitiveLiteral(Class<T> returnType, T value) {   
+    super(notNull(returnType), notNull(value));
   }
 
-  
-  public T execute() { // never returns null
-    return notNull(value);
-  }
-  
-  @Override
-  public String toString() {
+  public String text() {
     return value.toString();
-  }
-
-  /**
-   * How to reproduce this value=object?
-   */
-  public String toString(final Class<?> testee) {
-  	notNull(testee);
-    return toString();
   }
 }

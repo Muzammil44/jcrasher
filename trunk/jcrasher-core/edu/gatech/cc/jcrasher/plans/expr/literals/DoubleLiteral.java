@@ -19,10 +19,6 @@ package edu.gatech.cc.jcrasher.plans.expr.literals;
 /**
  * Hides a double literal.
  * 
- * <p>
- * Each reference parameter of every method must be non-null.
- * Each reference return value must be non-null.
- * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.2
  */
@@ -31,12 +27,7 @@ public class DoubleLiteral extends PrimitiveLiteral<Double> {
 	/**
 	 * Constructor
 	 */
-  public DoubleLiteral(final double val) {
-    super(Double.valueOf(val));
-  }
-  
-  public Class<Double> getReturnType() {
-    return Double.TYPE;
-  }
-
+  public DoubleLiteral(double val) {
+    super(Double.TYPE, Double.valueOf(val));
+  }  
 }

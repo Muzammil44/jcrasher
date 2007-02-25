@@ -19,10 +19,6 @@ package edu.gatech.cc.jcrasher.plans.expr.literals;
 /**
  * Hides an int literal.
  * 
- * <p>
- * Each reference parameter of every method must be non-null.
- * Each reference return value must be non-null.
- * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/lexical.html#3.10.1
  */
@@ -31,11 +27,7 @@ public class IntLiteral extends PrimitiveLiteral<Integer> {
 	/**
 	 * Constructor
 	 */
-  public IntLiteral(final int val) {
-    super(Integer.valueOf(val));
-  }
-  
-  public Class<Integer> getReturnType() {
-    return Integer.TYPE;
-  }
+  public IntLiteral(int val) {
+    super(Integer.TYPE, Integer.valueOf(val));
+  }  
 }
