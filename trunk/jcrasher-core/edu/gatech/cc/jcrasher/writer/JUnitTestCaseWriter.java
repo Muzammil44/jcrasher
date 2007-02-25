@@ -13,7 +13,7 @@ import java.io.File;
 import java.io.FileWriter;
 import java.lang.reflect.Constructor;
 
-import edu.gatech.cc.jcrasher.plans.blocks.Block;
+import edu.gatech.cc.jcrasher.plans.stmt.Block;
 
 /**
  * Generates a JUnit test case.
