@@ -15,7 +15,7 @@ import java.util.Random;
 
 import edu.gatech.cc.jcrasher.Constants;
 import edu.gatech.cc.jcrasher.plans.Executable;
-import edu.gatech.cc.jcrasher.plans.blocks.Block;
+import edu.gatech.cc.jcrasher.plans.stmt.Block;
 
 /**
  * Executes test cases before returning them.
