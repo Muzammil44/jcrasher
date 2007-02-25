@@ -14,7 +14,7 @@ import java.util.Set;
 
 import edu.gatech.cc.jcrasher.planner.ExecutingGenerator;
 import edu.gatech.cc.jcrasher.planner.Generator;
-import edu.gatech.cc.jcrasher.plans.blocks.Block;
+import edu.gatech.cc.jcrasher.plans.stmt.Block;
 import edu.gatech.cc.jcrasher.types.TypeGraph;
 import edu.gatech.cc.jcrasher.types.TypeGraphImpl;
 import edu.gatech.cc.jcrasher.writer.JUnitTestCaseWriter;
