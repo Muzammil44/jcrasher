@@ -23,15 +23,15 @@ import java.lang.reflect.Method;
 
 import junit.framework.TestCase;
 import edu.gatech.cc.jcrasher.Loadee;
-import edu.gatech.cc.jcrasher.plans.blocks.Block;
-import edu.gatech.cc.jcrasher.plans.blocks.BlockImpl;
-import edu.gatech.cc.jcrasher.plans.blocks.ExpressionStatement;
-import edu.gatech.cc.jcrasher.plans.blocks.Statement;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.plans.expr.FunctionCall;
 import edu.gatech.cc.jcrasher.plans.expr.MethodCall;
 import edu.gatech.cc.jcrasher.plans.expr.literals.IntLiteral;
+import edu.gatech.cc.jcrasher.plans.stmt.Block;
+import edu.gatech.cc.jcrasher.plans.stmt.BlockImpl;
+import edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement;
+import edu.gatech.cc.jcrasher.plans.stmt.Statement;
 
 /**
  * Tests edu.gatech.cc.jcrasher.writer.JUnitTestCaseWriter

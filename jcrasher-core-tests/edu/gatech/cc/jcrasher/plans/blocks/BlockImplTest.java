@@ -30,9 +30,13 @@ import edu.gatech.cc.jcrasher.plans.expr.FunctionCall;
 import edu.gatech.cc.jcrasher.plans.expr.MethodCall;
 import edu.gatech.cc.jcrasher.plans.expr.Variable;
 import edu.gatech.cc.jcrasher.plans.expr.literals.IntLiteral;
+import edu.gatech.cc.jcrasher.plans.stmt.Block;
+import edu.gatech.cc.jcrasher.plans.stmt.BlockImpl;
+import edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement;
+import edu.gatech.cc.jcrasher.plans.stmt.Statement;
 
 /**
- * Tests edu.gatech.cc.jcrasher.plans.blocks.BlockImpl
+ * Tests edu.gatech.cc.jcrasher.plans.stmt.BlockImpl
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
