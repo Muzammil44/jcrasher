@@ -16,7 +16,6 @@
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
 import junit.framework.TestCase;
-import edu.gatech.cc.jcrasher.Loadee;
 
 
 /**
@@ -47,10 +46,17 @@ public class ByteLiteralTest extends TestCase {
   }
 
   /***/
-  public void testToStringClass() {
-    assertEquals("(byte)-1", _oneLit.toString(Loadee.class));
-    assertEquals("(byte)0", zeroLit.toString(Loadee.class));
-    assertEquals("(byte)1", oneLit.toString(Loadee.class));
+  public void testText() {
+    assertEquals("(byte)-1", _oneLit.text());
+    assertEquals("(byte)0", zeroLit.text());
+    assertEquals("(byte)1", oneLit.text());
+  }
+  
+  /***/
+  public void testToString() {
+    assertEquals(_oneLit.toString(), _oneLit.text());
+    assertEquals(zeroLit.toString(), zeroLit.text());
+    assertEquals(oneLit.toString(), oneLit.text());
   }
 
 }

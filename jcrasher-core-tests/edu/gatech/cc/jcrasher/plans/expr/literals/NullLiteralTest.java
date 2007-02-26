@@ -15,47 +15,51 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
+import client.Client;
+import client.sub.Needed;
 import junit.framework.TestCase;
-import edu.gatech.cc.jcrasher.Loadee;
 
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
  */
 public class NullLiteralTest extends TestCase {
 
-  protected final NullLiteral<String> nullString = 
-  	new NullLiteral<String>(String.class);
-  protected final NullLiteral<Loadee> nullLoadee = 
-  	new NullLiteral<Loadee>(Loadee.class);
+  protected final NullLiteral<String> nullStringForClient = 
+  	new NullLiteral<String>(String.class, Client.class);
+  
+  protected final NullLiteral<Needed> nullNeededForClient = 
+  	new NullLiteral<Needed>(Needed.class, Client.class);
+  
+  protected final NullLiteral<Client> nullClientForClient = 
+  	new NullLiteral<Client>(Client.class, Client.class);
+
   
   /***/
   public void testGetReturnType() {
-    assertEquals(String.class, nullString.getReturnType());
-    assertEquals(Loadee.class, nullLoadee.getReturnType());
+    assertEquals(String.class, nullStringForClient.getReturnType());
+    assertEquals(Needed.class, nullNeededForClient.getReturnType());
+    assertEquals(Client.class, nullClientForClient.getReturnType());
   }
 
-  /***/
-  public void testNullLiteralNull() {
-    try {
-      new NullLiteral<String>(null);
-      fail("NullLiteral(null) not allowed");
-    }
-    catch(RuntimeException e) {  //expected
-    }
-  }
 
   /***/
   public void testExecute() {
-    assertEquals(null, nullString.execute());
-    assertEquals(null, nullLoadee.execute());
+    assertEquals(null, nullStringForClient.execute());
+    assertEquals(null, nullNeededForClient.execute());
+    assertEquals(null, nullClientForClient.execute());
   }
 
   /***/
-  public void testToStringClass() {
-    assertEquals("(String)null", nullString.toString(String.class));
-    assertEquals("(java.lang.String)null", nullString.toString(Loadee.class));
-    
-    assertEquals("(Loadee)null", nullLoadee.toString(Loadee.class));
-    assertEquals("(edu.gatech.cc.jcrasher.Loadee)null", nullLoadee.toString(String.class));
+  public void testText() {    
+    assertEquals("(java.lang.String)null", nullStringForClient.text());
+    assertEquals("(client.sub.Needed)null", nullNeededForClient.text());    
+    assertEquals("(Client)null", nullClientForClient.text());
   }
+  
+  /***/
+  public void testToString() {    
+    assertEquals(nullStringForClient.toString(), nullStringForClient.text());
+    assertEquals(nullNeededForClient.toString(), nullNeededForClient.text());    
+    assertEquals(nullClientForClient.toString(), nullClientForClient.text());
+  }  
 }
