@@ -16,7 +16,6 @@
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
 import junit.framework.TestCase;
-import edu.gatech.cc.jcrasher.Loadee;
 
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
@@ -47,9 +46,16 @@ public class IntLiteralTest extends TestCase {
   }
 
   /***/
-  public void testToStringClass() {
-    assertEquals("-1", _oneLit.toString(Loadee.class));
-    assertEquals("0", zeroLit.toString(Loadee.class));
-    assertEquals("1", oneLit.toString(Loadee.class));
+  public void testText() {
+    assertEquals("-1", _oneLit.text());
+    assertEquals("0", zeroLit.text());
+    assertEquals("1", oneLit.text());
+  }
+  
+  /***/
+  public void testToString() {
+    assertEquals(_oneLit.toString(), _oneLit.text());
+    assertEquals(zeroLit.toString(), zeroLit.text());
+    assertEquals(oneLit.toString(), oneLit.text());
   }
 }

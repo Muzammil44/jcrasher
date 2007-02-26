@@ -16,7 +16,6 @@
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
 import junit.framework.TestCase;
-import edu.gatech.cc.jcrasher.Loadee;
 
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
@@ -39,8 +38,14 @@ public class BooleanLiteralTest extends TestCase {
   }
 
   /***/
-  public void testToStringClass() {
-    assertEquals("true", trueLit.toString(Loadee.class));
-    assertEquals("false", falseLit.toString(Loadee.class));
+  public void testText() {
+    assertEquals("true", trueLit.text());
+    assertEquals("false", falseLit.text());
   }
+  
+  /***/
+  public void testToString() {
+    assertEquals(trueLit.toString(), trueLit.text());
+    assertEquals(falseLit.toString(), falseLit.text());
+  }  
 }

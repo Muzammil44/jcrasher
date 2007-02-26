@@ -16,7 +16,6 @@
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
 import junit.framework.TestCase;
-import edu.gatech.cc.jcrasher.Loadee;
 
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
@@ -34,17 +33,23 @@ public class StringLiteralTest extends TestCase {
     assertEquals(String.class, emptyLit.getReturnType());
     assertEquals(String.class, funkyLit.getReturnType());
   }
-  
-  /***/
-  public void testToStringClass() {
-    assertEquals("\"\"", emptyLit.toString(Loadee.class));
-    assertEquals("\""+funky+"\"", funkyLit.toString(Loadee.class));
-  }
 
   /***/
   public void testExecute() {
     assertEquals(empty, emptyLit.execute());
     assertEquals(funky, funkyLit.execute());
+  }
+  
+  /***/
+  public void testText() {
+    assertEquals("\"\"", emptyLit.text());
+    assertEquals("\""+funky+"\"", funkyLit.text());
+  }
+  
+  /***/
+  public void testToString() {
+    assertEquals(emptyLit.toString(), emptyLit.text());
+    assertEquals(funkyLit.toString(), funkyLit.text());
   }
 
   /***/
