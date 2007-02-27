@@ -17,12 +17,11 @@ package edu.gatech.cc.jcrasher.plans.expr;
 
 import java.lang.reflect.InvocationTargetException;
 
+import junit.framework.TestCase;
 import client.Client;
 import client.sub.LoadeeCall;
 import client.sub.LoadeeReflect;
 import client.sub.Needed;
-
-import junit.framework.TestCase;
 
 /**
  * @author csallner@gatech.edu (Christoph Csallner)

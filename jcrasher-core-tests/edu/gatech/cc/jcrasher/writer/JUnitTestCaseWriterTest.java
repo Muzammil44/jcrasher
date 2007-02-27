@@ -21,9 +21,8 @@ import static edu.gatech.cc.jcrasher.Constants.TAB;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
-import client.sub.Loadee;
-
 import junit.framework.TestCase;
+import client.sub.Loadee;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.plans.expr.FunctionCall;

@@ -20,6 +20,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.Arrays;
 import java.util.Set;
 
+import junit.framework.TestCase;
 import client.Client;
 import client.sub.Loadee;
 import client.sub.LoadeeCall;
@@ -28,7 +29,6 @@ import edu.gatech.cc.jcrasher.plans.expr.literals.IntLiteral;
 import edu.gatech.cc.jcrasher.plans.expr.literals.NullLiteral;
 import edu.gatech.cc.jcrasher.plans.expr.literals.StringLiteral;
 import edu.gatech.cc.jcrasher.types.ClassWrapper;
-import junit.framework.TestCase;
 
 
 /**

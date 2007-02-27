@@ -26,7 +26,6 @@ import edu.gatech.cc.jcrasher.plans.stmt.BlockImpl;
 import edu.gatech.cc.jcrasher.plans.stmt.BlockStatement;
 import edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement;
 import edu.gatech.cc.jcrasher.plans.stmt.LocalVariableDeclarationStatement;
-import edu.gatech.cc.jcrasher.plans.stmt.Statement;
 
 /**
  * Constructs a TypeNode a loaded class under test: extract all public
@@ -180,7 +179,6 @@ implements ClassUnderTest<T> {
     for (int i = 0; i < curPlans.length; i++) {
       ids[i] = b.getNextID(paramsTypes[i]); // A a = ...
       bs[i] = new LocalVariableDeclarationStatement(
-      		testeeType,
       		ids[i],
       		curPlans[i]);
     }
@@ -211,7 +209,7 @@ implements ClassUnderTest<T> {
 
     /* Last statement */
     bs[curPlans.length] = 
-    	new LocalVariableDeclarationStatement<T>(testeeType, returnID, conPlan);
+    	new LocalVariableDeclarationStatement<T>(returnID, conPlan);
 
     /*
      * Assemble and append generated block
@@ -259,7 +257,7 @@ implements ClassUnderTest<T> {
     /* Generate local variable for each needed param instance (-plan) */
     for (int i = 0; i < paramIDs.length; i++) {
       paramIDs[i] = b.getNextID(paramsTypes[i]); // A a = ...
-      bs[i] = new LocalVariableDeclarationStatement(testeeType, paramIDs[i], paramPlans[i]);
+      bs[i] = new LocalVariableDeclarationStatement(paramIDs[i], paramPlans[i]);
     }
 
 
@@ -278,8 +276,7 @@ implements ClassUnderTest<T> {
       /* Generate local variable for victim */
       Variable vID = b.getNextID(pMeth.getDeclaringClass()); // A a = ...
       bs[curPlans.length - 1] = 
-      	new LocalVariableDeclarationStatement(
-      			pMeth.getDeclaringClass(), 
+      	new LocalVariableDeclarationStatement( 
       			vID,
       			curPlans[0]);
 

@@ -5,7 +5,6 @@
  */
 package edu.gatech.cc.jcrasher.planner;
 
-import edu.gatech.cc.jcrasher.plans.JavaCode;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 
 /**
