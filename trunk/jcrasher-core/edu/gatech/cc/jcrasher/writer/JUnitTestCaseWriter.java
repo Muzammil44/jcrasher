@@ -244,7 +244,7 @@ implements TestCaseWriter
       }
       
       sb.append(
-          blocks[i].toString(doFilter? TAB+TAB : TAB, testeeClass)+     NL);
+          blocks[i].text()+     																				NL);
       
       if(doFilter) {
         sb.append(

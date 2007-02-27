@@ -5,6 +5,7 @@
  */
 package edu.gatech.cc.jcrasher.planner;
 
+import edu.gatech.cc.jcrasher.plans.JavaCode;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 
 /**
@@ -32,7 +33,8 @@ public interface PlanSpaceNode<T> {
    * 
    * @param planIndex the index of the plan according to the node's canonical
    *          order, taken from [0..getPlanSpaceSize()-1]
+   * @param testeeType needed to emit test code tailored to testee.
    * @return plan according to the ordering semantics, never null
    */
-  public Expression<?> getPlan(int planIndex);
+  public Expression<?> getPlan(int planIndex, Class<?> testeeType);
 }

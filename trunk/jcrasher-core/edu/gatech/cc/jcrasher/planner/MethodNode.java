@@ -81,12 +81,12 @@ public class MethodNode<T> extends FunctionNode<T> {
    * @return concrete method plan according to index.
    * @see PlanSpaceNode#getPlan(int)
    */
-  public Expression<T> getPlan(int planIndex) {
-    Expression<?>[] depPlans = getParamPlans(planIndex); // enforces our precondition
+  public Expression<T> getPlan(int planIndex, Class<?> testeeType) {
+    Expression<?>[] depPlans = getParamPlans(planIndex, testeeType); // enforces our precondition
 
     /* Zero-dim ok, iff non-arg static meth */
     if (depPlans.length == 0) {
-      return new MethodCall<T>(meth, new Expression[0]);
+      return new MethodCall<T>(testeeType, meth, new Expression[0]);
     }// end traversal of zero-dim space
 
 
@@ -100,11 +100,11 @@ public class MethodNode<T> extends FunctionNode<T> {
       for (int j = 0; j < paramPlans.length; j++) {
         paramPlans[j] = depPlans[j + 1];
       }
-      return new MethodCall<T>(meth, paramPlans, depPlans[0]);
+      return new MethodCall<T>(testeeType, meth, paramPlans, depPlans[0]);
     }
     
     /* Non-static method with >=1 arguments */
-    return new MethodCall<T>(meth, depPlans);
+    return new MethodCall<T>(testeeType, meth, depPlans);
   }
 
 

@@ -7,6 +7,7 @@ package edu.gatech.cc.jcrasher.planner;
 
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
+import edu.gatech.cc.jcrasher.plans.JavaCode;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 
 /**
@@ -141,7 +142,7 @@ public abstract class TypeNode<T> implements PlanSpaceNode<T> {
    *          order, taken from [0..getPlanSpaceSize()-1]
    * @return childrens' plans according to the ordering semantics, never null
    */
-  public Expression<?> getPlan(int planIndex) {
+  public Expression<?> getPlan(int planIndex, Class<?> testeeType) {
     check(planIndex >= 0);
     check(planIndex < getPlanSpaceSize());
 
@@ -153,7 +154,7 @@ public abstract class TypeNode<T> implements PlanSpaceNode<T> {
     int childIndex = getChildIndex(planIndex);
     int childPlanIndex = getChildPlanIndex(childIndex, planIndex);
 
-    return children[childIndex].getPlan(childPlanIndex);
+    return children[childIndex].getPlan(childPlanIndex, testeeType);
   }
 
 

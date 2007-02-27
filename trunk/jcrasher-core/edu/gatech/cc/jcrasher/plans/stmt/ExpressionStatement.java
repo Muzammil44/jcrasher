@@ -67,19 +67,12 @@ public class ExpressionStatement<T> implements Statement {
    * <li>b.m(0);
    * <li>new A();
    */
-  public String toString(final Class<?> testeeType) {
-    notNull(testeeType);
-    
-    final String res = fctPlan.toString(testeeType)+";";
-
-    return notNull(res);
+  public String text() {
+  	return fctPlan.toString()+";";
   }
-  
-  /**
-   * @return a representative example
-   */
+
   @Override
   public String toString() {
-    return fctPlan.toString()+";";
+    return text();
   }  
 }

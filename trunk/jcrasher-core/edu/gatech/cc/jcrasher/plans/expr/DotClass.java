@@ -5,10 +5,10 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr;
 
-import edu.gatech.cc.jcrasher.writer.CodeGenFct;
-
 /**
- * Represents Object.class
+ * Represents Object.class.
+ * 
+ * TODO: Generalize to user-defined class.
  * 
  * <p>
  * Each reference parameter of every method must be non-null.
@@ -17,20 +17,16 @@ import edu.gatech.cc.jcrasher.writer.CodeGenFct;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/expressions.html#15.8.2
  */
-public class DotClass extends ReferenceTypeExpression<Class> {
+public class DotClass extends SimpleExpression<Class> {
 
 	/**
 	 * Constructor
 	 */
-	public DotClass(Class<?> testeeType) {
-		super(Class.class, testeeType);	//FIXME should be Object.class
+	public DotClass() {
+		super(Class.class, Object.class);
 	}
 
-  public Class<Object> execute() {
-    return Object.class;
-  }
-  
   public String text() {
-    return CodeGenFct.getName(Object.class, testeeType)+".class";
+    return "java.lang.Object.class";
   }
 }

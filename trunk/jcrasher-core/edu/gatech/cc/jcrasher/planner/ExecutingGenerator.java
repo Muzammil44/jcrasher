@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Random;
 
 import edu.gatech.cc.jcrasher.Constants;
-import edu.gatech.cc.jcrasher.plans.Executable;
+import edu.gatech.cc.jcrasher.plans.JavaCode;
 import edu.gatech.cc.jcrasher.plans.stmt.Block;
 
 /**
@@ -31,7 +31,7 @@ public class ExecutingGenerator implements Generator {
   /**
    * @return if we want to keep (export) a testCase.
    */
-  protected boolean shouldExport(final Executable<?> testCase) {    
+  protected boolean shouldExport(final JavaCode<?> testCase) {    
     notNull(testCase);
     
     try {
@@ -98,7 +98,7 @@ public class ExecutingGenerator implements Generator {
       		i : random.nextInt(testsAvailable));
       Block testCase = null;
       try {
-        testCase = classNode.getBlock(testIndex);
+        testCase = classNode.getBlock(testIndex, classUnderTest);
       }
       catch(Throwable e) {
         /* Tried to access some non-initializable class or interface */

@@ -32,7 +32,9 @@ import edu.gatech.cc.jcrasher.plans.expr.Variable;
 public class BlockImpl implements Block {
 
   /* method or constructor this block is intended to execute. */
-  protected Member testee = null;
+  protected Member member;
+  protected Class<?> testeeType;
+  protected String spaces;
 
   /*
    * Block ::= {Statement*} Sequence of statements, intended to crash a
@@ -47,14 +49,15 @@ public class BlockImpl implements Block {
   /**
    * Constructor
    */
-  public BlockImpl(final Member m) {
-    notNull(m);
-    testee = m;
+  public BlockImpl(Class<?> testeeType, Member m, String spaces) {
+    this.member = notNull(m);
+    this.testeeType = notNull(testeeType);
+    this.spaces = notNull(spaces);
   }
 
   
   public Member getTestee() {
-    return notNull(testee);
+    return notNull(member);
   }
   
 
@@ -75,8 +78,6 @@ public class BlockImpl implements Block {
   /**
    * To be called from above, like CodeWriter
    * 
-   * @param pIdent ident on which to put block closing bracket opening bracket
-   *          is appended on line of parent construct
    * @return a specialized representation of the test block like:
    * <pre>
    * {
@@ -84,16 +85,16 @@ public class BlockImpl implements Block {
    * }
    * </pre>
    */
-  public String toString(final String pIdent, final Class<?> pClass) {
+  public String text() {
     StringBuilder sb = new StringBuilder("{");
 
     /* Get sequence of stmt strings */
     for (BlockStatement blockStmt : blockStmts) {
       sb.append(NL);
-      sb.append(pIdent+TAB+blockStmt.toString(pClass));
+      sb.append(spaces+TAB+blockStmt.text());
     }
     sb.append(NL);
-    sb.append(pIdent+"}");
+    sb.append(spaces+"}");
 
     return sb.toString();
     // TODO make context (current package) known in test case
@@ -101,20 +102,12 @@ public class BlockImpl implements Block {
   }
   
   
-  public String toString(Class<?> testeeClass) {
-    return toString("", testeeClass);	//TODO: bad default.
-  }
-  
-  
-  /**
-   * @return a representative example
-   */
   @Override
   public String toString() {
-    return toString("", testee.getDeclaringClass());
+    return text();
   }
-
-
+  
+  
   /**
    * To be called from below, like Statement
    * 
@@ -129,7 +122,7 @@ public class BlockImpl implements Block {
     localIDcount += 1; // new id
 
     if (pClass.equals(Void.class)) { // added 2004-08-03
-      return new Variable<V>(pClass, "<void"
+      return new Variable<V>(pClass, testeeType, "<void"
         + Integer.toString(localIDcount) + ">");
     }
 
@@ -158,8 +151,8 @@ public class BlockImpl implements Block {
       }
     }
 
-    res = new Variable<V>(pClass, leafName.toLowerCase().charAt(0)
-      + Integer.toString(localIDcount));
+    String id = leafName.toLowerCase().charAt(0) + Integer.toString(localIDcount);
+    res = new Variable<V>(pClass, testeeType, id);
 
     return notNull(res);
   }

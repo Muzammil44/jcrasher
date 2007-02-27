@@ -46,7 +46,7 @@ public class PlannerImpl implements Planner {
       sb.append(NL + NL + wrapper.getWrappedClass().getCanonicalName());
       for (Expression<?> value : wrapper.getPresetPlans(PlanFilter.ALL)) { // preset
                                                                   // values
-        sb.append(NL + "\t" + value.toString(wrapper.getWrappedClass()));
+        sb.append(NL + "\t" + value.text());
       }
       if (!wrapper.isLibraryType()) { // not interested in JDK-defined
                                       // constructors

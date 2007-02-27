@@ -7,6 +7,7 @@ package edu.gatech.cc.jcrasher.planner;
 
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
+import edu.gatech.cc.jcrasher.plans.JavaCode;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 
 /**
@@ -100,7 +101,7 @@ public abstract class FunctionNode<T> implements PlanSpaceNode<T> {
    *          order, taken from [0..getPlanSpaceSize()-1]
    * @return childrens' plans according to the ordering semantics, never null
    */
-  public Expression<?>[] getParamPlans(int planIndex) {
+  public Expression<?>[] getParamPlans(int planIndex, Class<?> testeeType) {
     check(planIndex >= 0); // enforce precondition
     check(planIndex < getPlanSpaceSize()); // terminate here iff any
                                           // canonicalSubSapceSizes[i] == 0
@@ -120,7 +121,7 @@ public abstract class FunctionNode<T> implements PlanSpaceNode<T> {
       
       /* leftover from division */
       currentIndex = currentIndex - (childIndex * canonicalSubSapceSizes[i]);
-      res[i] = parameters[i].getPlan(childIndex);
+      res[i] = parameters[i].getPlan(childIndex, testeeType);
     }
 
     return res;

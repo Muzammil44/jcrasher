@@ -36,7 +36,7 @@ public class ValueNode<T> implements PlanSpaceNode<T> {
     return plans.size();
   }
 
-  public Expression<T> getPlan(int planIndex) {
+  public Expression<T> getPlan(int planIndex, Class<?> testeeType) {
     return plans.get(planIndex);
   }
 
