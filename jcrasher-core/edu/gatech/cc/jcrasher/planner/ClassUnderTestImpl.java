@@ -7,7 +7,6 @@ package edu.gatech.cc.jcrasher.planner;
 
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
-import static edu.gatech.cc.jcrasher.types.TypeGraph.typeGraph;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -163,7 +162,7 @@ implements ClassUnderTest<T> {
       Expression<?>[] curPlans)
   {
     notNull(pCon);
-    notNull(curPlans);
+    notNull(curPlans);   
 
     final Class<T> testeeType = pCon.getDeclaringClass();
     final Block b = new BlockImpl(testeeType, pCon, spaces); // context for this combination

@@ -6,7 +6,8 @@
 package edu.gatech.cc.jcrasher;
 
 /**
- * Tries to crash a method and eventually reports about it afterwards.
+ * Generates test cases for the public methods and constructors 
+ * of the classes specified by the user.
  *
  * @author csallner@gatech.edu (Christoph Csallner)
  */
@@ -14,10 +15,7 @@ public interface Crasher {
 
 
 	/**
-	 * Do bad things with the methods of these classes and talk about them.
-	 * @param pClasses classes to find test cases for.
-	 * @param execute are we allowed to execute the test cases
-	 * we are generating.
+	 * Generate test cases for classes under test.
 	 */
-	public void crashClasses(Class[] pClasses, boolean execute);
+	public void crashClasses();
 }

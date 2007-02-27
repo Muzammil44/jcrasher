@@ -19,11 +19,6 @@ import edu.gatech.cc.jcrasher.Constants.Visibility;
 public interface TypeGraph {
 
   /**
-   * Provides easy access to a single rule base
-   */
-  public final TypeGraph typeGraph = TypeGraphImpl.instance();
-
-  /**
    * For each passed [abstract] class and interface do: add wrapper to mapping;
    * queue all reachable types like meth-param, enclosed classes; create/ sign
    * in to parent-classwrapper; distribute declared constr/ meths to wrapper of

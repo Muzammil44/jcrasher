@@ -65,7 +65,19 @@ public abstract class Constants {
   /**
    * Maximum number of test cases tried per testee class.
    */
-  public static int MAX_TEST_CASES_TRIED_CLASS = 1000;
+  public static int MAX_TEST_CASES_TRIED_CLASS = 1000; 
+  
+	/**
+	 * How many test classes should be generated max?
+	 * 300 classes * 1 min/ class = 300 min = 5h * 60min/ h
+	 */
+  public static int MAX_NR_TEST_CLASSES = 300;
+  
+	/**
+	 * How many test methods per generated test class:
+	 * 1000 and junitMultiCL will generate OutOfMemoryError
+	 */
+  public static int MAX_NR_TEST_METHS_PER_CLASS = 500;
   
   /**
    * How much internal state shown to user.  

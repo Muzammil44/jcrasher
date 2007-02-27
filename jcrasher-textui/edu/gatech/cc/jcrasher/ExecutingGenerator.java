@@ -3,7 +3,7 @@
  * 
  * Copyright 2006 Christoph Csallner and Yannis Smaragdakis.
  */
-package edu.gatech.cc.jcrasher.planner;
+package edu.gatech.cc.jcrasher;
 
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import static edu.gatech.cc.jcrasher.Constants.MAX_TEST_CASES_TRIED_CLASS;
@@ -13,7 +13,9 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
 
-import edu.gatech.cc.jcrasher.Constants;
+import edu.gatech.cc.jcrasher.planner.ClassUnderTest;
+import edu.gatech.cc.jcrasher.planner.Planner;
+import edu.gatech.cc.jcrasher.planner.PlannerImpl;
 import edu.gatech.cc.jcrasher.plans.JavaCode;
 import edu.gatech.cc.jcrasher.plans.stmt.Block;
 
@@ -24,7 +26,7 @@ import edu.gatech.cc.jcrasher.plans.stmt.Block;
  */
 public class ExecutingGenerator implements Generator {
 	
-	
+	protected static final Planner planner = PlannerImpl.instance();
 	protected static final Random random = new Random();
 
 
@@ -73,22 +75,17 @@ public class ExecutingGenerator implements Generator {
 	/**
 	 * 
 	 */
-	public <T> List<Block> getBlocks(final Class<T> classUnderTest) {
+	public <T> List<Block> getBlocks(final Class<T> classUnderTest, int maxAmount) {
     notNull(classUnderTest);
     
-    final ClassUnderTest<T> classNode = new ClassUnderTestImpl<T>(
-      classUnderTest,
-      Constants.MAX_PLAN_RECURSION,
-      Constants.VIS_TESTED,
-      Constants.VIS_USED);
-    
+    final ClassUnderTest<T> classNode = planner.getPlanSpace(classUnderTest);     
     final int testsAvailable = classNode.getPlanSpaceSize();
     final List<Block> testCasesSucceeded = new LinkedList<Block>();
     if (testsAvailable<=0) { //no or way too many potential test cases.
       return testCasesSucceeded;
     }
     
-    int testsTried = MAX_TEST_CASES_TRIED_CLASS;
+    int testsTried = maxAmount;
     if (testsTried>testsAvailable)
     	testsTried = testsAvailable;
     

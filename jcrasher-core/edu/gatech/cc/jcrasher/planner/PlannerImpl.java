@@ -7,33 +7,70 @@ package edu.gatech.cc.jcrasher.planner;
 
 import static edu.gatech.cc.jcrasher.Constants.NL;
 import static edu.gatech.cc.jcrasher.Constants.VERBOSE_LEVEL;
-import static edu.gatech.cc.jcrasher.types.TypeGraph.typeGraph;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.util.Hashtable;
 import java.util.Map;
 
+import edu.gatech.cc.jcrasher.Constants;
 import edu.gatech.cc.jcrasher.Constants.PlanFilter;
 import edu.gatech.cc.jcrasher.Constants.Verbose;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.types.ClassWrapper;
+import edu.gatech.cc.jcrasher.types.TypeGraph;
+import edu.gatech.cc.jcrasher.types.TypeGraphImpl;
 
 
 /**
- * Generalized planner creates Blocks with chained plans and local variables:
- * Hides class-wrapper- and plans- database, how instances are created, what
- * combination of methods are called etc.
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
 public class PlannerImpl implements Planner {
+  
+  protected static PlannerImpl theInstance;
+  
+  /**
+   * @return non-null singleton
+   */
+  public static PlannerImpl instance() {
+  	if (theInstance==null)
+  		theInstance = new PlannerImpl();
+  	
+  	return theInstance; 
+  }
 
-  /* Cache constructed nodes */
-  final protected Map<Class<?>, ClassUnderTestImpl<?>> plans = 
-    new Hashtable<Class<?>, ClassUnderTestImpl<?>>();
+  
+  protected final TypeGraph typeGraph = TypeGraphImpl.instance();
+  
+  /**
+   * Cache constructed nodes
+   */
+  final protected Map<Class, ClassUnderTest> plans = 
+    new Hashtable<Class, ClassUnderTest>();
 
-
+  
+  /**
+   * @return plan space of class T.
+   */ 
+  public <T> ClassUnderTest<T> getPlanSpace(Class<T> c) {
+  	if (plans.containsKey(c))
+  		return plans.get(c);
+  	
+    final ClassUnderTest<T> classNode = new ClassUnderTestImpl<T>(
+        c,
+        Constants.MAX_PLAN_RECURSION,
+        Constants.VIS_TESTED,
+        Constants.VIS_USED);
+    
+    plans.put(c, classNode);
+    return classNode;
+  }
+  
+  
+  /**
+   * Helper method
+   */
   protected StringBuilder flushRules(boolean isTypeNeeded) {
     final StringBuilder sb = new StringBuilder();
     final ClassWrapper[] wrappers = typeGraph.getWrappers();
@@ -68,7 +105,7 @@ public class PlannerImpl implements Planner {
   }
 
 
-  /**
+	/**
    * To be called after a getX(c) method has been called for each class c under
    * test
    */
@@ -83,12 +120,13 @@ public class PlannerImpl implements Planner {
     /* Each constructor/ method to be crashed = non-private, non-abstract */
     StringBuilder sb = new StringBuilder(
       "*** Methods and constructors under test:");
-    for (ClassUnderTestImpl<?> cPlan : plans.values()) {
-      sb.append(NL + NL + cPlan.getWrappedClass().getCanonicalName()); // qualified
+    for (ClassUnderTest<?> cPlan : plans.values()) {
+    	ClassUnderTestImpl<?> cPlanImpl = (ClassUnderTestImpl<?>) cPlan;
+      sb.append(NL + NL + cPlanImpl.getWrappedClass().getCanonicalName()); // qualified
                                                                         // class
                                                                         // name
 
-      for (PlanSpaceNode<?> pNode : cPlan.getChildren()) {
+      for (PlanSpaceNode<?> pNode : cPlanImpl.getChildren()) {
         FunctionNode<?> fNode = (FunctionNode) pNode;
         sb.append(NL + "\t" + fNode.toString()); // method or constructor under
                                                   // test
