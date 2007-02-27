@@ -22,8 +22,9 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 
+import client.sub.Loadee;
+
 import junit.framework.TestCase;
-import edu.gatech.cc.jcrasher.Loadee;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.plans.expr.FunctionCall;
@@ -62,17 +63,17 @@ public class BlockImplTest extends TestCase {
         Loadee.class.getMethod("staticMeth", new Class[]{int.class});
     
     testeeCall = new ConstructorCall<Loadee>(
-    		loadeeConstructor, new Expression[0]);    
+    		Loadee.class, loadeeConstructor, new Expression[0]);    
     testeeCrash = new MethodCall<Void>(
-        loadeeStaticMeth,
+    		Loadee.class, loadeeStaticMeth,
         new Expression[]{new IntLiteral(3)});
     
     testeeCallStmt = new ExpressionStatement<Loadee>(testeeCall);
     testeeCrashStmt = new ExpressionStatement<Void>(testeeCrash);
     
-    blockEmpty = new BlockImpl(loadeeConstructor);
-    blockCall = new BlockImpl(loadeeConstructor);
-    blockCrash = new BlockImpl(loadeeStaticMeth);
+    blockEmpty = new BlockImpl(Loadee.class, loadeeConstructor, "");
+    blockCall = new BlockImpl(Loadee.class, loadeeConstructor, "");
+    blockCrash = new BlockImpl(Loadee.class, loadeeStaticMeth, "");
     
     blockCall.setBlockStmts(new Statement[]{testeeCallStmt});
     blockCrash.setBlockStmts(new Statement[]{testeeCrashStmt});
@@ -81,7 +82,7 @@ public class BlockImplTest extends TestCase {
   /***/
   public void testBlockImpl() {
     try {
-      new BlockImpl(null);
+      new BlockImpl(Loadee.class, null, "");
       fail("BlockImpl(null) not allowed");
     }
     catch(RuntimeException e) {  //expected
@@ -103,44 +104,44 @@ public class BlockImplTest extends TestCase {
     String res0 =
       "{"+NL+
       "}"; 
-    assertEquals(res0, blockEmpty.toString("", Loadee.class));
+    assertEquals(res0, blockEmpty.toString());
     
-    String res1 =
-      "{"+NL+
-      TAB+"}"; 
-    assertEquals(res1, blockEmpty.toString(TAB, Loadee.class));
-    
-    String res2 =
-      "{"+NL+
-      TAB+TAB+"}"; 
-    assertEquals(res2, blockEmpty.toString(TAB+TAB, Loadee.class));    
+//    String res1 =
+//      "{"+NL+
+//      TAB+"}"; 
+//    assertEquals(res1, blockEmpty.toString(TAB, Loadee.class));
+//    
+//    String res2 =
+//      "{"+NL+
+//      TAB+TAB+"}"; 
+//    assertEquals(res2, blockEmpty.toString(TAB+TAB, Loadee.class));    
   }
   
   /***/
   public void testToStringStringClassCall() {
     String res0 =
       "{"+NL+
-      TAB+testeeCallStmt.toString(Loadee.class)+NL+
+      TAB+testeeCallStmt.text()+NL+
       "}"; 
-    assertEquals(res0, blockCall.toString("", Loadee.class));
+    assertEquals(res0, blockCall.text());
     
-    String res1 =
-      "{"+ NL+
-      TAB+TAB+testeeCallStmt.toString(Loadee.class)+NL+
-      TAB+"}"; 
-    assertEquals(res1, blockCall.toString(TAB, Loadee.class));
+//    String res1 =
+//      "{"+ NL+
+//      TAB+TAB+testeeCallStmt.toString(Loadee.class)+NL+
+//      TAB+"}"; 
+//    assertEquals(res1, blockCall.toString(TAB, Loadee.class));
+//    
+//    String res2 =
+//      "{"+NL+
+//      TAB+TAB+TAB+testeeCallStmt.toString(Loadee.class)+NL+
+//      TAB+TAB+"}"; 
+//    assertEquals(res2, blockCall.toString(TAB+TAB, Loadee.class));
     
-    String res2 =
-      "{"+NL+
-      TAB+TAB+TAB+testeeCallStmt.toString(Loadee.class)+NL+
-      TAB+TAB+"}"; 
-    assertEquals(res2, blockCall.toString(TAB+TAB, Loadee.class));
-    
-    String res2Object =
-      "{"+NL+
-      TAB+TAB+TAB+testeeCallStmt.toString(Object.class)+NL+
-      TAB+TAB+"}"; 
-    assertEquals(res2Object, blockCall.toString(TAB+TAB, Object.class));    
+//    String res2Object =
+//      "{"+NL+
+//      TAB+TAB+TAB+testeeCallStmt.toString(Object.class)+NL+
+//      TAB+TAB+"}"; 
+//    assertEquals(res2Object, blockCall.toString(TAB+TAB, Object.class));    
   }
   
   /***/
@@ -154,8 +155,8 @@ public class BlockImplTest extends TestCase {
     
     Variable<Integer> v1 = blockCall.getNextID(int.class);
     Variable<Integer> v2 = blockCall.getNextID(int.class);
-    assertTrue(v1.toString(Object.class).equals(v1.toString(Object.class))); 
-    assertFalse(v1.toString(Object.class).equals(v2.toString(Object.class)));
+    assertTrue(v1.text().equals(v1.text())); 
+    assertFalse(v1.text().equals(v2.text()));
   }
 
   /***/
