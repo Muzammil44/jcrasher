@@ -29,10 +29,7 @@ import java.lang.reflect.InvocationTargetException;
 public interface JavaCode<T> {
   
   /**
-   * To be called from above, like TestCaseGenerator.
-   * 
-   * First executes all of its parameters and then itself on the
-   * parameter values.
+   * Java code element, like a node of an abstract syntax tree.
    * 
    * @return maybe null.
    */

@@ -33,6 +33,9 @@ import edu.gatech.cc.jcrasher.writer.TestCaseWriter;
 public class NonExecutingCrasher extends AbstractCrasher {
 	
 
+	/**
+	 * FIXME: Replace by NonExecutingPlanner to hide PlannerImpl.
+	 */
 	protected final Planner planner = PlannerImpl.instance();
 	
 	/**
@@ -41,7 +44,7 @@ public class NonExecutingCrasher extends AbstractCrasher {
 	 * create (empty) typeSpace and distribute its reference
 	 */
 	public NonExecutingCrasher(Class[] classes) {
-		super(classes, new NonExecutingGenerator());
+		super(classes);
 		
 	}
 
@@ -84,10 +87,7 @@ public class NonExecutingCrasher extends AbstractCrasher {
 	}
 	
 
-	/**
-	 * FIXME: Separate plan space selection from actual generating.
-	 * FIXME: Move generating stuff to NonExecutingGenerator.
-	 */
+
 	public void crashClasses() {
 		
 		/* 
@@ -197,6 +197,8 @@ public class NonExecutingCrasher extends AbstractCrasher {
 	 * @param indices is guaranteed to be free of duplicates for entire class-space
 	 * @param arrayCursor starting index into indices - retrieve from here upto
 	 * 	max tests/ class = next block
+	 * 
+	 * TODO: Move to NonExecutingPlanner
 	 */
 	public <T> Block[] getTestBlocks(Class<T> pClass, int[] indices, int arrayCursor) {
 		notNull(pClass);
