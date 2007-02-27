@@ -17,12 +17,11 @@ package edu.gatech.cc.jcrasher.plans.expr;
 
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Vector;
 
+import junit.framework.TestCase;
 import client.Client;
 import client.sub.Loadee;
 import client.sub.Needed;
-import junit.framework.TestCase;
 
 /**
  * @author csallner@gatech.edu (Christoph Csallner)

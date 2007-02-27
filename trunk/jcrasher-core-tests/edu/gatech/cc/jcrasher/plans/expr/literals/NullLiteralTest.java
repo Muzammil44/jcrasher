@@ -15,9 +15,9 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
+import junit.framework.TestCase;
 import client.Client;
 import client.sub.Needed;
-import junit.framework.TestCase;
 
 /**
  * @author csallner@gatech.edu (Christoph Csallner)

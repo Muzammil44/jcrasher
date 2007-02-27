@@ -17,8 +17,8 @@ package edu.gatech.cc.jcrasher.writer;
 
 import static edu.gatech.cc.jcrasher.Constants.NL;
 import static edu.gatech.cc.jcrasher.Constants.TAB;
-import client.sub.Loadee;
 import junit.framework.TestCase;
+import client.sub.Loadee;
 
 /**
  * Tests edu.gatech.cc.jcrasher.writer.AbstractJUnitTestWriter

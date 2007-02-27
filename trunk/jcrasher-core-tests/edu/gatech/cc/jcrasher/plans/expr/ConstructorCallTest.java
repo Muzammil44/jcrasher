@@ -16,17 +16,16 @@
 package edu.gatech.cc.jcrasher.plans.expr;
 
 
+import static edu.gatech.cc.jcrasher.Assertions.notNull;
+
 import java.lang.reflect.InvocationTargetException;
 
+import junit.framework.TestCase;
 import client.Client;
-
 import client.sub.Loadee;
 import client.sub.LoadeeCall;
 import client.sub.LoadeeReflect;
 import client.sub.Needed;
-import junit.framework.TestCase;
-
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 
 /**

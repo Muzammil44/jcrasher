@@ -12,7 +12,6 @@ import java.lang.reflect.InvocationTargetException;
 
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.plans.expr.Variable;
-import edu.gatech.cc.jcrasher.writer.CodeGenFct;
 
 /**
  * Hides a code statement to generate a needed instance.
@@ -46,7 +45,6 @@ public class LocalVariableDeclarationStatement<V> implements BlockStatement {
    * Constructor
    */
   public LocalVariableDeclarationStatement(
-  		Class<?> testeeType,
       Variable<V> pID, 
       Expression<? extends V> pPlan) {
     

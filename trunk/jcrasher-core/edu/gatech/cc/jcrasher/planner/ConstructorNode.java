@@ -16,7 +16,6 @@ import java.util.List;
 import edu.gatech.cc.jcrasher.Constants;
 import edu.gatech.cc.jcrasher.Constants.PlanFilter;
 import edu.gatech.cc.jcrasher.Constants.Visibility;
-import edu.gatech.cc.jcrasher.plans.JavaCode;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.types.ClassWrapperImpl;

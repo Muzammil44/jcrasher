@@ -15,19 +15,15 @@
  */
 package edu.gatech.cc.jcrasher.plans.stmt;
 
-
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
-
 import java.lang.reflect.InvocationTargetException;
 
-import client.sub.Loadee;
-
 import junit.framework.TestCase;
+import client.Client;
+import client.sub.Loadee;
+import client.sub.LoadeeCall;
+import client.sub.Needed;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
-import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.plans.expr.MethodCall;
-import edu.gatech.cc.jcrasher.plans.expr.literals.IntLiteral;
-import edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement;
 
 /**
  * Tests edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement
@@ -36,43 +32,39 @@ import edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement;
  */
 public class ExpressionStatementTest extends TestCase {
 
-  protected ConstructorCall<Loadee> loadeeConstructorCall = null;
-  protected ConstructorCall<Loadee.Inner> innerConstructorCall = null;
-  protected MethodCall<Integer> innerMethodCall = null;    
-  protected MethodCall<Void> loadeeMethodCallInt = null;
+  protected LoadeeCall loadeeForClient = new LoadeeCall(Client.class);
   
-  protected ExpressionStatement<Integer> innerMethodCallStmt = null;
-  protected ExpressionStatement<Void> loadeeMethodCallIntStmt = null;
+  protected ConstructorCall<Loadee> loadeeConstructorCall = 
+    loadeeForClient.constructor();
   
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-     
-    loadeeConstructorCall = new ConstructorCall<Loadee>(
-    		Loadee.class,
-        Loadee.class.getConstructor(new Class[0]), 
-        new Expression[0]);
-    innerConstructorCall = new ConstructorCall<Loadee.Inner>(
-    		Loadee.class,
-        Loadee.Inner.class.getConstructor(new Class[]{Loadee.class}), 
-        new Expression[0],
-        loadeeConstructorCall);
-    innerMethodCall = new MethodCall<Integer>(
-    		Loadee.class,
-        Loadee.Inner.class.getMethod("innerMeth", new Class[0]),
-        new Expression[0],
-        innerConstructorCall);    
-    loadeeMethodCallInt = new MethodCall<Void>(
-    		Loadee.class,
-        Loadee.class.getMethod("meth", new Class[]{int.class}),
-        new Expression[]{new IntLiteral(5)},
-        loadeeConstructorCall);
-    
-    innerMethodCallStmt =
-        notNull(new ExpressionStatement<Integer>(innerMethodCall));
-    loadeeMethodCallIntStmt =
-        notNull(new ExpressionStatement<Void>(loadeeMethodCallInt));    
-  }
+  protected ConstructorCall<Loadee.Inner> innerConstructorCall =
+    loadeeForClient.innerConstructor(loadeeConstructorCall);
+  
+  protected MethodCall<Integer> innerMethodCall = 
+    loadeeForClient.innerMeth(innerConstructorCall);
+  
+  protected MethodCall<Void> loadeeMethodCallInt = 
+    loadeeForClient.meth(loadeeConstructorCall, 5);
+
+  protected ExpressionStatement<Integer> innerMethodCallStmt = 
+    new ExpressionStatement<Integer>(innerMethodCall);
+  
+  protected ExpressionStatement<Void> loadeeMethodCallIntStmt = 
+    new ExpressionStatement<Void>(loadeeMethodCallInt);
+  
+  
+  
+  protected LoadeeCall loadeeForClientNeeded = new LoadeeCall(Needed.class);
+  
+  protected ConstructorCall<Loadee.Inner> innerConstructorCallNeeded =
+    loadeeForClientNeeded.innerConstructor(loadeeForClientNeeded.constructor());
+  
+  protected MethodCall<Integer> innerMethodCallNeeded = 
+    loadeeForClientNeeded.innerMeth(innerConstructorCallNeeded);  
+  
+  protected ExpressionStatement<Integer> innerMethodCallNeededStmt = 
+    new ExpressionStatement<Integer>(innerMethodCallNeeded);
+  
   
   /***/
   public void testExpressionStatement() {
@@ -99,21 +91,35 @@ public class ExpressionStatementTest extends TestCase {
     }  
   }
 
+
   /***/
-  public void testToStringClass() {
+  public void testText() {
+    assertEquals(
+        loadeeMethodCallInt.text()+";",
+        loadeeMethodCallIntStmt.text());
+    
     assertEquals(
       innerMethodCall.text()+";",
       innerMethodCallStmt.text());   
+
     assertEquals(
-      innerMethodCall.text()+";",
-      innerMethodCallStmt.text());    
-    
-    assertEquals(
-      loadeeMethodCallInt.text()+";",
-      loadeeMethodCallIntStmt.text());
-    assertEquals(
-      loadeeMethodCallInt.text()+";",
-      loadeeMethodCallIntStmt.text());
+        innerMethodCallNeeded.text()+";",
+        innerMethodCallNeededStmt.text());       
   }
 
+  
+  /***/
+  public void testToString() {
+    assertEquals(
+        loadeeMethodCallIntStmt.toString(),
+        loadeeMethodCallIntStmt.text());
+    
+    assertEquals(
+        innerMethodCallStmt.toString(),
+      innerMethodCallStmt.text());   
+
+    assertEquals(
+        innerMethodCallNeededStmt.toString(),
+        innerMethodCallNeededStmt.text());       
+  }  
 }
