@@ -26,14 +26,17 @@ public class TypeGraphImpl extends AbstractTypeGraph {
 
   /* Static members */
 
-  protected final static TypeGraph theInstance = new TypeGraphImpl();
+  protected static TypeGraph theInstance;
 
 
   /**
    * @return non-null singleton
    */
   public static TypeGraph instance() {
-    return notNull(theInstance);
+  	if (theInstance==null)
+  		theInstance = new TypeGraphImpl();
+  	
+    return theInstance;
   }
 
 

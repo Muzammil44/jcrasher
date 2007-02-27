@@ -8,6 +8,8 @@ package edu.gatech.cc.jcrasher.planner;
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
+import edu.gatech.cc.jcrasher.types.TypeGraph;
+import edu.gatech.cc.jcrasher.types.TypeGraphImpl;
 
 /**
  * Node to access the plans of a type (sub-) plan space up to a given maximal
@@ -23,6 +25,8 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  */
 public abstract class TypeNode<T> implements PlanSpaceNode<T> {
 
+	protected final TypeGraph typeGraph = TypeGraphImpl.instance();
+	
   /**
    * Child types, i.e. victim and param types up to our max depth - 1
    */

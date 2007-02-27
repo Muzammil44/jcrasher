@@ -5,10 +5,10 @@
  */
 package edu.gatech.cc.jcrasher;
 
-import static edu.gatech.cc.jcrasher.Constants.FS;
-import static edu.gatech.cc.jcrasher.Constants.PS;
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
+import static edu.gatech.cc.jcrasher.Constants.FS;
+import static edu.gatech.cc.jcrasher.Constants.PS;
 
 import java.io.File;
 import java.util.Enumeration;
@@ -57,7 +57,7 @@ public class JCrasher {
 	/**
 	 * Execute test cases to improve filtering.
 	 */
-	protected boolean execute = false; 
+	protected static boolean execute = false; 
 	
 	/**
 	 * Set the log level globally.
@@ -383,8 +383,9 @@ public class JCrasher {
 			
 		/* Crash loaded class */
 		if (classes!=null && classes.length>0) {
-			final Crasher crasher = new CrasherImpl();
-			crasher.crashClasses(classes, false);
+			final Crasher crasher = execute? 
+					new ExecutingCrasher(classes) : new NonExecutingCrasher(classes);
+			crasher.crashClasses();
 		}
 		else { 
 			log.fine("Could not load any classes.");
