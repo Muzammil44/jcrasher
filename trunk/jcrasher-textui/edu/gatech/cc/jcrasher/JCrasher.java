@@ -35,7 +35,8 @@ public class JCrasher {
 		"Generate JUnit test case sources for every CLASS and all classes within\n" +
 		"every PACKAGE and their sub-packages.\n" +
 		"Example: java edu.gatech.cc.jcrasher.JCrasher p1.C p2\n\n" +
-		
+
+		"  -e, --execute        execute test cases while generating to suppress boring ones\n" +
 		"  -d, --depth=INT      maximal depth of method chaining (default 3)\n" +
 		"  -h, --help           print these instructions\n" +
 		"  -j, --junitFiltering make generated test cases extend FilteringTestCase\n" +
@@ -45,13 +46,18 @@ public class JCrasher {
 
 	protected final static String name = "JCrasher 2 (http://www.cc.gatech.edu/jcrasher)";
 	protected final static String copyright = 
-		"(C) Copyright 2002-2006 Christoph Csallner and Yannis Smaragdakis.";
+		"(C) Copyright 2002-2007 Christoph Csallner and Yannis Smaragdakis.";
 	protected final static String hint =
 		"Try `java edu.gatech.cc.jcrasher.JCrasher --help' for more information.";
 
 	/* TODO(csallner): evaluate the Java logging framework. */
 	private final static Logger log =
 		 Logger.getLogger(JCrasher.class.getName());
+	
+	/**
+	 * Execute test cases to improve filtering.
+	 */
+	protected boolean execute = false; 
 	
 	/**
 	 * Set the log level globally.
@@ -296,6 +302,7 @@ public class JCrasher {
 	 */
 	protected Class[] parse(final String[] args){
 		LongOpt[] longopts = new LongOpt[]{
+				new LongOpt("execute", LongOpt.NO_ARGUMENT, null, 'e'),
 				new LongOpt("depth", LongOpt.REQUIRED_ARGUMENT, null, 'd'),
 				new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),				
 				new LongOpt("junitFiltering", LongOpt.NO_ARGUMENT, null, 'j'),
@@ -303,11 +310,15 @@ public class JCrasher {
 	   		new LongOpt("outdir", LongOpt.REQUIRED_ARGUMENT, null, 'o'),
 				new LongOpt("version", LongOpt.NO_ARGUMENT, null, 'v')
 	  };
-	  Getopt g = new Getopt("JCrasher 2", args, "d:hjlo:v;", longopts);
+	  Getopt g = new Getopt("JCrasher 2", args, "ed:hjlo:v;", longopts);
 	  int opt = 0;
 	  while ((opt = g.getopt()) != -1) {
 	  	switch (opt) {
-	  	
+	  		
+	  		case 'e':  //--execute
+	  			execute = true;
+	  			break;
+	  		
 	  		case 'd':  //--depth .. maximum nesting depth.
 	  			parseDepth(g.getOptarg());
 	  			break;
@@ -373,7 +384,7 @@ public class JCrasher {
 		/* Crash loaded class */
 		if (classes!=null && classes.length>0) {
 			final Crasher crasher = new CrasherImpl();
-			crasher.crashClasses(classes);
+			crasher.crashClasses(classes, false);
 		}
 		else { 
 			log.fine("Could not load any classes.");
