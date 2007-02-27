@@ -15,6 +15,9 @@ public interface Crasher {
 
 	/**
 	 * Do bad things with the methods of these classes and talk about them.
+	 * @param pClasses classes to find test cases for.
+	 * @param execute are we allowed to execute the test cases
+	 * we are generating.
 	 */
-	public void crashClasses(Class[] pClasses);
+	public void crashClasses(Class[] pClasses, boolean execute);
 }

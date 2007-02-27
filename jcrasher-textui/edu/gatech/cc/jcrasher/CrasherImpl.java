@@ -34,7 +34,7 @@ public class CrasherImpl implements Crasher {
 	 * an object via combinations of functions in type-space
 	 */
 	protected final TypeGraph typeSpace = TypeGraphImpl.instance();
-	protected final Generator generator = new ExecutingGenerator();
+	protected Generator generator;
 
 
 	/**
@@ -42,9 +42,11 @@ public class CrasherImpl implements Crasher {
 	 * - Discover the relation and print it to screen.
 	 * - Plan to set max. depth.
 	 */
-	public void crashClasses(final Class[] classes) {
+	public void crashClasses(final Class[] classes, boolean execute) {
 		notNull(classes);
 		check(classes.length>0);
+		
+		generator = execute? new ExecutingGenerator(): null;	//TODO
 		
 
 		/* Build up needs-type-for-construction relation.
