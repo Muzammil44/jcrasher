@@ -19,17 +19,31 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.Vector;
 
+import client.Client;
+import client.sub.Loadee;
+import client.sub.Needed;
 import junit.framework.TestCase;
-import edu.gatech.cc.jcrasher.Loadee;
 
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
  */
 public class VariableTest extends TestCase {
 
-  protected final Variable stringX = new Variable<String>(String.class, "x");
-  protected final Variable<Integer> intY = new Variable<Integer>(int.class, "y");
-  protected final Variable<Map> mapZ = new Variable(Map.class, "z");
+  protected final Variable<String> stringX = 
+  	new Variable<String>(String.class, Client.class, "x");
+  
+  protected final Variable<Integer> intY =
+  	new Variable<Integer>(int.class, Client.class, "y");
+  
+  protected final Variable<Map> mapZ =
+  	new Variable<Map>(Map.class, Client.class, "z");
+  
+  protected final Variable<Loadee> loadeeForClient =
+  	new Variable<Loadee>(Loadee.class, Client.class, "a");
+  
+  protected final Variable<Loadee> loadeeForNeeded =
+  	new Variable<Loadee>(Loadee.class, Needed.class, "a");  
+  
   
   /***/
   public void testGetReturnType() {
@@ -39,24 +53,24 @@ public class VariableTest extends TestCase {
   }
 
   /***/
-  public void testVariableNull() {
+  public void testVariableNull() {  
     try {
-      new Variable(null, null);
-      fail("Variable(null, null) not allowed");
+      new Variable<String>(null, Client.class, "a");
+      fail("null argument");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
-      new Variable(String.class, null);
-      fail("Variable(.., null) not allowed");
+      new Variable<String>(String.class, null, "a");
+      fail("null argument");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
-      new Variable(null, "x");
-      fail("Variable(null, ..) not allowed");
+      new Variable<String>(String.class, Client.class, null);
+      fail("null argument");
     }
     catch(RuntimeException e) {  //expected
     }    
@@ -65,30 +79,31 @@ public class VariableTest extends TestCase {
   /***/
   public void testAssign() {
     stringX.assign(null);    
-    assertEquals(null, stringX.assignedValue);
+    assertEquals(null, stringX.value);
     
     stringX.assign("");    
-    assertEquals("", stringX.assignedValue);
+    assertEquals("", stringX.value);
 
     stringX.assign("hallo");    
-    assertEquals("hallo", stringX.assignedValue);    
+    assertEquals("hallo", stringX.value);    
     
-    try {
-      stringX.assign(new Vector());  
-      fail("Cannot assign Vector to a String");
-    }
-    catch(RuntimeException e) {  //expected
-    }    
+//    try {
+//      stringX.assign(new Vector<String>());  
+//      fail("Cannot assign Vector to a String");
+//    }
+//    catch(RuntimeException e) {  //expected
+//    }    
     
-    Integer one = 1;    
+    Integer one = Integer.valueOf(1);    
     intY.assign(one);    
-    assertEquals(one, intY.assignedValue);
+    assertEquals(one, intY.value);
     
     mapZ.assign(null);    
-    assertEquals(null, mapZ.assignedValue);
+    assertEquals(null, mapZ.value);
     
-    mapZ.assign(new HashMap());
-    assertEquals(new HashMap(), mapZ.assignedValue);    
+    HashMap<String, String> m = new HashMap<String, String>();
+    mapZ.assign(m);
+    assertEquals(m, mapZ.value);    
   }
   
   /***/
@@ -100,13 +115,29 @@ public class VariableTest extends TestCase {
   }
 
   /***/
-  public void testToStringClass() {
-    assertEquals("x", stringX.toString(Object.class));
-    assertEquals("x", stringX.toString(Loadee.class));
-    assertEquals("y", intY.toString(Object.class));
-    assertEquals("y", intY.toString(Loadee.class));
-    assertEquals("z", mapZ.toString(Object.class));
-    assertEquals("z", mapZ.toString(Loadee.class));
+  public void testText() {
+    assertEquals("x", stringX.text());
+    assertEquals("y", intY.text());
+    assertEquals("z", mapZ.text());
+    assertEquals("a", loadeeForClient.text());
+    assertEquals("a", loadeeForNeeded.text());
+  }
+  
+  /***/
+  public void testToString() {
+    assertEquals(stringX.toString(), stringX.text());
+    assertEquals(intY.toString(), intY.text());
+    assertEquals(mapZ.toString(), mapZ.text());
+    assertEquals(loadeeForClient.toString(), loadeeForClient.text());
+    assertEquals(loadeeForNeeded.toString(), loadeeForNeeded.text());
   }
 
+  /***/
+  public void testTextDeclaration() {
+    assertEquals("java.lang.String x", stringX.textDeclaration());
+    assertEquals("int y", intY.textDeclaration());
+    assertEquals("java.util.Map z", mapZ.textDeclaration());
+    assertEquals("client.sub.Loadee a", loadeeForClient.textDeclaration());
+    assertEquals("Loadee a", loadeeForNeeded.textDeclaration());
+  }
 }

@@ -16,7 +16,6 @@
 package edu.gatech.cc.jcrasher.plans.expr;
 
 import junit.framework.TestCase;
-import edu.gatech.cc.jcrasher.Loadee;
 
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
@@ -36,8 +35,12 @@ public class DotClassTest extends TestCase {
   }
 
   /***/
-  public void testToStringClass() {
-    assertEquals("Object.class", dotClass.toString(String.class));
-    assertEquals("java.lang.Object.class", dotClass.toString(Loadee.class));
+  public void testText() {
+    assertEquals("java.lang.Object.class", dotClass.text());
   }
+  
+  /***/
+  public void testToString() {
+    assertEquals(dotClass.toString(), dotClass.text());
+  }  
 }

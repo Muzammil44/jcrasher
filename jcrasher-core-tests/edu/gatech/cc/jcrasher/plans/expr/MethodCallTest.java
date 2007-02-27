@@ -15,117 +15,62 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr;
 
-
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+
+import client.Client;
+import client.sub.LoadeeCall;
+import client.sub.LoadeeReflect;
+import client.sub.Needed;
 
 import junit.framework.TestCase;
-import edu.gatech.cc.jcrasher.Loadee;
-import edu.gatech.cc.jcrasher.plans.expr.literals.IntLiteral;
 
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
  */
 public class MethodCallTest extends TestCase {
 
-  protected Method loadeeMethod = null;
-  protected Method loadeeMethodInt = null;
-  protected Method loadeeIntMethod = null;
-  protected Method staticLoadeeMethod = null;
-  protected Method staticLoadeeMethodInt = null;
-  
-  protected Method innerMethod = null;
-  protected Method staticMemberMethod = null;
-  protected Method staticMemberStaticMethod = null;
-  
-  protected MethodCall<Void> loadeeMethodCall = null;
-  protected MethodCall<Void> loadeeMethodCallInt = null;
-  protected MethodCall<Integer> loadeeIntMethodCall = null;
-  protected MethodCall<Void> staticLoadeeMethodCall = null;
-  protected MethodCall<Void> staticLoadeeMethodCallInt = null;  
+	protected final LoadeeReflect loadeeReflect = new LoadeeReflect();
+	protected final LoadeeCall loadeeForClient = 
+		new LoadeeCall(Client.class);
+	protected final LoadeeCall loadeeForNeeded = 
+		new LoadeeCall(Needed.class);
 
-  protected MethodCall<Integer> innerMethodCall = null;
-  protected MethodCall<Integer> staticMemberMethodCall = null;
-  protected MethodCall<Integer> staticMemberStaticMethodCall = null;  
-  
-  protected ConstructorCall<Loadee> loadeeConstructorCall = null;
-  protected ConstructorCall<Loadee.Inner> innerConstructorCall = null;
-  protected ConstructorCall<Loadee.StaticMember> staticMemberConstructorCall = null;
-  protected IntLiteral int5Plan = new IntLiteral(5);
-  
-  @Override
-  protected void setUp() throws Exception {
-    super.setUp();
-    
-    loadeeMethod = Loadee.class.getMethod("meth", new Class[0]);
-    loadeeMethodInt = Loadee.class.getMethod("meth", new Class[]{int.class});
-    loadeeIntMethod = Loadee.class.getMethod("intMeth", new Class[0]);
-    staticLoadeeMethod = Loadee.class.getMethod("staticMeth", new Class[0]);
-    staticLoadeeMethodInt = 
-        Loadee.class.getMethod("staticMeth", new Class[]{int.class});
-   
-    innerMethod = Loadee.Inner.class.getMethod("innerMeth", new Class[0]);
-    staticMemberMethod = Loadee.StaticMember.class.getMethod(
-        "staticMemberMeth", new Class[0]);
-    staticMemberStaticMethod = Loadee.StaticMember.class.getMethod(
-        "staticMemberStaticMeth", new Class[0]);
-    
-    loadeeConstructorCall = new ConstructorCall<Loadee>(
-        Loadee.class.getConstructor(new Class[0]), 
-        new Expression[0]);
-    innerConstructorCall = new ConstructorCall<Loadee.Inner>(
-        Loadee.Inner.class.getConstructor(new Class[]{Loadee.class}), 
-        new Expression[0],
-        loadeeConstructorCall); 
-    staticMemberConstructorCall = new ConstructorCall<Loadee.StaticMember>(
-        Loadee.StaticMember.class.getConstructor(new Class[0]), 
-        new Expression[0]);  
-    
-    loadeeMethodCall = new MethodCall<Void>(
-        loadeeMethod, new Expression[0], loadeeConstructorCall);
-    loadeeMethodCallInt = new MethodCall<Void>(
-        loadeeMethodInt, new Expression[]{int5Plan}, loadeeConstructorCall);
-    loadeeIntMethodCall = new MethodCall<Integer>(
-        loadeeIntMethod, new Expression[0], loadeeConstructorCall);
-    staticLoadeeMethodCall = new MethodCall<Void>(
-        staticLoadeeMethod, new Expression[0]);
-    staticLoadeeMethodCallInt = new MethodCall<Void>(
-        staticLoadeeMethodInt, new Expression[]{int5Plan});
-    
-    innerMethodCall = new MethodCall<Integer>(
-      innerMethod, new Expression[0], innerConstructorCall);
-    staticMemberMethodCall = new MethodCall<Integer>(
-      staticMemberMethod, new Expression[0], staticMemberConstructorCall);
-    staticMemberStaticMethodCall = new MethodCall<Integer>(
-      staticMemberStaticMethod, new Expression[0]);    
-  }
-  
-
+	
   /***/
-  public void testMethodCallMethodExpressionArray() {  
+  public void testMethodCall3() {  
     try {
-      new MethodCall<Integer>(null, null);
-      fail("MethodCall(null, null) not allowed");
+      new MethodCall<Void>(
+      		null,
+      		loadeeReflect.staticMeth(),
+      		new Expression[0]);
+      fail("null argument");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
-      new MethodCall<Integer>(staticLoadeeMethod, null);
-      fail("MethodCall(.., null) not allowed");
+      new MethodCall<Integer>(
+      		Client.class,
+      		null,
+      		new Expression[0]);
+      fail("null argument");
+    }
+    catch(RuntimeException e) {  //expected
+    }
+    
+    try {
+      new MethodCall<Integer>(
+      		Client.class,
+      		loadeeReflect.staticMeth(),
+      		null);
+      fail("null argument");
     }
     catch(RuntimeException e) {  //expected
     }    
     
-    try {
-      new MethodCall<Integer>(null, new Expression[0]);
-      fail("MethodCall(null, ..) not allowed");
-    }
-    catch(RuntimeException e) {  //expected
-    }
     
     try {
-      new MethodCall<Integer>(loadeeMethod, new Expression[0]);
+      new MethodCall<Void>(Client.class, loadeeReflect.meth(), new Expression[0]);
       fail("Wrong constructor for instance method"); 
     }
     catch(RuntimeException e) {  //expected
@@ -133,18 +78,58 @@ public class MethodCallTest extends TestCase {
   }
 
   /***/
-  public void testMethodCallMethodExpressionArrayExpression() {
+  public void testMethodCall4() {
     try {
-      new MethodCall<Integer>(loadeeMethod, new Expression[0], null);
-      fail("MethodCall(.., .., null) not allowed");
+      new MethodCall<Void>(
+      		null,
+      		loadeeReflect.meth(),
+      		new Expression[0],
+      		loadeeForClient.constructor());
+      fail("null argument");
+    }
+    catch(RuntimeException e) {  //expected
+    }
+    
+    try {
+      new MethodCall<Void>(
+      		Client.class,
+      		null,
+      		new Expression[0],
+      		loadeeForClient.constructor());
+      fail("null argument");
+    }
+    catch(RuntimeException e) {  //expected
+    }
+    
+    try {
+      new MethodCall<Void>(
+      		Client.class,
+      		loadeeReflect.meth(),
+      		null,
+      		loadeeForClient.constructor());
+      fail("null argument");
+    }
+    catch(RuntimeException e) {  //expected
+    }
+    
+    try {
+      new MethodCall<Void>(
+      		Client.class,
+      		loadeeReflect.meth(),
+      		new Expression[0],
+      		null);
+      fail("null argument");
     }
     catch(RuntimeException e) {  //expected
     }
     
     try {
       new MethodCall<Integer>(
-          staticLoadeeMethod, new Expression[0], loadeeConstructorCall);
-      fail("Wrong constructor for instance method");
+      		Client.class,
+          loadeeReflect.staticMeth(),
+          new Expression[0],
+          loadeeForClient.constructor());
+      fail("Wrong constructor for static method");
     }
     catch(RuntimeException e) {  //expected
     }       
@@ -152,92 +137,182 @@ public class MethodCallTest extends TestCase {
   
   /***/
   public void testGetReturnType() {
-    assertEquals(Void.TYPE, loadeeMethodCall.getReturnType());
-    assertEquals(Void.TYPE, loadeeMethodCallInt.getReturnType());
-    assertEquals(int.class, loadeeIntMethodCall.getReturnType());
-    assertEquals(Void.TYPE, staticLoadeeMethodCall.getReturnType());
-    assertEquals(Void.TYPE, staticLoadeeMethodCallInt.getReturnType());
+    assertEquals(
+    		Void.TYPE,
+    		loadeeForClient.meth(loadeeForClient.constructor()).getReturnType());
+    assertEquals(
+    		Void.TYPE,
+    		loadeeForClient.meth(loadeeForClient.constructor(true)).getReturnType());    
     
-    assertEquals(int.class, innerMethodCall.getReturnType());
-    assertEquals(int.class, staticMemberMethodCall.getReturnType());
-    assertEquals(int.class, staticMemberStaticMethodCall.getReturnType());
+    assertEquals(
+    		Void.TYPE,
+    		loadeeForClient.meth(loadeeForClient.constructor(true), 3).getReturnType());
+    
+    assertEquals(
+    		int.class,
+    		loadeeForClient.intMeth(loadeeForClient.constructor(true)).getReturnType());
+    
+    assertEquals(Void.TYPE, loadeeForClient.staticMeth().getReturnType());
+    assertEquals(Void.TYPE, loadeeForClient.staticMeth(1).getReturnType());
+    
+    assertEquals(
+    		int.class,
+    		loadeeForClient.innerMeth(loadeeForClient.
+    				innerConstructor(loadeeForClient.constructor())).getReturnType());
+    
+    assertEquals(
+    		int.class,
+    		loadeeForClient.staticMemberStaticMethod().getReturnType());
+    
+    assertEquals(
+    		int.class,
+    		loadeeForClient.staticMemberMeth(loadeeForClient.
+    				staticMemberConstructor()).getReturnType());
   }
 
+  
   /***/
   public void testExecute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException {
-    loadeeMethodCall.execute();
+  	loadeeForClient.meth(loadeeForClient.constructor()).execute();
     try {
-      loadeeMethodCallInt.execute();
+    	loadeeForClient.meth(loadeeForClient.constructor(), 3).execute();
       fail("Should have crashed");
     }
     catch(InvocationTargetException e) {  //expected
     }          
-    Object res3 = loadeeIntMethodCall.execute();
-    assertEquals(Integer.valueOf(1), res3);
+    Object res1 = loadeeForClient.intMeth(loadeeForClient.constructor()).execute();
+    assertEquals(Integer.valueOf(1), res1);
     
-    staticLoadeeMethodCall.execute();
+    loadeeForClient.staticMeth().execute();
     try {
-      staticLoadeeMethodCallInt.execute();
+    	loadeeForClient.staticMeth(7).execute();
       fail("Should have crashed");
     }
     catch(InvocationTargetException e) {  //expected
     }  
    
-    assertEquals(Integer.valueOf(1), innerMethodCall.execute());
-    assertEquals(Integer.valueOf(1), staticMemberMethodCall.execute());
-    assertEquals(Integer.valueOf(1), staticMemberStaticMethodCall.execute());
+    assertEquals(
+    		Integer.valueOf(1),
+    		loadeeForClient.innerMeth(loadeeForClient.
+    				innerConstructor(loadeeForClient.constructor())).execute());
+    
+    assertEquals(
+    		Integer.valueOf(1),
+    		loadeeForClient.staticMemberMeth(loadeeForClient.
+    				staticMemberConstructor()).execute());
+    
+    assertEquals(
+    		Integer.valueOf(1),
+    		loadeeForClient.staticMemberStaticMethod().execute());
   }
 
   /***/
-  public void testToStringClass() {
+  public void testText() {
     assertEquals(
-      "(new edu.gatech.cc.jcrasher.Loadee()).meth()",
-      loadeeMethodCall.toString(Object.class));
+    		"(new client.sub.Loadee()).meth()",
+    		loadeeForClient.meth(loadeeForClient.constructor()).text());
     
     assertEquals(
-      "(new Loadee()).meth()",
-      loadeeMethodCall.toString(Loadee.class));    
-    assertEquals(
-      "(new Loadee()).meth(5)",
-      loadeeMethodCallInt.toString(Loadee.class));
-    assertEquals(
-      "(new Loadee()).intMeth()",
-      loadeeIntMethodCall.toString(Loadee.class));
+    		"(new Loadee(-1)).meth()",
+    		loadeeForNeeded.meth(loadeeForNeeded.constructor(-1)).text());        
     
     assertEquals(
-      "edu.gatech.cc.jcrasher.Loadee.staticMeth()",
-      staticLoadeeMethodCall.toString(Object.class));
+        "(new client.sub.Loadee()).meth(4)",
+        loadeeForClient.meth(loadeeForClient.constructor(), 4).text());
+      
+    assertEquals(
+        "(new Loadee(-7)).meth(6)",
+        loadeeForNeeded.meth(loadeeForNeeded.constructor(-7), 6).text());           
     
     assertEquals(
-      "Loadee.staticMeth()",
-      staticLoadeeMethodCall.toString(Loadee.class));
+    		"(new Loadee(true)).intMeth()",
+    		loadeeForNeeded.intMeth(loadeeForNeeded.constructor(true)).text());
+    
     assertEquals(
-      "Loadee.staticMeth(5)",
-      staticLoadeeMethodCallInt.toString(Loadee.class));
+    		"client.sub.Loadee.staticMeth()",
+    		loadeeForClient.staticMeth().text());
+    
+    assertEquals(
+        "Loadee.staticMeth()",
+        loadeeForNeeded.staticMeth().text());
+
+    assertEquals(
+        "client.sub.Loadee.staticMeth(8)",
+        loadeeForClient.staticMeth(8).text());
+      
+    assertEquals(
+        "Loadee.staticMeth(9)",
+        loadeeForNeeded.staticMeth(9).text());
   }
 
   /***/
-  public void testToStringClassNested() {
+  public void testTextNested() {
     assertEquals(
-      "((new Loadee()).new Inner()).innerMeth()",
-      innerMethodCall.toString(Loadee.class));
-    assertEquals(
-      "(new Loadee.StaticMember()).staticMemberMeth()",
-      staticMemberMethodCall.toString(Loadee.class));
-    assertEquals(
-      "Loadee.StaticMember.staticMemberStaticMeth()",
-      staticMemberStaticMethodCall.toString(Loadee.class));
+    		"((new client.sub.Loadee(4)).new Inner(3)).innerMeth()",
+    		loadeeForClient.innerMeth(
+    				loadeeForClient.innerConstructor(loadeeForClient.constructor(4), 3)).text());
     
     assertEquals(
-      "((new edu.gatech.cc.jcrasher.Loadee()).new Inner()).innerMeth()",
-      innerMethodCall.toString(Object.class));
+    		"((new Loadee(false)).new Inner(-9)).innerMeth()",
+    		loadeeForNeeded.innerMeth(
+    				loadeeForNeeded.innerConstructor(loadeeForNeeded.constructor(false), -9)).text());
+    
+
     assertEquals(
-      "(new edu.gatech.cc.jcrasher.Loadee.StaticMember()).staticMemberMeth()",
-      staticMemberMethodCall.toString(Object.class));
+    		"(new client.sub.Loadee.StaticMember()).staticMemberMeth()",
+    		loadeeForClient.staticMemberMeth(
+    				loadeeForClient.staticMemberConstructor()).text());
+
     assertEquals(
-      "edu.gatech.cc.jcrasher.Loadee.StaticMember.staticMemberStaticMeth()",
-      staticMemberStaticMethodCall.toString(Object.class));
+        "(new Loadee.StaticMember(-5)).staticMemberMeth()",
+        loadeeForNeeded.staticMemberMeth(
+        		loadeeForNeeded.staticMemberConstructor(-5)).text());
+    
+    
+    assertEquals(
+    		"client.sub.Loadee.StaticMember.staticMemberStaticMeth()",
+    		loadeeForClient.staticMemberStaticMethod().text());
+    
+    assertEquals(
+    		"Loadee.StaticMember.staticMemberStaticMeth()",
+        loadeeForNeeded.staticMemberStaticMethod().text());
   }
 
+  /***/
+  public void testToStringNested() {
+    assertEquals(
+    		loadeeForClient.innerMeth(
+    				loadeeForClient.innerConstructor(loadeeForClient.constructor(4), 3)).toString(),
+    		loadeeForClient.innerMeth(
+    				loadeeForClient.innerConstructor(loadeeForClient.constructor(4), 3)).text());
+    
+    assertEquals(
+    		loadeeForNeeded.innerMeth(
+    				loadeeForNeeded.innerConstructor(loadeeForNeeded.constructor(false), -9)).toString(),
+    		loadeeForNeeded.innerMeth(
+    				loadeeForNeeded.innerConstructor(loadeeForNeeded.constructor(false), -9)).text());
+    
+
+    assertEquals(
+    		loadeeForClient.staticMemberMeth(
+    				loadeeForClient.staticMemberConstructor()).toString(),
+    		loadeeForClient.staticMemberMeth(
+    				loadeeForClient.staticMemberConstructor()).text());
+
+    assertEquals(
+        loadeeForNeeded.staticMemberMeth(
+        		loadeeForNeeded.staticMemberConstructor(-5)).toString(),
+        loadeeForNeeded.staticMemberMeth(
+        		loadeeForNeeded.staticMemberConstructor(-5)).text());  
+    
+    
+    assertEquals(
+    		loadeeForClient.staticMemberStaticMethod().toString(),
+    		loadeeForClient.staticMemberStaticMethod().text());
+    
+    assertEquals(
+    		loadeeForNeeded.staticMemberStaticMethod().toString(),
+        loadeeForNeeded.staticMemberStaticMethod().text());
+  }
 }
