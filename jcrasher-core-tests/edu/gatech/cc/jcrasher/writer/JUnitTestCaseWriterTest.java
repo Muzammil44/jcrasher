@@ -21,8 +21,9 @@ import static edu.gatech.cc.jcrasher.Constants.TAB;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 
+import client.sub.Loadee;
+
 import junit.framework.TestCase;
-import edu.gatech.cc.jcrasher.Loadee;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.plans.expr.FunctionCall;
@@ -66,16 +67,19 @@ public class JUnitTestCaseWriterTest extends TestCase {
     Method loadeeStaticMeth =
         Loadee.class.getMethod("staticMeth", new Class[]{int.class});
     
-    testeeCall = new ConstructorCall<Loadee>(loadeeConstructor, new Expression[0]);    
+    testeeCall = new ConstructorCall<Loadee>(
+    		Loadee.class,
+    		loadeeConstructor, new Expression[0]);    
     testeeCrash = new MethodCall<Void>(
+    		Loadee.class,
         loadeeStaticMeth,
         new Expression[]{new IntLiteral(3)});
     
     testeeCallStmt = new ExpressionStatement<Loadee>(testeeCall);
     testeeCrashStmt = new ExpressionStatement<Void>(testeeCrash);
     
-    blockCall = new BlockImpl(loadeeConstructor);
-    blockCrash = new BlockImpl(loadeeStaticMeth);
+    blockCall = new BlockImpl(Loadee.class,loadeeConstructor, TAB+TAB);
+    blockCrash = new BlockImpl(Loadee.class,loadeeStaticMeth, TAB+TAB);
     
     blockCall.setBlockStmts(new Statement[]{testeeCallStmt});
     blockCrash.setBlockStmts(new Statement[]{testeeCrashStmt});
@@ -375,7 +379,7 @@ public class JUnitTestCaseWriterTest extends TestCase {
     	  TAB+" */"+        																					NL+                    		
         TAB+"public void test0() throws Throwable {"+               NL+
         TAB+TAB+"try"+
-                blocks1[0].toString(TAB+TAB, Loadee.class)+
+                blocks1[0].text()+
                                                                     NL+
         TAB+TAB+"catch (Exception e) {dispatchException(e);}"+      NL+
         TAB+"}"+                                                    NL,
@@ -389,7 +393,7 @@ public class JUnitTestCaseWriterTest extends TestCase {
     	  TAB+" */"+        																					NL+    		
         TAB+"public void test0() throws Throwable {"+               NL+
         TAB+TAB+"try"+
-                blocks2[0].toString(TAB+TAB, Loadee.class)+
+                blocks2[0].text()+
                                                                     NL+
         TAB+TAB+"catch (Exception e) {dispatchException(e);}"+      NL+
         TAB+"}"+                                                    NL+
@@ -399,7 +403,7 @@ public class JUnitTestCaseWriterTest extends TestCase {
         TAB+" */"+        																					NL+    		       
         TAB+"public void test1() throws Throwable {"+               NL+
         TAB+TAB+"try"+
-                blocks2[1].toString(TAB+TAB, Loadee.class)+
+                blocks2[1].text()+
                                                                     NL+
         TAB+TAB+"catch (Exception e) {dispatchException(e);}"+      NL+
         TAB+"}"+                                                    NL,
@@ -412,13 +416,13 @@ public class JUnitTestCaseWriterTest extends TestCase {
     	  TAB+" * JCrasher-generated test case."+											NL+
     	  TAB+" */"+        																					NL+    		    		
         TAB+"public void test0() throws Throwable "+
-                blocks2[0].toString(TAB, Loadee.class)+             NL+
+                blocks2[0].text()+             											NL+
                                                                     NL+                                                            
         TAB+"/**"+																									NL+
         TAB+" * JCrasher-generated test case."+											NL+
         TAB+" */"+        																					NL+    		               
         TAB+"public void test1() throws Throwable "+
-                blocks2[1].toString(TAB, Loadee.class)+             NL,
+                blocks2[1].text()+             											NL,
         junitTestCaseWriter.getTestCases());        
   }
 }

@@ -20,8 +20,9 @@ import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 import java.lang.reflect.InvocationTargetException;
 
+import client.sub.Loadee;
+
 import junit.framework.TestCase;
-import edu.gatech.cc.jcrasher.Loadee;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.plans.expr.MethodCall;
@@ -48,17 +49,21 @@ public class ExpressionStatementTest extends TestCase {
     super.setUp();
      
     loadeeConstructorCall = new ConstructorCall<Loadee>(
+    		Loadee.class,
         Loadee.class.getConstructor(new Class[0]), 
         new Expression[0]);
     innerConstructorCall = new ConstructorCall<Loadee.Inner>(
+    		Loadee.class,
         Loadee.Inner.class.getConstructor(new Class[]{Loadee.class}), 
         new Expression[0],
         loadeeConstructorCall);
     innerMethodCall = new MethodCall<Integer>(
+    		Loadee.class,
         Loadee.Inner.class.getMethod("innerMeth", new Class[0]),
         new Expression[0],
         innerConstructorCall);    
     loadeeMethodCallInt = new MethodCall<Void>(
+    		Loadee.class,
         Loadee.class.getMethod("meth", new Class[]{int.class}),
         new Expression[]{new IntLiteral(5)},
         loadeeConstructorCall);
@@ -97,18 +102,18 @@ public class ExpressionStatementTest extends TestCase {
   /***/
   public void testToStringClass() {
     assertEquals(
-      innerMethodCall.toString(Object.class)+";",
-      innerMethodCallStmt.toString(Object.class));   
+      innerMethodCall.text()+";",
+      innerMethodCallStmt.text());   
     assertEquals(
-      innerMethodCall.toString(Loadee.class)+";",
-      innerMethodCallStmt.toString(Loadee.class));    
+      innerMethodCall.text()+";",
+      innerMethodCallStmt.text());    
     
     assertEquals(
-      loadeeMethodCallInt.toString(Object.class)+";",
-      loadeeMethodCallIntStmt.toString(Object.class));
+      loadeeMethodCallInt.text()+";",
+      loadeeMethodCallIntStmt.text());
     assertEquals(
-      loadeeMethodCallInt.toString(Loadee.class)+";",
-      loadeeMethodCallIntStmt.toString(Loadee.class));
+      loadeeMethodCallInt.text()+";",
+      loadeeMethodCallIntStmt.text());
   }
 
 }
