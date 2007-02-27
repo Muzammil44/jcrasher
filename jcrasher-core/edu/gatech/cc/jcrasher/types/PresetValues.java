@@ -85,8 +85,8 @@ public class PresetValues {
       e.printStackTrace();
     }
     notNull(new_Object);
-    return new ConstructorCall[] {
-    		new ConstructorCall<Object>(new_Object, new Expression[0])};
+    return new ConstructorCall[] {	//FIXME: Vector just a placeholder for real testee
+    		new ConstructorCall<Object>(Vector.class, new_Object, new Expression[0])};
   }
 
 
@@ -103,7 +103,7 @@ public class PresetValues {
     notNull(con);
 
     return new Expression[]{
-    		new ConstructorCall<Hashtable>(con, new Expression[0])
+    		new ConstructorCall<Hashtable>(Object.class, con, new Expression[0])
     };
   }
 
@@ -120,7 +120,7 @@ public class PresetValues {
     }
     notNull(con);
 
-    return new Expression[]{new ConstructorCall<Vector>(con, new Expression[0])};
+    return new Expression[]{new ConstructorCall<Vector>(Vector.class, con, new Expression[0])};
   }
 
 
@@ -131,9 +131,9 @@ public class PresetValues {
     Class<int[]> c = int[].class;
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[2];
 
-    plans[0] = new ArrayCreateAndInit<int[]>(c); // {}
+    plans[0] = new ArrayCreateAndInit<int[]>(c, Vector.class); // {}
     plans[0].setComponentPlans(new PrimitiveLiteral[0]);
-    plans[1] = new ArrayCreateAndInit<int[]>(c); // {0}
+    plans[1] = new ArrayCreateAndInit<int[]>(c, Vector.class); // {0}
     plans[1].setComponentPlans(new PrimitiveLiteral[]{new IntLiteral(0)});
     return plans;
   }
@@ -146,9 +146,9 @@ public class PresetValues {
     Class<String[]> c = String[].class;
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[2];
 
-    plans[0] = new ArrayCreateAndInit<String[]>(c); // {}
+    plans[0] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {}
     plans[0].setComponentPlans(new StringLiteral[0]);
-    plans[1] = new ArrayCreateAndInit<String[]>(c); // {""}
+    plans[1] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {""}
     plans[1].setComponentPlans(new StringLiteral[]{new StringLiteral("")});
     return plans;
   }
@@ -160,7 +160,7 @@ public class PresetValues {
   protected static <T> Expression[] getEmptyArray(final Class<T> c) {
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[1];
 
-    plans[0] = new ArrayCreateAndInit<T>(c); // {}
+    plans[0] = new ArrayCreateAndInit<T>(c, Vector.class); // {}
     plans[0].setComponentPlans(new Expression[0]);
 
     return plans;

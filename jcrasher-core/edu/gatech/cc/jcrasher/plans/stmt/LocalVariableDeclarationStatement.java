@@ -46,8 +46,9 @@ public class LocalVariableDeclarationStatement<V> implements BlockStatement {
    * Constructor
    */
   public LocalVariableDeclarationStatement(
-      final Variable<V> pID, 
-      final Expression<? extends V> pPlan) {
+  		Class<?> testeeType,
+      Variable<V> pID, 
+      Expression<? extends V> pPlan) {
     
     notNull(pID);
     notNull(pPlan);
@@ -79,16 +80,8 @@ public class LocalVariableDeclarationStatement<V> implements BlockStatement {
    * <li>A a = new A(null);
    * <li>B b = a.m(0);
    */
-  public String toString(final Class<?> testee) {
-    notNull(testee);
-    
-    final String className =
-        CodeGenFct.getName(var.getReturnType(), testee);
-
-    final String res = className + " " + var.toString(testee) + " = "
-      + varInitPlan.toString(testee) + ";";
-
-    return notNull(res);
+  public String text() {    
+    return var.textDeclaration()+" = "+varInitPlan.text()+";";
   }
   
   
@@ -97,6 +90,6 @@ public class LocalVariableDeclarationStatement<V> implements BlockStatement {
    */
   @Override
   public String toString() {
-    return toString(var.getReturnType());
+    return text();
   }
 }

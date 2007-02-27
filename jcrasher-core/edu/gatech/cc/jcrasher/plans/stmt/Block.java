@@ -35,17 +35,6 @@ import edu.gatech.cc.jcrasher.plans.expr.Variable;
 public interface Block extends Statement {
 
   /**
-   * To be called from above, like CodeWriter
-   * 
-   * @param pIdent ident on which to put block opening/ closing bracket
-   * @param testee the class under test
-   * @return a specialized representation of the test block like:
-   *  { A.m(null); }
-   */
-  public String toString(final String pIdent, final Class<?> testee);
-
-
-  /**
    * @return testee that this block contains code for calling.
    */
   public Member getTestee();

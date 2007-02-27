@@ -16,6 +16,7 @@ import java.util.List;
 import edu.gatech.cc.jcrasher.Constants;
 import edu.gatech.cc.jcrasher.Constants.PlanFilter;
 import edu.gatech.cc.jcrasher.Constants.Visibility;
+import edu.gatech.cc.jcrasher.plans.JavaCode;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.types.ClassWrapperImpl;
@@ -81,8 +82,8 @@ public class ConstructorNode<T> extends FunctionNode<T> {
    * @return concrete method plan according to index.
    * @see PlanSpaceNode#getPlan(int)
    */
-  public Expression<T> getPlan(int planIndex) {
-    Expression[] depPlans = getParamPlans(planIndex); // enforces our precondition
+  public Expression<T> getPlan(int planIndex, Class<?> testeeType) {
+    Expression<?>[] depPlans = getParamPlans(planIndex, testeeType); // enforces our precondition
 
     /* distinguish inner class from params */
     if (typeGraph.getWrapper(con.getDeclaringClass()).isInnerClass()) {
@@ -90,15 +91,15 @@ public class ConstructorNode<T> extends FunctionNode<T> {
                                                                        
       check(depPlans.length >= 1);
 
-      Expression[] paramPlans = new Expression[depPlans.length - 1];
+      Expression<?>[] paramPlans = new Expression[depPlans.length - 1];
       for (int j = 0; j < paramPlans.length; j++) {
         paramPlans[j] = depPlans[j + 1];
       }
-      return new ConstructorCall<T>(con, paramPlans, depPlans[0]);
+      return new ConstructorCall<T>(testeeType, con, paramPlans, depPlans[0]);
     } 
     
     /* Non-inner class constructor with >=0 arguments */
-    return new ConstructorCall<T>(con, depPlans);
+    return new ConstructorCall<T>(testeeType, con, depPlans);
   }
 
 

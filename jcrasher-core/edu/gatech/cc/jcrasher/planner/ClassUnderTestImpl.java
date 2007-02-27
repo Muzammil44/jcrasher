@@ -42,6 +42,7 @@ extends TypeNode<T>
 implements ClassUnderTest<T> {
 
   protected Class<T> wrappedClass = null;
+  protected String spaces = "  ";
 
   /**
    * Constructor to be used from outside JCrasher---to just use the
@@ -123,7 +124,7 @@ implements ClassUnderTest<T> {
    * 
    * Precond: 0 <= planIndex < getPlanSpaceSize() Postcond: no side-effects
    */
-  public Block getBlock(int planIndex) {
+  public Block getBlock(int planIndex, Class<?> testeeType) {
     Block res = null;
 
     /* retrieve function's childrens' plans of given index */
@@ -133,7 +134,7 @@ implements ClassUnderTest<T> {
                                                                     // plan
                                                                     // space
     FunctionNode<?> node = (FunctionNode) getChild(childIndex);
-    Expression[] paramPlans = node.getParamPlans(childPlanIndex); // get params' plans
+    Expression[] paramPlans = node.getParamPlans(childPlanIndex, testeeType); // get params' plans
 
     /* TODO(csallner): hack, check of which kind the child is */
     if (node instanceof ConstructorNode) {
@@ -159,13 +160,14 @@ implements ClassUnderTest<T> {
    * 2004-04-22 changed to public to allow access from ESC extension.
    */
   public Block getTestBlockForCon(
-      final Constructor<T> pCon,
-      final Expression<?>[] curPlans)
+      Constructor<T> pCon,
+      Expression<?>[] curPlans)
   {
     notNull(pCon);
     notNull(curPlans);
 
-    final Block b = new BlockImpl(pCon); // context for this combination
+    final Class<T> testeeType = pCon.getDeclaringClass();
+    final Block b = new BlockImpl(testeeType, pCon, spaces); // context for this combination
 
     /* Simple version: one stmt for each instance and exec fct */
     final BlockStatement[] bs = new BlockStatement[curPlans.length + 1];
@@ -177,7 +179,10 @@ implements ClassUnderTest<T> {
     /* Generate local variable for each needed instance (-plan) */
     for (int i = 0; i < curPlans.length; i++) {
       ids[i] = b.getNextID(paramsTypes[i]); // A a = ...
-      bs[i] = new LocalVariableDeclarationStatement(ids[i], curPlans[i]);
+      bs[i] = new LocalVariableDeclarationStatement(
+      		testeeType,
+      		ids[i],
+      		curPlans[i]);
     }
 
     /*
@@ -198,15 +203,15 @@ implements ClassUnderTest<T> {
       for (int j = 0; j < paramPlans.length; j++) {
         paramPlans[j] = ids[j + 1];
       }
-      conPlan = new ConstructorCall<T>(pCon, paramPlans, ids[0]);
+      conPlan = new ConstructorCall<T>(testeeType, pCon, paramPlans, ids[0]);
     } 
     else { // Non-inner class constructor with >=1 arguments
-      conPlan = new ConstructorCall<T>(pCon, ids);
+      conPlan = new ConstructorCall<T>(testeeType, pCon, ids);
     }
 
     /* Last statement */
     bs[curPlans.length] = 
-    	new LocalVariableDeclarationStatement<T>(returnID, conPlan);
+    	new LocalVariableDeclarationStatement<T>(testeeType, returnID, conPlan);
 
     /*
      * Assemble and append generated block
@@ -224,13 +229,14 @@ implements ClassUnderTest<T> {
    * 2004-04-22 changed to public to allow access from ESC extension.
    */
   public Block getTestBlockForMeth(
-      final Method pMeth,
-      final Expression[] curPlans) {
+      Method pMeth,
+      Expression[] curPlans) {
     
     notNull(pMeth);
     notNull(curPlans);
-
-    final Block b = new BlockImpl(pMeth); // context for this combination
+    
+    final Class<T> testeeType = (Class<T>) pMeth.getDeclaringClass();
+    final Block b = new BlockImpl(testeeType, pMeth, spaces); // context for this combination
 
     /* Simple version: one stmt for each instance and exec fct */
     BlockStatement[] bs = new BlockStatement[curPlans.length + 1];
@@ -253,7 +259,7 @@ implements ClassUnderTest<T> {
     /* Generate local variable for each needed param instance (-plan) */
     for (int i = 0; i < paramIDs.length; i++) {
       paramIDs[i] = b.getNextID(paramsTypes[i]); // A a = ...
-      bs[i] = new LocalVariableDeclarationStatement(paramIDs[i], paramPlans[i]);
+      bs[i] = new LocalVariableDeclarationStatement(testeeType, paramIDs[i], paramPlans[i]);
     }
 
 
@@ -271,12 +277,15 @@ implements ClassUnderTest<T> {
 
       /* Generate local variable for victim */
       Variable vID = b.getNextID(pMeth.getDeclaringClass()); // A a = ...
-      bs[curPlans.length - 1] = new LocalVariableDeclarationStatement(vID,
-        curPlans[0]);
+      bs[curPlans.length - 1] = 
+      	new LocalVariableDeclarationStatement(
+      			pMeth.getDeclaringClass(), 
+      			vID,
+      			curPlans[0]);
 
-      conPlan = new MethodCall(pMeth, paramIDs, vID);
+      conPlan = new MethodCall(testeeType, pMeth, paramIDs, vID);
     } else { // Static method with >=1 arguments
-      conPlan = new MethodCall(pMeth, paramIDs);
+      conPlan = new MethodCall(testeeType, pMeth, paramIDs);
     }
 
     /* Last statement */
