@@ -1,5 +1,5 @@
 /*
- * ExecutingGenerator.java
+ * ExecutingPlanner.java
  * 
  * Copyright 2006 Christoph Csallner and Yannis Smaragdakis.
  */
@@ -24,7 +24,7 @@ import edu.gatech.cc.jcrasher.plans.stmt.Block;
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class ExecutingGenerator implements Generator {
+public class ExecutingPlanner {
 	
 	protected static final Planner planner = PlannerImpl.instance();
 	protected static final Random random = new Random();

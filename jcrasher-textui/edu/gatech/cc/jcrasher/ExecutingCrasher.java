@@ -22,13 +22,16 @@ import edu.gatech.cc.jcrasher.writer.TestCaseWriter;
  */
 public class ExecutingCrasher extends AbstractCrasher {	
 	
+	protected final ExecutingPlanner executingPlanner =
+		new ExecutingPlanner();
+	
 	/**
 	 * Constructor
 	 * 
 	 * @param classes to crash. 
 	 */
 	public ExecutingCrasher(Class[] classes) {
-		super(classes, new ExecutingGenerator());
+		super(classes);
 	}
 
 
@@ -37,7 +40,7 @@ public class ExecutingCrasher extends AbstractCrasher {
 	 */
 	public void crashClasses() {
 		for (Class<?> c: classes) {			
-			final List<Block> blockList = generator.getBlocks(c, MAX_TEST_CASES_TRIED_CLASS);
+			final List<Block> blockList = executingPlanner.getBlocks(c, MAX_TEST_CASES_TRIED_CLASS);
 			final Block[] blocks = blockList.toArray(new Block[blockList.size()]);
 			final TestCaseWriter testCaseWriter = new JUnitTestCaseWriter(
 					c, "No comment", Constants.JUNIT_FILTERING, blocks);

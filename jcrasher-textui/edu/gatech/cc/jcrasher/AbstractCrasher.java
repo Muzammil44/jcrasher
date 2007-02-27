@@ -16,7 +16,7 @@ import edu.gatech.cc.jcrasher.types.TypeGraphImpl;
 
 /**
  * Crawls classes to be tested. This populates our type graph.
- * Then uses the generator to generate test cases.
+ * Then uses the planner to pick and generate test cases.
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
@@ -28,8 +28,6 @@ public abstract class AbstractCrasher implements Crasher {
 	 */
 	protected final TypeGraph typeGraph = TypeGraphImpl.instance();
 	
-	protected Generator generator;
-	
 	/**
 	 * Classes to crash.
 	 */
@@ -39,8 +37,7 @@ public abstract class AbstractCrasher implements Crasher {
 	/**
 	 * Constructor
 	 */
-	protected AbstractCrasher(Class[] classes, Generator generator) {
-		this.generator = notNull(generator);
+	protected AbstractCrasher(Class[] classes) {
 		this.classes = notNull(classes);
 		check(classes.length>0);
 		
