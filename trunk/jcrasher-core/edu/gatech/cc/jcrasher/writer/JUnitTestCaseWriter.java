@@ -152,6 +152,7 @@ implements TestCaseWriter
     if (doFilter && (testedMethName != null)) {
       /* override default in FilteringTestCase */
       sb.append(
+      	TAB+"@Override"+                     																NL+
         TAB+"protected String getNameOfTestedMeth() {"+                     NL+
         TAB+TAB+"return \""+qualTesteeName+"."+testedMethName+"\";"+        NL+
         TAB+"}"+                                                            NL+

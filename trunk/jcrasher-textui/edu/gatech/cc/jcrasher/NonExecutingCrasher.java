@@ -17,6 +17,8 @@ import edu.gatech.cc.jcrasher.planner.ClassUnderTest;
 import edu.gatech.cc.jcrasher.planner.Planner;
 import edu.gatech.cc.jcrasher.planner.PlannerImpl;
 import edu.gatech.cc.jcrasher.plans.stmt.Block;
+import edu.gatech.cc.jcrasher.writer.JUnitAll;
+import edu.gatech.cc.jcrasher.writer.JUnitAllImpl;
 import edu.gatech.cc.jcrasher.writer.JUnitTestCaseWriter;
 import edu.gatech.cc.jcrasher.writer.TestCaseWriter;
 
@@ -37,6 +39,11 @@ public class NonExecutingCrasher extends AbstractCrasher {
 	 * FIXME: Replace by NonExecutingPlanner to hide PlannerImpl.
 	 */
 	protected final Planner planner = PlannerImpl.instance();
+	
+	/**
+	 * Aggregate test suite
+	 */
+	protected final JUnitAll junitAll = new JUnitAllImpl();
 	
 	/**
 	 * Constructor
@@ -89,6 +96,11 @@ public class NonExecutingCrasher extends AbstractCrasher {
 
 
 	public void crashClasses() {
+		
+		if (Constants.OUT_DIR==null)
+			junitAll.create(classes[0]);
+		else
+			junitAll.create(Constants.OUT_DIR.getAbsolutePath());
 		
 		/* 
 		 * Determine size of each class's plan-space --> sum = total space 
@@ -185,9 +197,13 @@ public class NonExecutingCrasher extends AbstractCrasher {
 				codeWriter.write();
 				
 				arrayCursor += blocks.length;
+				
+				junitAll.addTestSuite(classes[i].getName()+"Test"+sliceCount);
 			}
 			//codeWriter.generateSuite(classes[i], sliceCount);	//create a management class
 		}
+		
+		junitAll.finish();
 	}
 	
 	
