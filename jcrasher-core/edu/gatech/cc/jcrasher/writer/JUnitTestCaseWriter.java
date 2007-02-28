@@ -115,14 +115,14 @@ implements TestCaseWriter
         " extends "+qualSuperClassName+" {"+                                NL+
         TAB+                                                                NL+
         getJavaDocComment("Executed before each testXXX().", TAB)+
-        TAB+"@Override"+                                     								NL+
+        getOverride()+
         TAB+"protected void setUp() {"+                                     NL+
         reinitCode+
         TAB+TAB+"//TODO: my setup code goes here."+                         NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL+
         getJavaDocComment("Executed after each testXXX().", TAB)+
-        TAB+"@Override"+                                     								NL+
+        getOverride()+
         TAB+"protected void tearDown() throws Exception {"+                 NL+
         TAB+TAB+"super.tearDown();"+                                        NL+
         TAB+TAB+"//TODO: my tear down code goes here."+                     NL+
@@ -150,9 +150,8 @@ implements TestCaseWriter
     final StringBuilder sb = new StringBuilder();
     
     if (doFilter && (testedMethName != null)) {
-      /* override default in FilteringTestCase */
       sb.append(
-      	TAB+"@Override"+                     																NL+
+      	getOverride()+
         TAB+"protected String getNameOfTestedMeth() {"+                     NL+
         TAB+TAB+"return \""+qualTesteeName+"."+testedMethName+"\";"+        NL+
         TAB+"}"+                                                            NL+
