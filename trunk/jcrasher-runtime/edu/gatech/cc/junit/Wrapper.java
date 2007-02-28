@@ -5,18 +5,19 @@
  */
 package edu.gatech.cc.junit;
 
+import static edu.gatech.cc.jcrasher.Assertions.notNull;
+
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
  */
 public abstract class Wrapper extends RuntimeException {
-	protected RuntimeException e=null;
+	protected RuntimeException e;
 
 	/**
 	 * Constructor
 	 */
 	public Wrapper(RuntimeException ex) {
-		assert ex!=null;
-		e = ex;
+		this.e = notNull(ex);
 	}
 	
 	@Override

@@ -22,6 +22,7 @@ import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.Type;
 
+import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 /**
  * CopyCLinitClassLoader
@@ -164,8 +165,8 @@ public class CopyCLinitClassLoader
 		/* Skim thru all fub-methods to find <clinit>() */
 		MethodGen _clinit = null;
 		for(int i=0; i < clazz.getMethods().length; i++) {
-			assert clazz.getMethods()[i] != null;
-			assert clazz.getMethods()[i].getName() != null;
+			notNull(clazz.getMethods()[i]);
+			notNull(clazz.getMethods()[i].getName());
 			if (clazz.getMethods()[i].getName().equals("<clinit>")) {
 				_clinit = new MethodGen(
 					clazz.getMethods()[i],	//found <clinit>()
@@ -240,7 +241,7 @@ public class CopyCLinitClassLoader
 	 * Replace putstatic with pop if final
 	 */
 	private void modifyclreinit(MethodGen clreinit, ClassGen clazz) {
-		assert clreinit != null;
+		notNull(clreinit);
 		
 		/* replace putstatic with pop iff final field concerned */	
 		for (Iterator i=clreinit.getInstructionList().iterator(); i.hasNext();) {

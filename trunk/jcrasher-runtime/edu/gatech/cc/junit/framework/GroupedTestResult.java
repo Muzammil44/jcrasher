@@ -15,12 +15,12 @@ import edu.gatech.cc.junit.IntendedException;
 import edu.gatech.cc.junit.Wrapper;
 import edu.gatech.cc.junit.textui.RaGTestRunner;
 
+import static edu.gatech.cc.jcrasher.Assertions.notNull;
+
 /**
- * GroupedTestResult
  * Suppresses all exceptions similar to previously recorded exceptions.
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
- * @version	$Id: $
  */
 public class GroupedTestResult extends TestResult {
 
@@ -33,10 +33,12 @@ public class GroupedTestResult extends TestResult {
 	
 	/* @return if stack1 has the same top element and is shorter than stack2. */
 	protected boolean isMoreFocused(Throwable t1, Throwable t2) {
-		assert t1!=null && t2!=null;
+		notNull(t1);
+		notNull(t2);
 		StackTraceElement[] stack1 = t1.getStackTrace();
 		StackTraceElement[] stack2 = t2.getStackTrace();
-		assert stack1!=null && stack2!=null;
+		notNull(stack1);
+		notNull(stack2);
 		
 		return hasSameTop(stack1, stack2) && stack1.length<stack2.length;
 	}
@@ -45,7 +47,8 @@ public class GroupedTestResult extends TestResult {
 	/* @return true iff stack1 has the same element on the top of its stack
 	 * as stack2 has on the top of its stack. */
 	protected boolean hasSameTop(StackTraceElement[] stack1, StackTraceElement[] stack2) {
-		assert stack1!=null && stack2!=null;		
+		notNull(stack1);
+		notNull(stack2);		
 		return stack1[0].equals(stack2[0]);
 	}
 	

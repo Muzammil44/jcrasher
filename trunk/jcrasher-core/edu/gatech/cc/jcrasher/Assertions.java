@@ -17,6 +17,7 @@ public class Assertions {
   public static <T> T notNull(final T t) {
     if (t == null) {
       throw new NullPointerException();
+    	//throw new Error("notNull(null)");
     }
     return t;
   }
