@@ -28,8 +28,8 @@ public interface JUnitAll {
 		" */"+																									NL+
 		"public class JUnitAll extends TestSuite {"+						NL+
 																														NL+
-		TAB+"public JUnitAll(String pName) {"+									NL+
-		TAB+TAB+"super(pName);"+																NL+
+		TAB+"public JUnitAll(String name) {"+										NL+
+		TAB+TAB+"super(name);"+																	NL+
 		TAB+"}"+																								NL+
 																														NL+
 		TAB+"public static Test suite() {"+											NL+

@@ -12,6 +12,8 @@ import java.io.IOException;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import static edu.gatech.cc.jcrasher.Constants.NL;
 
+import static edu.gatech.cc.jcrasher.Constants.TAB
+;
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
  */
@@ -64,7 +66,7 @@ public class JUnitAllImpl implements JUnitAll {
 		notNull(test);
 		
 		try {
-	    fw.write("\t\tsuite.addTestSuite(" +test +".class);"+NL);
+	    fw.write(TAB+TAB+"suite.addTestSuite(" +test +".class);"+NL);
 		}
 		catch(IOException e) {
 			e.printStackTrace();
@@ -84,7 +86,7 @@ public class JUnitAllImpl implements JUnitAll {
 		notNull(test);
 		
 		try {
-	    fw.write("\t\tsuite.addTest(" +test +".suite());"+NL);
+	    fw.write(TAB+TAB+"suite.addTest(" +test +".suite());"+NL);
 		}
 		catch(IOException e) {
 			e.printStackTrace();
