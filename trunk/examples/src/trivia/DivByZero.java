@@ -18,4 +18,8 @@ public class DivByZero {
   public static double inverse(int i) {	
 		return 1/i;
 	}	
+  
+  public static double always(int i) {	
+		return i/0;
+	}	
 }

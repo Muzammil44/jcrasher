@@ -62,5 +62,6 @@ public class GroupedTestFailure extends TestFailure {
 		
 		int pos = trace.lastIndexOf("at sun.reflect.NativeMethodAccessorImpl.invoke0");
 		return trace.substring(0, pos).trim();
+//		return trace.toString();
 	}	
 }
