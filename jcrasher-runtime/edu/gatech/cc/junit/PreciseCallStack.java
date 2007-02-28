@@ -79,7 +79,12 @@ public class PreciseCallStack {
 	 */
 	public static String methSig(String className, int lineNr, boolean useSimpleName) {
 		JavaClass clazz = null;
-		clazz = Repository.lookupClass(className);
+		try { 
+			clazz = Repository.lookupClass(className);
+		}
+		catch (ClassNotFoundException e) {
+			return "<method not found>";
+		}
 		
 		org.apache.bcel.classfile.Method[] methods = clazz.getMethods();
 		for (int i=0; i<methods.length; i++) {

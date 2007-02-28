@@ -37,6 +37,7 @@ Note that properties of the calling project override properties defined here.
 		<basename property="basedir.basename" file="${basedir}"/>
 		<property name="run.id" value="${basedir.basename}-jcrasher-${jcrasher.version}-${DSTAMP}-${TSTAMP}"/>
 		<property name="jcrasher.out" value="${run.id}.jcrasher.txt"/>
+    <property name="junit.out" value="${run.id}.junit.txt"/>
 		<property name="test.zip" value="${run.id}.zip"/>
 		
     <!--package/Testee.java package/Testee.java-->  
@@ -116,8 +117,9 @@ Note that properties of the calling project override properties defined here.
     <java classname="edu.gatech.cc.junit.textui.RaGTestRunner" fork="true"      
         dir="${bin.generated.tests}" output="${junit.out}" maxmemory="384m">
       <classpath>
-        <pathelement location="${jcrasher.jar}"/>   
-        <pathelement location="${bin.generated.tests}" /> 
+        <pathelement location="${jcrasher.jar}"/>
+        <pathelement location="${junit.jar}"/>
+        <pathelement location="${bin.generated.tests}"/> 
         <pathelement location="${bin}"/>    
         <pathelement path="${classpath}"/>
       </classpath>
@@ -137,7 +139,9 @@ Note that properties of the calling project override properties defined here.
 			<fileset dir="." includes="jcrasher.xml"/> <!-- testee build script -->
       <fileset dir="." includes="${testee.list.filename}"/>
 			<fileset dir="." includes="${jcrasher.out}"/>
+      <fileset dir="." includes="${junit.out}"/>      
       <fileset dir="." includes="TEST-*.txt"/>
+      <fileset dir="." includes="${src}/"/>
 			<fileset dir="." includes="${src.generated.tests}/"/>
 		</zip>		
 	</target>	
