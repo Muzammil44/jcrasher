@@ -7,6 +7,7 @@ package edu.gatech.cc.jcrasher.writer;
 
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import static edu.gatech.cc.jcrasher.Constants.NL;
+import static edu.gatech.cc.jcrasher.Constants.TAB;
 
 import java.io.File;
 import java.io.FileWriter;
@@ -22,6 +23,7 @@ public abstract class AbstractJUnitTestWriter<T> {
   
 	protected final Class<T> testeeClass;
 	protected final String comment;
+	protected final boolean doAnnotate = false;	//Java 5 
   
 	/**
 	 * Constructor
@@ -72,7 +74,12 @@ public abstract class AbstractJUnitTestWriter<T> {
     return sb.toString();
   }
   
-  
+  /**
+   * @return doAnnotate? "@Override" : ""
+   */
+  protected String getOverride() {
+  	return doAnnotate? TAB+"@Override"+NL : "";
+  }
   
   /**
    * @param content one or multiple \newline separated lines of text.
