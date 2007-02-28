@@ -5,15 +5,13 @@
  */
 package edu.gatech.cc.jcrasher.writer;
 
+import static edu.gatech.cc.jcrasher.Assertions.notNull;
+import static edu.gatech.cc.jcrasher.Constants.NL;
+import static edu.gatech.cc.jcrasher.Constants.TAB;
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
-
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
-import static edu.gatech.cc.jcrasher.Constants.NL;
-
-import static edu.gatech.cc.jcrasher.Constants.TAB
-;
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
  */

@@ -30,7 +30,7 @@ import java.util.Vector;
  */
 public class ClassRegistry {
 
-	private static List classes = new Vector();
+	private static List<Class<?>> classes = new Vector<Class<?>>();
 	private final static Class[] zeroFormalParams = new Class[0];
 
 	/*
@@ -48,7 +48,7 @@ public class ClassRegistry {
 		//FIXME debug
 		//System.out.println("\tresetting " +f.getDeclaringClass().getName() +"." +f.getName() +" \"" +f.get(null) +"\"");			
 		
-		Class fieldType = f.getType();	//switch case (field type)
+		Class<?> fieldType = f.getType();	//switch case (field type)
 		if (! fieldType.isPrimitive()) {f.set(null, null);}	//victim-obj := null as static, value := null as reset
 		else {	//primitive types
 			if (fieldType.getName() == "boolean") {f.setBoolean(null, false);}
@@ -69,7 +69,7 @@ public class ClassRegistry {
 	/*
 	 * Reset the values of c's non-final static fields to the default = {null, 0, 0.0, false}
 	 */
-	private static void zeroStaticFields(Class c) throws IllegalAccessException {
+	private static void zeroStaticFields(Class<?> c) throws IllegalAccessException {
 		Field[] fields = c.getDeclaredFields();	//get all (private, default, protected, public) fields declared by c
 		for (int i=0; i<fields.length; i++) {
 			int fieldModifiers = fields[i].getModifiers();
@@ -92,7 +92,7 @@ public class ClassRegistry {
 	 */
 	protected static void zeroStaticFields() throws IllegalAccessException {
 		for (int i=0; i<classes.size(); i++) {
-			Class c = (Class) classes.get(i);
+			Class<?> c = classes.get(i);
 			zeroStaticFields(c);
 		}
 	}
@@ -118,9 +118,9 @@ public class ClassRegistry {
 	 */
 	protected static void classInitializers() throws Exception {
 		for (int i=0; i<classes.size(); i++) {
-			Class c = (Class) classes.get(i);
+			Class<?> c = classes.get(i);
 			Method clreinit = c.getDeclaredMethod("clreinit", zeroFormalParams);
-			clreinit.invoke(null, null);	//static meth, zero params
+			clreinit.invoke(null, new Object[0]);	//static meth, zero params
 		}			
 	}
 	
@@ -130,7 +130,7 @@ public class ClassRegistry {
 	 * BCEL-ClassLoader calls this method to register a loaded class in the runtime.
 	 * The order in which classes are registered is preserved in the list.
 	 */
-	public static void register(Class c) {
+	public static void register(Class<?> c) {
 		assert c != null;		
 		classes.add(c);	//appends c to the end of the list
 	}

@@ -16,8 +16,6 @@ import org.apache.bcel.classfile.Field;
 import org.apache.bcel.classfile.JavaClass;
 import org.apache.bcel.generic.CPInstruction;
 import org.apache.bcel.generic.ClassGen;
-import org.apache.bcel.generic.ConstantPoolGen;
-import org.apache.bcel.generic.INVOKESTATIC;
 import org.apache.bcel.generic.InstructionConstants;
 import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.InstructionList;
@@ -86,7 +84,7 @@ public class CopyCLinitClassLoader
 	 * 
 	 * @param className name of test-suite, specified by user in JUnit UI
 	 */
-	public Class load(String className) throws ClassNotFoundException {
+	public Class<?> load(String className) throws ClassNotFoundException {
 		return super.loadClass(className, true);	//load and link class--don't register test-case
 	}
 
@@ -140,7 +138,7 @@ public class CopyCLinitClassLoader
 	 * from an ignored package.
 	 * Should only be called after c has been loaded
 	 */
-	private boolean isExcludedClass(Class c) {
+	private boolean isExcludedClass(Class<?> c) {
 		if (!Modifier.isPublic(c.getModifiers())) {		//exclude if not public
 			return true;
 		}
@@ -373,8 +371,8 @@ public class CopyCLinitClassLoader
 	 * Register classes under test needed by test-case
 	 */
 	@Override
-	protected Class loadClass(String className, boolean resolve) throws ClassNotFoundException {
-		Class res = super.loadClass(className, resolve);	//modify, load, link (iff resolve), don't initialize
+	protected Class<?> loadClass(String className, boolean resolve) throws ClassNotFoundException {
+		Class<?> res = super.loadClass(className, resolve);	//modify, load, link (iff resolve), don't initialize
 		
 		//FIXME debug print names of classes requested (may have been loaded previously)
 		//System.out.println("\tloaded " +res.getName());
@@ -389,7 +387,7 @@ public class CopyCLinitClassLoader
 		 * and clinit() should be called by <clinit>()---whenever the JVM calls <clinit>(). */
 		try {
 			Method clinit = res.getDeclaredMethod("clinit", new Class[0]);
-			clinit.invoke(null, null);	//static meth, zero params
+			clinit.invoke(null, new Object[0]);	//static meth, zero params
 		}
 		catch (Exception e) {
 			e.printStackTrace();

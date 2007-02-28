@@ -6,13 +6,13 @@
 package edu.gatech.cc.junit;
 
 /**
- * IntendedException
- * 
  * @author csallner@gatech.edu (Christoph Csallner)
- * @version	$Id: $
  */
 public class IntendedException extends Wrapper {
 	
+	/**
+	 * Constructor
+	 */
 	public IntendedException(RuntimeException ex) {
 		super(ex);
 	}

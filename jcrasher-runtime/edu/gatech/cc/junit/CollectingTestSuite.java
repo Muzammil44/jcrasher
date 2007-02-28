@@ -1,10 +1,10 @@
 package edu.gatech.cc.junit;
+import static edu.gatech.cc.jcrasher.Assertions.check;
+
 import java.io.File;
 import java.io.IOException;
 
 import junit.framework.TestSuite;
-
-import static edu.gatech.cc.jcrasher.Assertions.check;
 
 /*
  * CollectingTestSuite.java
@@ -22,6 +22,9 @@ import static edu.gatech.cc.jcrasher.Assertions.check;
  */
 public class CollectingTestSuite extends TestSuite {
 
+	/**
+	 * FIXME: Hardcoded directory name
+	 */
 	public static final String cncBinDir = "cnc-bin"; 
 	
 	protected static File getTestRoot(){
@@ -31,6 +34,9 @@ public class CollectingTestSuite extends TestSuite {
 		return curDir;
 	}
 	
+	/**
+	 * 
+	 */
 	public static String getTestRootName() {
 		String res = null;
 		try {
@@ -42,7 +48,9 @@ public class CollectingTestSuite extends TestSuite {
 		return res;
 	}
 	
-	
+	/**
+	 * 
+	 */
 	public static TestSuite suite() {
 		TestSuite suite = new TestSuite();
 		try {
@@ -68,7 +76,7 @@ public class CollectingTestSuite extends TestSuite {
 			String suiteName = file.getCanonicalPath();
 			suiteName = suiteName.substring(root.length()+1, suiteName.lastIndexOf("."));
 			suiteName = suiteName.replace('/','.').replace('\\','.');
-			Class suiteClass = Class.forName(suiteName);
+			Class<?> suiteClass = Class.forName(suiteName);
 			result.addTest(new TestSuite(suiteClass));
 		}		
 		return result;

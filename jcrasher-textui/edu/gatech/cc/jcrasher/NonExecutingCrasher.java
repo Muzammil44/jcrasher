@@ -232,7 +232,7 @@ public class NonExecutingCrasher extends AbstractCrasher {
 				resV.add(cNode.getBlock(indices[i+arrayCursor], pClass));
 		}
 		
-		res = (Block[]) resV.toArray(new Block[resV.size()]);
+		res = resV.toArray(new Block[resV.size()]);
 		
 		assert res != null;
 		return res;

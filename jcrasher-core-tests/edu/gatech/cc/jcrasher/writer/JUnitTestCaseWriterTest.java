@@ -40,7 +40,7 @@ import edu.gatech.cc.jcrasher.plans.stmt.Statement;
  */
 public class JUnitTestCaseWriterTest extends TestCase {
 
-  protected Class inDefaultPackage = null;
+  protected Class<?> inDefaultPackage = null;
   
   protected Block blockCall = null;
   protected Block blockCrash = null;

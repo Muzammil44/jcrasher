@@ -31,25 +31,57 @@ import edu.gatech.cc.junit.reinit.CopyCLinitClassLoader;
  */
 public class RaGTestRunner extends TestRunner {
 
-	public static final String ANNOTATED_LIST_FILENAME = "annotated.txt";  
+	/**
+	 * Where we write our list of annotated methods to.
+	 */
+	public static final String ANNOTATED_LIST_FILENAME = "annotated.txt";
+	
+	/**
+	 * Reinit?
+	 */
 	public static boolean DO_REINIT = true;
 	
-	public static final int GROUP_CLASSIC = 1;  //SPE: same stack-trace down to test0.
-	public static final int GROUP_FOCUSED = 2;  //same top-element.
+	/**
+	 * SPE: same stack-trace down to test0.
+	 */
+	public static final int GROUP_CLASSIC = 1;
+	
+	/**
+	 * Same top-element.
+	 */
+	public static final int GROUP_FOCUSED = 2;
+	
+	/**
+	 * Classic grouping
+	 */
 	public static int GROUP_MODE = GROUP_CLASSIC;
 	
 	
 	
 	/**
-	 * Constructors
+	 * Constructor
+	 * 
+	 * Called third, calls super.
 	 */
-	public RaGTestRunner(ResultPrinter printer) {	//called third, calls super.
+	public RaGTestRunner(ResultPrinter printer) {
 		super(printer);
 	}	
-	public RaGTestRunner(PrintStream writer) {		//called second.
+	
+	/**
+	 * Constructor
+	 * 
+	 * Called second.
+	 */
+	public RaGTestRunner(PrintStream writer) {
 		this(new GroupedResultPrinter(writer));
 	}
-	public RaGTestRunner() {									//called first, by main.
+	
+	/**
+	 * Constructor 
+	 *
+	 * Called first, by main.
+	 */
+	public RaGTestRunner() {
 		this(System.out);												// default out-print-stream
 	}
 	

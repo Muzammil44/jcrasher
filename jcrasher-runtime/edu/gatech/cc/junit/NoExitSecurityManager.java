@@ -5,9 +5,6 @@
  */
 package edu.gatech.cc.junit;
 
-import java.io.FileDescriptor;
-import java.net.InetAddress;
-import java.security.Permission;
 
 /**
  * NoExitSecurityManager

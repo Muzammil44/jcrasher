@@ -6,13 +6,13 @@
 package edu.gatech.cc.junit;
 
 /**
- * AccidentException
- * 
  * @author csallner@gatech.edu (Christoph Csallner)
- * @version	$Id: $
  */
 public class AccidentException extends Wrapper {
 
+	/**
+	 * Constructor
+	 */
 	public AccidentException(RuntimeException ex) {
 		super(ex);
 	}
