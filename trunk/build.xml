@@ -158,14 +158,14 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
         <include name="**/*.class" />
         <include name="**/*.properties" />
       </fileset>
-      <fileset dir="${bin-jcrasher-textui}">
-        <include name="**/*.class" />
-        <include name="**/*.properties" />
-      </fileset>      
       <fileset dir="${bin-jcrasher-runtime}">
         <include name="**/*.class" />
         <include name="**/*.properties" />
-      </fileset>            
+      </fileset>         
+      <fileset dir="${bin-jcrasher-textui}">
+        <include name="**/*.class" />
+        <include name="**/*.properties" />
+      </fileset>               
     </jar>
   </target>
 
@@ -184,7 +184,8 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
       <tarfileset dir="${basedir}">
         <include name="${src-jcrasher-core}/" />
         <include name="${src-jcrasher-core-tests}/" />
-        <include name="${src-jcrasher-textui}/" />
+        <include name="${src-jcrasher-runtime}/" />
+        <include name="${src-jcrasher-textui}/" />        
         <include name="${lib}/" />
         <include name="index.html" />
         <include name="build.number" />

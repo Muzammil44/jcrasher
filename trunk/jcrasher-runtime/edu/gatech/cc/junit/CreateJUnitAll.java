@@ -1,7 +1,5 @@
 package edu.gatech.cc.junit;
 
-import java.util.Enumeration;
-
 import junit.framework.TestSuite;
 
 /*

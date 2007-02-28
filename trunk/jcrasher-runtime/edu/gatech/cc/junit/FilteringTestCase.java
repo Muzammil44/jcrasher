@@ -120,7 +120,7 @@ public class FilteringTestCase extends TestCase {
 		String methName = stack[posFromTop].getMethodName();
 					
 		/* access class via reflection */
-		Class throwingClass = Class.forName(className);
+		Class<?> throwingClass = Class.forName(className);
 					
 		/* throwing class non-public --> done */
 		if (Modifier.isPublic(throwingClass.getModifiers())==false) {
@@ -175,12 +175,12 @@ public class FilteringTestCase extends TestCase {
 		/* get called method from frame via reflection */
 		String calledMethName = stack[calledPosFromTop].getMethodName();
 		String calledClassName = stack[calledPosFromTop].getClassName();
-		Class calledClass = Class.forName(calledClassName);					
+		Class<?> calledClass = Class.forName(calledClassName);					
 
 		/* get calling method from frame via reflection */				
 		String callingMethName = stack[callingPosFromTop].getMethodName();
 		String callingClassName = stack[callingPosFromTop].getClassName();					
-		Class callingClass = Class.forName(callingClassName);					
+		Class<?> callingClass = Class.forName(callingClassName);					
 
 		/* true iff both methods are constructors and
 		 * the called constructor is some super or this constructor of the calling constructor */
