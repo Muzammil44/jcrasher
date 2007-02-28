@@ -8,6 +8,8 @@ import java.util.Vector;
 
 import junit.framework.TestCase;
 
+import static edu.gatech.cc.jcrasher.Assertions.check;
+
 /**
  * TestCase that 
  * - eats up all checked exceptions.
@@ -300,7 +302,7 @@ public class FilteringTestCase extends TestCase {
 	 * the same name. */
 	protected int testCalledTestee(RuntimeException e) {
 		int testPos = e.getStackTrace().length - stackLengthOfTest;
-		assert testPos>0;
+		check(testPos>0);
 		
 		int calledPos = testPos - 1;		
 		StackTraceElement calledFrame = e.getStackTrace()[calledPos];
@@ -399,7 +401,7 @@ public class FilteringTestCase extends TestCase {
 		}
 			
 		/* height > |testSeq| .. found a bug iff called some public-public method providing good input. */
-		assert (stack.length > stackLengthOfTest);
+		check(stack.length > stackLengthOfTest);
 		int publicToPublicSliceHeight = getPublicToPublicSliceHeight(e);
 						
 		/* Done with pruning: see how thick the remaining middle frame-stack-slice is 

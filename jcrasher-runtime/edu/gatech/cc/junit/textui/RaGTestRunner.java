@@ -39,7 +39,7 @@ public class RaGTestRunner extends TestRunner {
 	/**
 	 * Reinit?
 	 */
-	public static boolean DO_REINIT = true;
+	public static boolean DO_REINIT = false;
 	
 	/**
 	 * SPE: same stack-trace down to test0.
@@ -217,8 +217,8 @@ public class RaGTestRunner extends TestRunner {
 				FilteringTestCase.DIRECT_CALL_ONLY = true;
 				foundArg = true;
 			}						
-			if (args[0].equals("-noreinit")) {
-				DO_REINIT = false;  //turn off reinitialization
+			if (args[0].equals("-reinit")) {
+				DO_REINIT = true;  //turn on reinitialization
 				foundArg = true;
 			}
 			

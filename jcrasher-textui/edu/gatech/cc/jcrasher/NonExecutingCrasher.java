@@ -234,7 +234,7 @@ public class NonExecutingCrasher extends AbstractCrasher {
 		
 		res = resV.toArray(new Block[resV.size()]);
 		
-		assert res != null;
+		notNull(res);
 		return res;
 	}
 }

@@ -130,7 +130,6 @@ Note that properties of the calling project override properties defined here.
       <assertions>  <!--assertions enabled for testing-->
         <enable/>
       </assertions>
-      <arg value="-noreinit"/>
       <arg value="JUnitAll"/>
     </java>
   </target> 
