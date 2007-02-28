@@ -20,14 +20,11 @@ import edu.gatech.cc.junit.framework.GroupedTestResult;
 import edu.gatech.cc.junit.reinit.CopyCLinitClassLoader;
 
 /**
- * RaGTestRunner
- * 
  * Re-Initializing and Grouping JUnit TestRunner.
  * Extends the junit.textui.TestRunner without modifications.
  * Requires the JCrasher Runtime.
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
- * @version	$Id: $
  */
 public class RaGTestRunner extends TestRunner {
 
