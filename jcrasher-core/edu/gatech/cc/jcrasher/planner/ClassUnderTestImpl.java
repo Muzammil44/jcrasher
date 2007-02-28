@@ -40,7 +40,7 @@ extends TypeNode<T>
 implements ClassUnderTest<T> {
 
   protected Class<T> wrappedClass = null;
-  protected String spaces = "  ";
+  protected String spaces = "    ";
 
   /**
    * Constructor to be used from outside JCrasher---to just use the
@@ -186,7 +186,7 @@ implements ClassUnderTest<T> {
      * Statement for constructor under test
      */
     /* Generate identifer to execute the con under test */
-    Variable<T> returnID = b.getNextID(pCon.getDeclaringClass()); // A a =
+    //Variable<T> returnID = b.getNextID(pCon.getDeclaringClass()); // A a =
                                                                       // ...
 
     /*
@@ -208,7 +208,8 @@ implements ClassUnderTest<T> {
 
     /* Last statement */
     bs[curPlans.length] = 
-    	new LocalVariableDeclarationStatement<T>(returnID, conPlan);
+    	//new LocalVariableDeclarationStatement<T>(returnID, conPlan);
+    	new ExpressionStatement<T>(conPlan);
 
     /*
      * Assemble and append generated block
