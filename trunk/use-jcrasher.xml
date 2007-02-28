@@ -88,7 +88,9 @@ Note that properties of the calling project override properties defined here.
 	</target>
 
 
-	<!-- Run JCrasher-generated test cases -->
+	<!-- Run JCrasher-generated test cases 
+    TODO: Run our special test case runner.
+  -->
 	<target name="test.run" depends="test.compile">
     <junit dir="${bin.generated.tests}" fork="yes" 
         printsummary="on">
@@ -100,7 +102,7 @@ Note that properties of the calling project override properties defined here.
       </classpath>
       <batchtest>
         <fileset dir="${bin.generated.tests}">
-          <include name="**/*Test.class" />
+          <include name="**/*Test*.class" />
         </fileset>
       </batchtest>
       <assertions>  <!--assertions enabled for testing-->
@@ -109,11 +111,28 @@ Note that properties of the calling project override properties defined here.
     </junit>
 	</target>
 
+  <!--test.run-->
+  <target name="test.run.filtering" depends="test.compile">
+    <java classname="edu.gatech.cc.junit.textui.RaGTestRunner" fork="true"      
+        dir="${bin.generated.tests}" output="${junit.out}" maxmemory="384m">
+      <classpath>
+        <pathelement location="${jcrasher.jar}"/>   
+        <pathelement location="${bin.generated.tests}" /> 
+        <pathelement location="${bin}"/>    
+        <pathelement path="${classpath}"/>
+      </classpath>
+      <assertions>  <!--assertions enabled for testing-->
+        <enable/>
+      </assertions>
+      <arg value="-noreinit"/>
+      <arg value="JUnitAll"/>
+    </java>
+  </target> 
 
 
 	<!--test.archive
 	Zip this file, the generated test cases, and the results-->
-	<target name="test.archive" depends="test.run">				
+	<target name="test.archive" depends="test.run.filtering">				
 		<zip destfile="${test.zip}">
 			<fileset dir="." includes="jcrasher.xml"/> <!-- testee build script -->
       <fileset dir="." includes="${testee.list.filename}"/>
