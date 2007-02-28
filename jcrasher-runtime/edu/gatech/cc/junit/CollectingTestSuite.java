@@ -4,6 +4,8 @@ import java.io.IOException;
 
 import junit.framework.TestSuite;
 
+import static edu.gatech.cc.jcrasher.Assertions.check;
+
 /*
  * CollectingTestSuite.java
  * 
@@ -24,8 +26,8 @@ public class CollectingTestSuite extends TestSuite {
 	
 	protected static File getTestRoot(){
 		File curDir = new File("./" +cncBinDir);  //project-basedir/cnc-bin
-		assert curDir.exists();
-		assert curDir.isDirectory();
+		check(curDir.exists());
+		check(curDir.isDirectory());
 		return curDir;
 	}
 	
