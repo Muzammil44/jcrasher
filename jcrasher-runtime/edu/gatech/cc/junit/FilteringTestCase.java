@@ -384,16 +384,18 @@ public class FilteringTestCase extends TestCase {
 		/* Treat unchecked (runtime) exceptions */
 		RuntimeException e = (RuntimeException) throwable;
 		
-		/* Bypass heuristic iff we have Daikon-inferred preconditions 
-		 * for the method that caused the exception */
-		StackTraceElement calledMeth = stack[stack.length-stackLengthOfTest-1];
-		String methSig = calledMeth.getClassName() +"#" +PreciseCallStack.methSig(
-				calledMeth.getClassName(),
-				calledMeth.getLineNumber(),
-				true);  //TODO use fully qualified param type name to remove imprecision
-
-		if (ANNOTATED_LIST.contains(methSig)) {
-			throw e;
+		if (!ANNOTATED_LIST.isEmpty()) {
+			/* Bypass heuristic iff we have Daikon-inferred preconditions 
+			 * for the method that caused the exception */
+			StackTraceElement calledMeth = stack[stack.length-stackLengthOfTest-1];
+			String methSig = calledMeth.getClassName() +"#" +PreciseCallStack.methSig(
+					calledMeth.getClassName(),
+					calledMeth.getLineNumber(),
+					true);  //TODO use fully qualified param type name to remove imprecision
+	
+			if (ANNOTATED_LIST.contains(methSig)) {
+				throw e;
+			}
 		}
 			
 		/* height > |testSeq| .. found a bug iff called some public-public method providing good input. */
