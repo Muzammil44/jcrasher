@@ -158,10 +158,11 @@ public class NonExecutingCrasher extends AbstractCrasher {
 			//more methods than plans in space?
 			if (nrIndices >= planSpaceSizes[i])
 				sample = getExhaustiveEnumeration(planSpaceSizes[i]);
-			else
+			else {
 				sample = getRandomIndices(planSpaceSizes[i], nrIndices);
+				check(sample.length == nrIndices);
+			}
 			
-			check(sample.length == nrIndices);			
 			
 			/* 
 			 * split result into junks of max 500 for each test class

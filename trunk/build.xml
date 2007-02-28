@@ -14,10 +14,12 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
   <property name="lib" value="lib"/>    
   <property name="src-jcrasher-core" value="jcrasher-core"/>
   <property name="src-jcrasher-core-tests" value="jcrasher-core-tests"/>  
-  <property name="src-jcrasher-textui" value="jcrasher-textui"/>  
+  <property name="src-jcrasher-textui" value="jcrasher-textui"/>
+  <property name="src-jcrasher-runtime" value="jcrasher-runtime"/> 
   <property name="bin-jcrasher-core" value="bin-jcrasher-core"/>
   <property name="bin-jcrasher-core-tests" value="bin-jcrasher-core-tests"/>  
   <property name="bin-jcrasher-textui" value="bin-jcrasher-textui"/>
+  <property name="bin-jcrasher-runtime" value="bin-jcrasher-runtime"/> 
 
   <path id="project.classpath">
     <pathelement location="${bin-jcrasher-core}" />
@@ -112,10 +114,40 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
     </javac>
   </target>
 
+ 
+  <!-- BCEL -->
+  <target name="lib.bcel" depends="init">
+    <unzip src="${lib}/bcel-5.1.jar" dest="${bin-jcrasher-runtime}" 
+        overwrite="false">
+      <patternset>
+        <include name="**/*.class" />
+        <include name="**/*.properties" />
+      </patternset>
+    </unzip>
+   
+    <unzip src="${lib}/jakarta-regexp-1.3.jar" dest="${bin-jcrasher-runtime}" 
+        overwrite="false">
+      <patternset>
+        <include name="**/*.class" />
+        <include name="**/*.properties" />
+      </patternset>
+    </unzip>    
+  </target>
+  
 
+  <!-- JCrasher runtime: Build --> 
+  <target name="jcrasher.runtime.build"
+      depends="lib.bcel">
+    <javac destdir="${bin-jcrasher-runtime}" debug="true">
+      <src path="${src-jcrasher-runtime}" />
+      <classpath refid="project.classpath" />
+    </javac>
+  </target>
+  
+      
   <!-- JCrasher all: Release binary -->  
   <target name="jcrasher.all.release.bin"
-      depends="jcrasher.core.test,jcrasher.textui.build"
+      depends="jcrasher.core.test,jcrasher.textui.build,jcrasher.runtime.build"
       description="make jcrasher.jar">
     <jar destfile="jcrasher-${version}.${build.number}.jar">
       <fileset dir="${basedir}">
@@ -126,10 +158,14 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
         <include name="**/*.class" />
         <include name="**/*.properties" />
       </fileset>
-        <fileset dir="${bin-jcrasher-textui}">
-          <include name="**/*.class" />
-          <include name="**/*.properties" />
-        </fileset>      
+      <fileset dir="${bin-jcrasher-textui}">
+        <include name="**/*.class" />
+        <include name="**/*.properties" />
+      </fileset>      
+      <fileset dir="${bin-jcrasher-runtime}">
+        <include name="**/*.class" />
+        <include name="**/*.properties" />
+      </fileset>            
     </jar>
   </target>
 

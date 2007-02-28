@@ -115,7 +115,7 @@ Note that properties of the calling project override properties defined here.
 	Zip this file, the generated test cases, and the results-->
 	<target name="test.archive" depends="test.run">				
 		<zip destfile="${test.zip}">
-			<fileset dir="." includes="jcrasher.xml"/>
+			<fileset dir="." includes="jcrasher.xml"/> <!-- testee build script -->
       <fileset dir="." includes="${testee.list.filename}"/>
 			<fileset dir="." includes="${jcrasher.out}"/>
       <fileset dir="." includes="TEST-*.txt"/>
