@@ -11,7 +11,7 @@ import java.lang.reflect.Constructor;
 import java.util.Hashtable;
 import java.util.Vector;
 
-import edu.gatech.cc.jcrasher.JCrasher;
+import edu.gatech.cc.jcrasher.Assertions;
 import edu.gatech.cc.jcrasher.plans.expr.ArrayCreateAndInit;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
 import edu.gatech.cc.jcrasher.plans.expr.DotClass;
@@ -152,19 +152,19 @@ public class PresetValues {
    */
   protected static Expression<String[]>[] getStringArray1() {
     Class<String[]> c = String[].class;
-    ArrayCreateAndInit[] plans = new ArrayCreateAndInit[2];
+    
 
     //FIXME: Add following back
 //    From DSD-Crasher:
-//    
+//    ArrayCreateAndInit[] plans = new ArrayCreateAndInit[2];  
 //    plans[0] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {}
 //    plans[0].setComponentPlans(new StringLiteral[0]);
 //    plans[1] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {""}
 //    plans[1].setComponentPlans(new StringLiteral[]{new StringLiteral("")});
     
 
-//  Simulate old JCrasher:
-    
+//  Simulate old Assertions:
+    ArrayCreateAndInit[] plans = new ArrayCreateAndInit[3];
     plans[0] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {}
     plans[0].setComponentPlans(new StringLiteral[0]);
     plans[1] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {" "}
@@ -182,7 +182,7 @@ public class PresetValues {
   protected static <T> Expression<T>[] getEmptyArray(final Class<T> c) {
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[1];
 
-    plans[0] = new ArrayCreateAndInit<T>(c, JCrasher.class); // {}
+    plans[0] = new ArrayCreateAndInit<T>(c, Assertions.class); // {}
     plans[0].setComponentPlans(new Expression[0]);
 
     return plans;
