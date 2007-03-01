@@ -25,6 +25,7 @@ import edu.gatech.cc.jcrasher.plans.stmt.BlockImpl;
 import edu.gatech.cc.jcrasher.plans.stmt.BlockStatement;
 import edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement;
 import edu.gatech.cc.jcrasher.plans.stmt.LocalVariableDeclarationStatement;
+import static edu.gatech.cc.jcrasher.Constants.TAB;
 
 /**
  * Constructs a TypeNode a loaded class under test: extract all public
@@ -40,7 +41,7 @@ extends TypeNode<T>
 implements ClassUnderTest<T> {
 
   protected Class<T> wrappedClass = null;
-  protected String spaces = "    ";
+  protected String testBlockSpaces = TAB+TAB;
 
   /**
    * Constructor to be used from outside JCrasher---to just use the
@@ -165,7 +166,7 @@ implements ClassUnderTest<T> {
     notNull(curPlans);   
 
     final Class<T> testeeType = pCon.getDeclaringClass();
-    final Block b = new BlockImpl(testeeType, pCon, spaces); // context for this combination
+    final Block b = new BlockImpl(testeeType, pCon, testBlockSpaces); // context for this combination
 
     /* Simple version: one stmt for each instance and exec fct */
     final BlockStatement[] bs = new BlockStatement[curPlans.length + 1];
@@ -234,7 +235,7 @@ implements ClassUnderTest<T> {
     notNull(curPlans);
     
     final Class<T> testeeType = (Class<T>) pMeth.getDeclaringClass();
-    final Block b = new BlockImpl(testeeType, pMeth, spaces); // context for this combination
+    final Block b = new BlockImpl(testeeType, pMeth, testBlockSpaces); // context for this combination
 
     /* Simple version: one stmt for each instance and exec fct */
     BlockStatement[] bs = new BlockStatement[curPlans.length + 1];
