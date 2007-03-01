@@ -154,10 +154,24 @@ public class PresetValues {
     Class<String[]> c = String[].class;
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[2];
 
+    //FIXME: Add following back
+//    From DSD-Crasher:
+//    
+//    plans[0] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {}
+//    plans[0].setComponentPlans(new StringLiteral[0]);
+//    plans[1] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {""}
+//    plans[1].setComponentPlans(new StringLiteral[]{new StringLiteral("")});
+    
+
+//  Simulate old JCrasher:
+    
     plans[0] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {}
     plans[0].setComponentPlans(new StringLiteral[0]);
-    plans[1] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {""}
-    plans[1].setComponentPlans(new StringLiteral[]{new StringLiteral("")});
+    plans[1] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {" "}
+    plans[1].setComponentPlans(new StringLiteral[]{new StringLiteral(" ")});
+    plans[2] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {" "}
+    plans[2].setComponentPlans(new StringLiteral[]{
+        new StringLiteral("$"), new StringLiteral("%")});
     return plans;
   }
 
@@ -229,15 +243,19 @@ public class PresetValues {
     }
 
     /* Array */
-    if (pClass.equals(int[].class)) {
-      return getIntArray1();
-    }
+    
+  //FIXME: Add following back: 
+//    if (pClass.equals(int[].class)) {
+//      return getIntArray1();
+//    }
     if (pClass.equals(String[].class)) {
       return getStringArray1();
     }
-    if (pClass.isArray()) {
-      return getEmptyArray(pClass);
-    }
+    
+    //FIXME: Add following back: 
+//    if (pClass.isArray()) {
+//      return getEmptyArray(pClass);
+//    }
 
     /* No preset plans for other complex types */
     return new Expression[0];
