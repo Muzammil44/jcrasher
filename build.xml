@@ -4,7 +4,7 @@
 Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
 -->
 
-<project basedir="." default="jcrasher.all.release.bin" name="jcrasher">
+<project basedir="." default="relase.jcrasher.all.bin" name="jcrasher">
 
   <!-- inc for major change -->
   <property name="version" value="2.0" /> 
@@ -71,23 +71,7 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
     </junit>
   </target> 
   
-  
-  <!-- JCrasher core: Release binary -->
-  <target name="jcrasher.core.release.bin" depends="jcrasher.core.test"
-      description="make jcrasher-core.jar">
-    <jar destfile="jcrasher-core-${version}.${build.number}.jar">
-      <fileset dir="${basedir}">
-        <include name="${license-jcrasher}" />
-        <include name="${license-fb-crasher}" />      
-        <include name="NOTICE.txt" /> 
-      </fileset>
-      <fileset dir="${bin-jcrasher-core}">
-        <include name="**/*.class" />        
-      </fileset>      
-    </jar>
-  </target>
-
-
+	
   <!-- JCrasher textui: Init --> 
   <target name="jcrasher.textui.init" depends="init">
     <mkdir dir="${bin-jcrasher-textui}" /> 
@@ -114,6 +98,33 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
       <classpath refid="project.classpath" />
     </javac>
   </target>
+	
+	
+  <!-- JCrasher Basic: Release binary
+  	This is the right release if you want to create test cases
+  	that can be executed with plain JUnit.
+  	You will not need our JUnit extensions. 
+  -->
+  <target name="release.jcrasher.basic.bin" 
+  	  depends="jcrasher.core.test,jcrasher.textui.build"
+      description="make jcrasher-basic.jar">
+    <jar destfile="jcrasher-basic-${version}.${build.number}.jar">
+      <fileset dir="${basedir}">
+        <include name="${license-jcrasher}" />
+        <include name="${license-fb-crasher}" />
+      	<include name="${license-gnu-getopt}" />
+      </fileset>
+      <fileset dir="${bin-jcrasher-core}">
+        <include name="**/*.class" />
+      	<include name="**/*.properties" />
+      </fileset>
+      <fileset dir="${bin-jcrasher-textui}">
+        <include name="**/*.class" />
+      	<include name="**/*.properties" />
+      </fileset>    	
+    </jar>
+  </target>
+
 
  
   <!-- BCEL -->
@@ -147,12 +158,12 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
   
       
   <!-- JCrasher all: Release binary -->  
-  <target name="jcrasher.all.release.bin"
+  <target name="relase.jcrasher.all.bin"
       depends="jcrasher.core.test,jcrasher.textui.build,jcrasher.runtime.build"
       description="make jcrasher.jar">
     <jar destfile="jcrasher-${version}.${build.number}.jar">
       <fileset dir="${basedir}">
-				<include name="use-jcrasher.xml" />
+		<include name="use-jcrasher.xml" />
         <include name="LICENSE*.txt" />
         <include name="NOTICE.txt" />        
       </fileset>
@@ -170,17 +181,11 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
       </fileset>               
     </jar>
   </target>
-
-
-  <!-- Jar binaries: Produce jcrasher.jar and jcrasher-core.jar -->
-  <target name="jar" 
-      depends="jcrasher.core.release.bin,jcrasher.all.release.bin"
-      description="make jcrasher-src.tar.gz">
-  </target> 
        
         
   <!-- JCraher all: Release source -->
-  <target name="jcrasher.all.release.src" depends="jar"
+  <target name="release.jcrasher.all.src" 
+  	  depends="jcrasher.core.test,jcrasher.textui.build,jcrasher.runtime.build"
       description="make jcrasher-src.tar.gz">
     <tar destfile="jcrasher-${version}.${build.number}-src.tar">
       <tarfileset dir="${basedir}">
@@ -194,7 +199,7 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
         <include name="NOTICE.txt" />        
         <include name="LICENSE*.txt" />
         <include name="build.xml" />
-				<include name="use-jcrasher.xml" />
+		<include name="use-jcrasher.xml" />
       </tarfileset>
     </tar>
 
