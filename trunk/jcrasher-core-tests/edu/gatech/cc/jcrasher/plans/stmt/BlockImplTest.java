@@ -101,15 +101,17 @@ public class BlockImplTest extends TestCase {
       "}"; 
     assertEquals(res0, blockEmpty.toString());
     
+    //FIXME: Seems broken
+    
 //    String res1 =
 //      "{"+NL+
 //      TAB+"}"; 
-//    assertEquals(res1, blockEmpty.toString(TAB, Loadee.class));
+//    assertEquals(res1, blockEmpty.text());
 //    
 //    String res2 =
 //      "{"+NL+
 //      TAB+TAB+"}"; 
-//    assertEquals(res2, blockEmpty.toString(TAB+TAB, Loadee.class));    
+//    assertEquals(res2, blockEmpty.text());    
   }
   
   /***/
@@ -120,23 +122,25 @@ public class BlockImplTest extends TestCase {
       "}"; 
     assertEquals(res0, blockCall.text());
     
+//FIXME: Seems broken    
+    
 //    String res1 =
 //      "{"+ NL+
-//      TAB+TAB+testeeCallStmt.toString(Loadee.class)+NL+
+//      TAB+TAB+testeeCallStmt.text()+NL+
 //      TAB+"}"; 
-//    assertEquals(res1, blockCall.toString(TAB, Loadee.class));
+//    assertEquals(res1, blockCall.text());
 //    
 //    String res2 =
 //      "{"+NL+
-//      TAB+TAB+TAB+testeeCallStmt.toString(Loadee.class)+NL+
+//      TAB+TAB+TAB+testeeCallStmt.text()+NL+
 //      TAB+TAB+"}"; 
-//    assertEquals(res2, blockCall.toString(TAB+TAB, Loadee.class));
-    
+//    assertEquals(res2, blockCall.text());
+//    
 //    String res2Object =
 //      "{"+NL+
-//      TAB+TAB+TAB+testeeCallStmt.toString(Object.class)+NL+
+//      TAB+TAB+TAB+testeeCallStmt.text()+NL+
 //      TAB+TAB+"}"; 
-//    assertEquals(res2Object, blockCall.toString(TAB+TAB, Object.class));    
+//    assertEquals(res2Object, blockCall.text());    
   }
   
   /***/

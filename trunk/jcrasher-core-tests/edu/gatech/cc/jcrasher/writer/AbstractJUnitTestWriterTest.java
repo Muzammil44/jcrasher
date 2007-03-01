@@ -70,19 +70,19 @@ public class AbstractJUnitTestWriterTest extends TestCase {
     junitTestWriter = 
     	new ConcreteJUnitTestWriter<Loadee>(Loadee.class, "No comment");
     assertEquals(
-        "package edu.gatech.cc.jcrasher;"+NL+NL,
+        "package client.sub;"+NL+NL,
         junitTestWriter.getPackageHeader());
     
     junitTestWriter = 
     	new ConcreteJUnitTestWriter<Loadee.StaticMember>(Loadee.StaticMember.class, "No comment");
     assertEquals(
-        "package edu.gatech.cc.jcrasher;"+NL+NL,
+        "package client.sub;"+NL+NL,
         junitTestWriter.getPackageHeader());
     
     junitTestWriter = 
     	new ConcreteJUnitTestWriter(Loadee.Inner.class, "No comment");    
     assertEquals(
-        "package edu.gatech.cc.jcrasher;"+NL+NL,
+        "package client.sub;"+NL+NL,
         junitTestWriter.getPackageHeader());
   }
 
