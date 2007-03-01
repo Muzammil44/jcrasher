@@ -11,6 +11,7 @@ import java.lang.reflect.Constructor;
 import java.util.Hashtable;
 import java.util.Vector;
 
+import edu.gatech.cc.jcrasher.JCrasher;
 import edu.gatech.cc.jcrasher.plans.expr.ArrayCreateAndInit;
 import edu.gatech.cc.jcrasher.plans.expr.ConstructorCall;
 import edu.gatech.cc.jcrasher.plans.expr.DotClass;
@@ -35,6 +36,7 @@ import edu.gatech.cc.jcrasher.plans.expr.literals.StringLiteral;
  * 
  * TODO: General treatment of simple type arrays of arbitrary dimension, see:
  * http://java.sun.com/docs/books/vmspec/2nd-edition/html/ClassFile.doc.html#14152
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
 public class PresetValues {
@@ -73,6 +75,12 @@ public class PresetValues {
     new StringLiteral(""), new StringLiteral("`\'@#$%^&/({<[|\\n:.,;")};
 
 
+  /*
+   * We use a fake hard-coded testee type of java.util.Vector
+   * when the return type is in java.lang. This forces JavaCode.text() to
+   * emit full qualified type name of the return type.
+   */
+  
 
   /*
    * new Object()
@@ -93,7 +101,7 @@ public class PresetValues {
   /*
    * new java.util.Hashtable() --implements java.util.Map
    */
-  protected static Expression[] getHashtable() {
+  protected static Expression<Hashtable>[] getHashtable() {
     Constructor<Hashtable> con = null;
     try {
       con = Hashtable.class.getDeclaredConstructor(new Class[0]);
@@ -111,7 +119,7 @@ public class PresetValues {
   /*
    * new java.util.Vector() --implements java.util.List
    */
-  protected static Expression[] getVector() {
+  protected static Expression<Vector>[] getVector() {
     Constructor<Vector> con = null;
     try {
       con = java.util.Vector.class.getDeclaredConstructor(new Class[0]);
@@ -120,14 +128,14 @@ public class PresetValues {
     }
     notNull(con);
 
-    return new Expression[]{new ConstructorCall<Vector>(Vector.class, con, new Expression[0])};
+    return new Expression[]{new ConstructorCall<Vector>(Object.class, con, new Expression[0])};
   }
 
 
   /*
    * int[]
    */
-  protected static Expression[] getIntArray1() {
+  protected static Expression<int[]>[] getIntArray1() {
     Class<int[]> c = int[].class;
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[2];
 
@@ -142,7 +150,7 @@ public class PresetValues {
   /*
    * String[]
    */
-  protected static Expression[] getStringArray1() {
+  protected static Expression<String[]>[] getStringArray1() {
     Class<String[]> c = String[].class;
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[2];
 
@@ -157,10 +165,10 @@ public class PresetValues {
   /*
    * T[]
    */
-  protected static <T> Expression[] getEmptyArray(final Class<T> c) {
+  protected static <T> Expression<T>[] getEmptyArray(final Class<T> c) {
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[1];
 
-    plans[0] = new ArrayCreateAndInit<T>(c, Vector.class); // {}
+    plans[0] = new ArrayCreateAndInit<T>(c, JCrasher.class); // {}
     plans[0].setComponentPlans(new Expression[0]);
 
     return plans;
