@@ -44,10 +44,10 @@ public class JCrasher {
 		"  -o, --outdir=DIR     where JCrasher writes test case sources to (default .)\n" +
 		"  -v, --version        print version number\n";
 
-	protected final static String name = "JCrasher 2 (http://www.cc.gatech.edu/jcrasher)";
-	protected final static String copyright = 
-		"(C) Copyright 2002-2007 Christoph Csallner and Yannis Smaragdakis.";
-	protected final static String hint =
+  protected final static String copyright = 
+    "(C) Copyright 2002-2007 Christoph Csallner and Yannis Smaragdakis.";
+	protected static String name = "JCrasher 2 (http://www.cc.gatech.edu/jcrasher)";
+	protected static String hint =
 		"Try `java edu.gatech.cc.jcrasher.JCrasher --help' for more information.";
 
 	/* TODO(csallner): evaluate the Java logging framework. */
@@ -223,7 +223,7 @@ public class JCrasher {
 	 * package name means that the user wants to load all classes
 	 * found in this package and all its sub-packages.
 	 */
-	protected Class[] parseClasses(final String[] userSpecs) {
+	protected Class<?>[] parseClasses(final String[] userSpecs) {
 		final Set<Class<?>> res = new HashSet<Class<?>>();	//avoid multiple entires of same class
 
 		/* First interpret each user-provided name as a class name.
@@ -287,9 +287,11 @@ public class JCrasher {
 	
 	
 	/**
-	 * set Constants.OUT_DIR according to user param
+	 * Sets Constants.OUT_DIR according to user param.
+   * 
+   * Only public to allow access from Check 'n' Crash.
 	 */
-	protected void parseOutDir(final String arg) {
+	public void parseOutDir(final String arg) {
 		Constants.OUT_DIR = new File(arg);
 		if (Constants.OUT_DIR.isDirectory()==false) {
 			die(arg +" is not a directory.");
@@ -297,10 +299,20 @@ public class JCrasher {
 	}
 	
 	
+  /**
+   * Allow other tools to use our parsing functionality
+   * and give their name and hint.
+   */
+  public void setNameAndHint(String pName, String pHint) {
+    name = pName;
+    hint = pHint;
+  }
+  
+  
 	/* 
 	 * Parse command line parameters using GNU GetOpt 
 	 */
-	protected Class[] parse(final String[] args){
+	protected Class<?>[] parse(final String[] args){
 		LongOpt[] longopts = new LongOpt[]{
 				new LongOpt("execute", LongOpt.NO_ARGUMENT, null, 'e'),
 				new LongOpt("depth", LongOpt.REQUIRED_ARGUMENT, null, 'd'),
@@ -379,7 +391,7 @@ public class JCrasher {
 
 		/* Load classes of given name with system class-loader */
 		final JCrasher main = new JCrasher();
-		final Class[] classes = main.parse(args);
+		final Class<?>[] classes = main.parse(args);
 			
 		/* Crash loaded class */
 		if (classes!=null && classes.length>0) {
