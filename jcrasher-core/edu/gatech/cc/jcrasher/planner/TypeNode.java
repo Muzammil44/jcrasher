@@ -145,7 +145,7 @@ public abstract class TypeNode<T> implements PlanSpaceNode<T> {
    *          order, taken from [0..getPlanSpaceSize()-1]
    * @return childrens' plans according to the ordering semantics, never null
    */
-  public Expression<?> getPlan(int planIndex, Class<?> testeeType) {
+  public Expression<? extends T> getPlan(int planIndex, Class<?> testeeType) {
     check(planIndex >= 0);
     check(planIndex < getPlanSpaceSize());
 

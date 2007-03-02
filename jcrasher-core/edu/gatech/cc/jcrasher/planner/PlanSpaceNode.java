@@ -35,5 +35,5 @@ public interface PlanSpaceNode<T> {
    * @param testeeType needed to emit test code tailored to testee.
    * @return plan according to the ordering semantics, never null
    */
-  public Expression<?> getPlan(int planIndex, Class<?> testeeType);
+  public Expression<? extends T> getPlan(int planIndex, Class<?> testeeType);
 }
