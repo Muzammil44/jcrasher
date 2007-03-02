@@ -18,18 +18,21 @@ JUnit: http://junit.org/
 	Build and run JCrasher on testee.
 </description>
 	
-	<!--Environment-->
+	
+	<!-- ********************************************* -->
+	
+	<!-- ADAPT FOLLOWING THREE LINES TO YOUR SETUP -->
+	
 	<property name="jcrasher.version" value="2.0.47"/>
 	<property name="jcrasher.jar" value="..\jcrasher-${jcrasher.version}.jar"/>
+	<property name="junit.jar" value="c:\lib\junit-3.8.1.jar"/>		
 	
-	<!-- ADAPT FOLLOWING LINE TO YOUR SETUP -->
-	<property name="junit.jar" value="c:\lib\junit-3.8.1.jar"/>
-	
+	<!-- ********************************************* -->
 	
 	
 	<!--Project-->
 	<property name="classpath" value=""/>		<!--Libraries required by the testee-->
-	<property name="src" value="src"/>		<!--no backslashes as used as pattern-->
+	<property name="src" value="src"/>			<!--no backslashes as used as pattern-->
 	<property name="bin" value="bin"/>
 	<property name="src.generated.tests" value="jcrasher-generated-tests-src"/> 
 	<property name="bin.generated.tests" value="jcrasher-generated-tests-bin"/>
