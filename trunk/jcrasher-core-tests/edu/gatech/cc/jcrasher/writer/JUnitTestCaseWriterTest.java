@@ -20,6 +20,8 @@ import static edu.gatech.cc.jcrasher.Constants.TAB;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 
 import junit.framework.TestCase;
 import client.sub.Loadee;
@@ -30,6 +32,7 @@ import edu.gatech.cc.jcrasher.plans.expr.MethodCall;
 import edu.gatech.cc.jcrasher.plans.expr.literals.IntLiteral;
 import edu.gatech.cc.jcrasher.plans.stmt.Block;
 import edu.gatech.cc.jcrasher.plans.stmt.BlockImpl;
+import edu.gatech.cc.jcrasher.plans.stmt.BlockStatement;
 import edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement;
 import edu.gatech.cc.jcrasher.plans.stmt.Statement;
 
@@ -80,8 +83,13 @@ public class JUnitTestCaseWriterTest extends TestCase {
     blockCall = new BlockImpl(Loadee.class,loadeeConstructor, TAB+TAB);
     blockCrash = new BlockImpl(Loadee.class,loadeeStaticMeth, TAB+TAB);
     
-    blockCall.setBlockStmts(new Statement[]{testeeCallStmt});
-    blockCrash.setBlockStmts(new Statement[]{testeeCrashStmt});
+    List<BlockStatement> list = new LinkedList<BlockStatement>();
+    list.add(testeeCallStmt);    
+    blockCall.setBlockStmts(list);
+    
+    list = new LinkedList<BlockStatement>();
+    list.add(testeeCrashStmt);   
+    blockCrash.setBlockStmts(list);
     
     blocks1 = new Block[] {blockCrash};
     blocks2 = new Block[] {blockCall, blockCrash};

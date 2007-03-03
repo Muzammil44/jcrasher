@@ -6,6 +6,7 @@
 package edu.gatech.cc.jcrasher.plans.stmt;
 
 import java.lang.reflect.Member;
+import java.util.List;
 
 import edu.gatech.cc.jcrasher.plans.expr.Variable;
 
@@ -50,8 +51,9 @@ public interface Block extends Statement {
    */
   public <V> Variable<V> getNextID(final Class<V> pClass);
 
+  
   /**
-   * @param pBlockStmts (empty) list, but never null
+   * @param blockStatements (empty) list, but never null
    */
-  public void setBlockStmts(final BlockStatement[] pBlockStmts);
+  public void setBlockStmts(final List<BlockStatement> blockStatements);
 }

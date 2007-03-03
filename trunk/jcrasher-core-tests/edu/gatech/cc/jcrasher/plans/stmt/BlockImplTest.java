@@ -21,6 +21,8 @@ import static edu.gatech.cc.jcrasher.Constants.TAB;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.util.LinkedList;
+import java.util.List;
 
 import junit.framework.TestCase;
 import client.sub.Loadee;
@@ -70,8 +72,13 @@ public class BlockImplTest extends TestCase {
     blockCall = new BlockImpl(Loadee.class, loadeeConstructor, "");
     blockCrash = new BlockImpl(Loadee.class, loadeeStaticMeth, "");
     
-    blockCall.setBlockStmts(new Statement[]{testeeCallStmt});
-    blockCrash.setBlockStmts(new Statement[]{testeeCrashStmt});
+    List<BlockStatement> list = new LinkedList<BlockStatement>();
+    list.add(testeeCallStmt);
+    blockCall.setBlockStmts(list);
+    
+    list = new LinkedList<BlockStatement>();
+    list.add(testeeCrashStmt);
+    blockCrash.setBlockStmts(list);
   }
   
   /***/

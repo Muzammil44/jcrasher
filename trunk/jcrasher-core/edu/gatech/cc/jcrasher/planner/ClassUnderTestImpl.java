@@ -12,6 +12,7 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 import edu.gatech.cc.jcrasher.Constants.PlanFilter;
@@ -215,7 +216,12 @@ implements ClassUnderTest<T> {
     /*
      * Assemble and append generated block
      */
-    b.setBlockStmts(bs);
+    List<BlockStatement> blockStatements = new LinkedList<BlockStatement>();
+    for(BlockStatement blockStatement: bs)  //TODO: wasteful conversion.
+      blockStatements.add(blockStatement);
+    
+    b.setBlockStmts(blockStatements);
+    
     return b;
   }
 
@@ -291,7 +297,12 @@ implements ClassUnderTest<T> {
 
 
     /* Assemble and append generated block */
-    b.setBlockStmts(bs);
+    List<BlockStatement> blockStatements = new LinkedList<BlockStatement>();
+    for(BlockStatement blockStatement: bs)  //TODO: wasteful conversion.
+      blockStatements.add(blockStatement);
+    
+    b.setBlockStmts(blockStatements);
+    
     return b;
   }
   

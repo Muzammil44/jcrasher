@@ -64,13 +64,10 @@ public class BlockImpl implements Block {
   /**
    * @param pBlockStmts maybe-empty list, but never null
    */
-  public void setBlockStmts(final BlockStatement[] pBlockStmts) {
-    notNull(pBlockStmts);
-    
-    blockStmts.clear();
-    for (BlockStatement stmt: pBlockStmts) {
-      blockStmts.add(stmt);  
-    }
+  public void setBlockStmts(final List<BlockStatement> blockStatements) {
+    notNull(blockStatements);
+    this.blockStmts.clear();
+    this.blockStmts.addAll(blockStatements);
   }
 
 
