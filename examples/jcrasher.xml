@@ -33,7 +33,7 @@ JUnit: http://junit.org/
 	<!--Project-->
 	<property name="classpath" value=""/>		<!--Libraries required by the testee-->
 	<property name="src" value="src"/>			<!--no backslashes as used as pattern-->
-	<property name="bin" value="bin"/>
+	<property name="bin" value="jcrasher-bin"/>
 	<property name="src.generated.tests" value="jcrasher-generated-tests-src"/> 
 	<property name="bin.generated.tests" value="jcrasher-generated-tests-bin"/>
 	<property name="testee.list.filename" value="testees.txt"/>
@@ -57,7 +57,7 @@ JUnit: http://junit.org/
 		<delete dir="${bin.generated.tests}"/>
 		<delete>
 	  	<fileset dir="${basedir}">  <!--deletes . if nested patternsets omitted-->
-	  		<patternset includes="*.jcrasher.txt,*.junit.txt,TEST-*.txt"/>
+	  		<patternset includes="*.jcrasher.txt,*.junit.txt,use-jcrasher.xml"/>
 	  	</fileset>		
 		</delete>
 	</target>			
