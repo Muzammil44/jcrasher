@@ -4,7 +4,7 @@
 Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
 -->
 
-<project basedir="." default="relase.jcrasher.all.bin" name="jcrasher">
+<project basedir="." default="relase.jcrasher.all" name="jcrasher">
 
   <!-- inc for major change -->
   <property name="version" value="2.0" /> 
@@ -170,13 +170,14 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
   </target>
   
       
-  <!-- JCrasher all: Release binary -->  
-  <target name="relase.jcrasher.all.bin"
+  <!-- JCrasher all: Release separate binary and source jars -->  
+  <target name="relase.jcrasher.all"
       depends="jcrasher.core.test,jcrasher.textui.build,jcrasher.runtime.build"
       description="make jcrasher.jar">
+  	
     <jar destfile="jcrasher-${version}.${build.number}.jar">
       <fileset dir="${basedir}">
-		<include name="use-jcrasher.xml" />
+				<include name="use-jcrasher.xml" />
         <include name="LICENSE*.txt" />
         <include name="NOTICE.txt" />        
       </fileset>
@@ -193,31 +194,42 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
         <include name="**/*.properties" />
       </fileset>               
     </jar>
+  	
+    <jar destfile="jcrasher-${version}.${build.number}-sources.jar">
+      <fileset dir="${basedir}">
+        <include name="NOTICE.txt" />        
+        <include name="LICENSE*.txt" />
+        <include name="build.xml" />
+				<include name="use-jcrasher.xml" />
+      </fileset>
+      <fileset dir="${src-jcrasher-core}"/>
+    	<fileset dir="${src-jcrasher-runtime}"/>
+    	<fileset dir="${src-jcrasher-textui}"/>
+    </jar>	
   </target>
        
         
-  <!-- JCraher all: Release source -->
-  <target name="release.jcrasher.all.src" 
-  	  depends="jcrasher.core.test,jcrasher.textui.build,jcrasher.runtime.build"
+  <!-- JCraher all: Release source tarball -->
+  <target name="release.jcrasher.all.src.tar.gz" 
+  	  depends="relase.jcrasher.all"
       description="make jcrasher-src.tar.gz">
-    <tar destfile="jcrasher-${version}.${build.number}-src.tar">
+    <tar destfile="jcrasher-${version}.${build.number}-sources-to-build.tar">
       <tarfileset dir="${basedir}">
         <include name="${src-jcrasher-core}/" />
         <include name="${src-jcrasher-core-tests}/" />
         <include name="${src-jcrasher-runtime}/" />
         <include name="${src-jcrasher-textui}/" />        
         <include name="${lib}/" />
-        <include name="index.html" />
         <include name="build.number" />
         <include name="NOTICE.txt" />        
         <include name="LICENSE*.txt" />
         <include name="build.xml" />
-		<include name="use-jcrasher.xml" />
+				<include name="use-jcrasher.xml" />
       </tarfileset>
     </tar>
 
-    <gzip src="jcrasher-${version}.${build.number}-src.tar" 
-        destfile="jcrasher-${version}.${build.number}-src.tar.gz" />
+    <gzip src="jcrasher-${version}.${build.number}-sources-to-build.tar" 
+        destfile="jcrasher-${version}.${build.number}-sources-to-build.tar.gz" />
   </target>
 
   
