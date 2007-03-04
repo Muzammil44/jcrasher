@@ -72,7 +72,7 @@ public class PresetValues {
   /* Complex types */
   protected static final Expression[] classPlans = new Expression[]{new DotClass()};
   protected static final Expression[] stringPlans = new Expression[]{
-    new StringLiteral(""), new StringLiteral("`\'@#$%^&/({<[|\\n:.,;")};
+    new StringLiteral(""), new StringLiteral("\"\n\\.`\'@#$%^&/({<[|\\n:.,;")};
 
 
   /*
@@ -141,8 +141,8 @@ public class PresetValues {
 
     plans[0] = new ArrayCreateAndInit<int[]>(c, Vector.class); // {}
     plans[0].setComponentPlans(new PrimitiveLiteral[0]);
-    plans[1] = new ArrayCreateAndInit<int[]>(c, Vector.class); // {0}
-    plans[1].setComponentPlans(new PrimitiveLiteral[]{new IntLiteral(0)});
+    plans[1] = new ArrayCreateAndInit<int[]>(c, Vector.class); // {-1}
+    plans[1].setComponentPlans(new PrimitiveLiteral[]{new IntLiteral(-1)});
     return plans;
   }
 
@@ -153,25 +153,17 @@ public class PresetValues {
   protected static Expression<String[]>[] getStringArray1() {
     Class<String[]> c = String[].class;
     
-
-    //FIXME: Add following back
-//    From DSD-Crasher:
-//    ArrayCreateAndInit[] plans = new ArrayCreateAndInit[2];  
-//    plans[0] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {}
-//    plans[0].setComponentPlans(new StringLiteral[0]);
-//    plans[1] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {""}
-//    plans[1].setComponentPlans(new StringLiteral[]{new StringLiteral("")});
-    
-
-//  Simulate old Assertions:
     ArrayCreateAndInit[] plans = new ArrayCreateAndInit[3];
-    plans[0] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {}
-    plans[0].setComponentPlans(new StringLiteral[0]);
-    plans[1] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {" "}
-    plans[1].setComponentPlans(new StringLiteral[]{new StringLiteral(" ")});
-    plans[2] = new ArrayCreateAndInit<String[]>(c, Vector.class); // {" "}
-    plans[2].setComponentPlans(new StringLiteral[]{
-        new StringLiteral("$"), new StringLiteral("%")});
+    plans[0] = new ArrayCreateAndInit<String[]>(c, Vector.class);
+    plans[0].setComponentPlans(new StringLiteral[0]); // {}
+    plans[1] = new ArrayCreateAndInit<String[]>(c, Vector.class);
+    plans[1].setComponentPlans(new StringLiteral[]{ // {""}
+        new StringLiteral("")});
+    plans[2] = new ArrayCreateAndInit<String[]>(c, Vector.class);
+    plans[2].setComponentPlans(new StringLiteral[]{ // {"\"","\n","'"}
+        new StringLiteral("\""),
+        new StringLiteral("\n"),
+        new StringLiteral("'")});
     return plans;
   }
 
@@ -243,19 +235,19 @@ public class PresetValues {
     }
 
     /* Array */
+     
+    if (pClass.equals(int[].class)) {
+      return getIntArray1();
+    }
     
-  //FIXME: Add following back: 
-//    if (pClass.equals(int[].class)) {
-//      return getIntArray1();
-//    }
     if (pClass.equals(String[].class)) {
       return getStringArray1();
     }
     
     //FIXME: Add following back: 
-//    if (pClass.isArray()) {
-//      return getEmptyArray(pClass);
-//    }
+    if (pClass.isArray()) {
+      return getEmptyArray(pClass);
+    }
 
     /* No preset plans for other complex types */
     return new Expression[0];

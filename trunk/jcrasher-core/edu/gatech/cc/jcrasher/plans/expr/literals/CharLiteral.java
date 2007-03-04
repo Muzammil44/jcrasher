@@ -5,6 +5,8 @@
  */
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
+import org.apache.commons.lang.StringEscapeUtils;
+
 
 /**
  * Holds Java-syntax of how to define a char value.
@@ -25,9 +27,24 @@ public class CharLiteral extends PrimitiveLiteral<Character> {
     super(Character.TYPE, Character.valueOf(val));
   }
   
+  /**
+   * TODO: Is this right?
+   */
+  protected String textInternal() {
+    switch (value) {
+    case '\'':
+      return "\\'"; 
+
+    case '"':
+      return "\"";
+      
+    default:
+      return StringEscapeUtils.escapeJava(value.toString()); 
+    }
+  }
 
   @Override
   public String text() {
-    return "'" + value.toString() + "'";
+    return "'" + textInternal() + "'";
   }
 }

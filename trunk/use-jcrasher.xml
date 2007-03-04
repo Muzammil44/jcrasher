@@ -71,7 +71,7 @@ Note that properties of the calling project override properties defined here.
 			<packagemapper from="${basedir}${file.separator}*.java" to="*"/>
 		</pathconvert> <!--package.Testee package.Testee-->
 		<java classname="edu.gatech.cc.jcrasher.JCrasher" fork="true"
-	 			dir="${src}" output="${jcrasher.out}" maxmemory="128m">
+	 			dir="${src}" output="${jcrasher.out}" maxmemory="1024m">
 			<classpath refid="test.classpath"/>
 			<arg value="-o"/>
 			<arg file="${src.generated.tests}"/>

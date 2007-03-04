@@ -24,7 +24,8 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
   <path id="project.classpath">
     <pathelement location="${bin-jcrasher-core}" />
     <pathelement location="${bin-jcrasher-textui}" />
-    <pathelement location="${lib}/java-getopt-1.0.10.jar" />
+    <pathelement location="${lib}/commons-lang-2.3.jar" />
+  	<pathelement location="${lib}/java-getopt-1.0.10.jar" />
   </path>
 
 
@@ -40,9 +41,21 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
     <mkdir dir="${bin-jcrasher-core-tests}" /> 
   </target>  
 
+	
+  <!-- Jakarta Commons -->
+  <target name="lib.commons.lang" depends="jcrasher.core.init">
+    <unzip src="${lib}/commons-lang-2.3.jar" dest="${bin-jcrasher-core}" 
+        overwrite="false">
+      <patternset>
+        <include name="**/*.class" />
+        <include name="**/*.properties" />
+      </patternset>
+    </unzip>
+  </target>	
   
+	
  <!-- JCrasher core: Build --> 
-  <target name="jcrasher.core.build" depends="jcrasher.core.init">
+  <target name="jcrasher.core.build" depends="lib.commons.lang">
     <javac destdir="${bin-jcrasher-core}" debug="true">
       <src path="${src-jcrasher-core}" />
       <classpath refid="project.classpath" />
