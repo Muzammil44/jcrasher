@@ -24,32 +24,53 @@ public class StringLiteralTest extends TestCase {
 
   protected final String empty = "";
   protected final String funky = "$funky_";
+  protected final String newline = "\n";
+  protected final String space = " ";
+  protected final String tick = "'";
+  protected final String quote = "\"";
+  protected final String backslash = "\\";
   
-  protected final StringLiteral emptyLit = new StringLiteral(empty);
-  protected final StringLiteral funkyLit = new StringLiteral(funky);
+  protected final StringLiteral emptyLiteral = new StringLiteral(empty);
+  protected final StringLiteral funkyLiteral = new StringLiteral(funky);
+  protected final StringLiteral newlineLiteral = new StringLiteral(newline);
+  protected final StringLiteral spaceLiteral = new StringLiteral(space);
+  protected final StringLiteral tickLiteral = new StringLiteral(tick);
+  protected final StringLiteral quoteLiteral = new StringLiteral(quote);
+  protected final StringLiteral backslashLiteral = new StringLiteral(backslash);
   
   /***/
   public void testGetReturnType() {
-    assertEquals(String.class, emptyLit.getReturnType());
-    assertEquals(String.class, funkyLit.getReturnType());
+    assertEquals(String.class, emptyLiteral.getReturnType());
+    assertEquals(String.class, funkyLiteral.getReturnType());
   }
 
   /***/
   public void testExecute() {
-    assertEquals(empty, emptyLit.execute());
-    assertEquals(funky, funkyLit.execute());
+    assertEquals(empty, emptyLiteral.execute());
+    assertEquals(funky, funkyLiteral.execute());
   }
   
   /***/
   public void testText() {
-    assertEquals("\"\"", emptyLit.text());
-    assertEquals("\""+funky+"\"", funkyLit.text());
+    System.out.println(newlineLiteral.text());
+    System.out.println(spaceLiteral.text());
+    System.out.println(tickLiteral.text());
+    System.out.println(quoteLiteral.text());
+    System.out.println(backslashLiteral.text());
+    
+    assertEquals("\"\"", emptyLiteral.text());
+    assertEquals("\""+funky+"\"", funkyLiteral.text());
+    assertEquals("\"\\n\"", newlineLiteral.text());
+    assertEquals("\" \"", spaceLiteral.text());
+    assertEquals("\"'\"", tickLiteral.text());
+    assertEquals("\"\\\"\"", quoteLiteral.text());
+    assertEquals("\"\\\\\"", backslashLiteral.text());
   }
   
   /***/
   public void testToString() {
-    assertEquals(emptyLit.toString(), emptyLit.text());
-    assertEquals(funkyLit.toString(), funkyLit.text());
+    assertEquals(emptyLiteral.toString(), emptyLiteral.text());
+    assertEquals(funkyLiteral.toString(), funkyLiteral.text());
   }
 
   /***/

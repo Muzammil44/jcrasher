@@ -16,7 +16,6 @@ import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Hashtable;
 import java.util.List;
-import java.util.Vector;
 
 import edu.gatech.cc.jcrasher.Constants;
 import edu.gatech.cc.jcrasher.Constants.PlanFilter;
@@ -272,7 +271,9 @@ public class ClassWrapperImpl<T> implements ClassWrapper<T> {
     }
     final List<Expression<T>> withNull = 
         new ArrayList<Expression<T>>(presetPlans); // null desired
-    withNull.add(new NullLiteral<T>(wrappedClass, Vector.class));
+    withNull.add(new NullLiteral<T>(
+        wrappedClass,
+        Constants.class)); //FIXME: Breaks if testee from JCrasher package.
     return withNull;
   }
 

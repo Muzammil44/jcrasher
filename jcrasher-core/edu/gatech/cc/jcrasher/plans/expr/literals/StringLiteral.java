@@ -6,6 +6,9 @@
 package edu.gatech.cc.jcrasher.plans.expr.literals;
 
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
+
+import org.apache.commons.lang.StringEscapeUtils;
+
 import edu.gatech.cc.jcrasher.plans.expr.SimpleExpression;
 
 
@@ -31,6 +34,6 @@ public class StringLiteral extends SimpleExpression<String> {
   }
 
   public String text() {
-  	return "\"" + value + "\"";
+  	return "\"" + StringEscapeUtils.escapeJava(value)+ "\"";
   }  
 }
