@@ -332,7 +332,7 @@ public class FilteringTestCase extends TestCase {
 		}
 	}
 	
-	
+  	
 	/**
 	 * Main entry to JCrasher runtime
 	 * 
@@ -349,14 +349,20 @@ public class FilteringTestCase extends TestCase {
 			stackLengthOfTest = getMyStackLength() -1;	//we are called by test123()
 		}
 		
-		/* Ignore errors and checked exceptions. */
-		if ((throwable instanceof Error) && (!SHOW_ERRORS)) {
-			return;
-		}
-		if (!(throwable instanceof RuntimeException) ||  	//Checked exception --> ignore.
-				throwable instanceof ExitSecurityException) { 	//System.exit --> ignore.
-			return;
-		}
+    /* Ignore errors and checked exceptions. */
+    if (throwable instanceof Exception && 
+        !(throwable instanceof RuntimeException))
+      return;  //Always ignore checked exceptions.
+    
+    if (throwable instanceof ExitSecurityException)
+      return;  //Always ignore System.exit violations.
+        
+    /* Moved following if-statement to GroupedTestResult.addError.
+     * Calling dispatchExeption may produce a stack overflow error itself
+     * and we would not reach here for filtering it out. */
+//    if ((throwable instanceof Error) && (!SHOW_ERRORS))
+//      return;
+    
 			
 		/* 0 <= height < |test| .. test0() not on top of stack frame? Should not happen -->  meaningless
 		 * height == |test| .. test0() crashes: JCrasher fault --> meaningless */
