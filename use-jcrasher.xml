@@ -70,10 +70,9 @@ Note that properties of the calling project override properties defined here.
 		<pathconvert property="testee.list.type" refid="testee.filelist" pathsep=" ">
 			<packagemapper from="${basedir}${file.separator}*.java" to="*"/>
 		</pathconvert> <!--package.Testee package.Testee-->
-		<java classname="edu.gatech.cc.jcrasher.JCrasher" fork="true"
-	 			dir="${src}" output="${jcrasher.out}" maxmemory="1024m">
+		<java classname="edu.gatech.cc.jcrasher.JCrasher" output="${jcrasher.out}">
 			<classpath refid="test.classpath"/>
-			<arg value="-o"/>
+			<arg value="--outdir"/>
 			<arg file="${src.generated.tests}"/>
 			<arg line="${jcrasher.params}"/>  <!--for example, "-d=2"-->
 			<arg line="${testee.list.type}"/>
@@ -116,10 +115,11 @@ Note that properties of the calling project override properties defined here.
     </junit>
 	</target>
 
-  <!--test.run-->
+  <!--Run test with our filtering JUnit Text UI-->
   <target name="test.run.filtering" depends="test.compile">
-    <java classname="edu.gatech.cc.junit.textui.RaGTestRunner" fork="true"      
-        dir="${bin.generated.tests}" output="${junit.out}" maxmemory="384m">
+    <java classname="edu.gatech.cc.junit.textui.RaGTestRunner"
+    		output="${junit.out}"
+    		fork="yes">	<!--TODO: Ant crashes otherwise-->
       <classpath>
         <pathelement location="${jcrasher.jar}"/>
         <pathelement location="${junit.jar}"/>
@@ -130,6 +130,7 @@ Note that properties of the calling project override properties defined here.
       <assertions>  <!--assertions enabled for testing-->
         <enable/>
       </assertions>
+    	<arg value="-showErrors"/>
       <arg value="JUnitAll"/>
     </java>
   </target> 

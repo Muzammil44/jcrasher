@@ -92,19 +92,27 @@ public class GroupedTestResult extends TestResult {
 	 * than t.
 	 */
 	protected GroupedTestFailure getPrototype (Throwable t) {
+    if (t instanceof Wrapper)
+      t = ((Wrapper)t).unwrap();
+    
 		GroupedTestFailure candidate= null;
 		for (int i=0; i<fErrors.size(); i++) {
 			GroupedTestFailure failure = (GroupedTestFailure) fErrors.elementAt(i);
 			Throwable p = failure.thrownException(); //p could be t's prototype.
 			
-			/* Errors do not have a stacktrace */
-			if (t instanceof Error && p.getClass().equals(t.getClass())) {
-				return failure;
-			}
+      /* Some throwable do not have a stacktrace */
+      if (p.getStackTrace()==null)
+        return failure;
+      
+//			/* Errors do not have a stacktrace */
+//			if (t instanceof Error && p.getClass().equals(t.getClass())) {
+//				return failure;
+//			}
 			
 			/* Exceptions may have different stack trace */
-			if ((t instanceof RuntimeException && (p.getClass().equals(t.getClass()))) || 
-					(t instanceof Wrapper && p.getClass().equals((((Wrapper)t).unwrap().getClass())))){  //same exception type.
+      if (p.getClass().equals(t.getClass())) {
+//			if ((t instanceof RuntimeException && (p.getClass().equals(t.getClass()))) || 
+//					(t instanceof Wrapper && p.getClass().equals((((Wrapper)t).unwrap().getClass())))){  //same exception type.
 				
 				switch (RaGTestRunner.GROUP_MODE) {
 				  /* new CnC mode: agressive grouping. */
@@ -154,25 +162,34 @@ public class GroupedTestResult extends TestResult {
 	 * + failure in all of the above.
 	 */
 	@Override
-	public synchronized void addError(Test test, Throwable t) {
-		GroupedTestFailure p = getPrototype(t);
+	public synchronized void addError(Test test, Throwable throwable) {
+    
+    /* Moved Error check here from FilteringTestCase.
+     * Calling dispatchError might generate another stack overflow error.
+     * Which would end up here regardless of any filtering in dispatchError. */
+    if ((throwable instanceof Error) && (!FilteringTestCase.SHOW_ERRORS))
+      return;
+    
+		GroupedTestFailure prototype = getPrototype(throwable);
 		GroupedTestFailure failure = null;
 		
-		if (RaGTestRunner.GROUP_MODE==RaGTestRunner.GROUP_FOCUSED && p!=null &&
-				isMoreFocused(t, p.thrownException())) // unwrap after isMoreFocused
+		if (RaGTestRunner.GROUP_MODE==RaGTestRunner.GROUP_FOCUSED && prototype!=null &&
+				isMoreFocused(throwable, prototype.thrownException())) // unwrap after isMoreFocused
 		{	/* make failure the new protype */
-			if (t instanceof Wrapper) {t = ((Wrapper)t).unwrap();}
-			failure = new GroupedTestFailure(test, t, null);
-			p.parent = failure;
+			if (throwable instanceof Wrapper) {throwable = ((Wrapper)throwable).unwrap();}
+			failure = new GroupedTestFailure(test, throwable, null);
+			prototype.parent = failure;
 		}		
 		else {
-			if (t instanceof Wrapper) {t = ((Wrapper)t).unwrap();}
-			failure = new GroupedTestFailure(test, t, p);
+			if (throwable instanceof Wrapper) {
+        throwable = ((Wrapper)throwable).unwrap();
+      }
+			failure = new GroupedTestFailure(test, throwable, prototype);
 		}
 		
 		fErrors.addElement(failure);		
 		for (Enumeration e= fListeners.elements(); e.hasMoreElements(); ) {
-			((GroupedTestListener)e.nextElement()).addError(test, t, p);
+			((GroupedTestListener)e.nextElement()).addError(test, throwable, prototype);
 		}
 	}
 }
