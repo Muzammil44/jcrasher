@@ -6,6 +6,7 @@
 package edu.gatech.cc.junit.framework;
 
 import java.util.Enumeration;
+import java.util.Vector;
 
 import junit.framework.Test;
 import junit.framework.TestResult;
@@ -52,6 +53,29 @@ public class GroupedTestResult extends TestResult {
 		return stack1[0].equals(stack2[0]);
 	}
 	
+  /**
+   * Determine whether the top 20 elements of the two stack traces 
+   * are of same size and pairwise equal.
+   */
+  protected boolean equal20(StackTraceElement[] stack1, StackTraceElement[] stack2) {   
+    if ((stack1 == null) && (stack2 == null)) 
+      return true;  //errors have a null stack trace
+
+    if ((stack1 == null) || (stack2 == null))
+      return false; //one stack is null, the other is not
+
+    if (stack1.length < 20 || stack2.length < 20)
+      return false;
+    
+    for (int i=0; i < 20; i++) {
+      if (! stack1[i].equals(stack2[i])) {
+        return false;   /* at least one different element */
+      }
+    }
+    
+    return true;
+  } 
+  
 	
 	/**
 	 * Determine whether two stack traces stack1 and stack2 are 
@@ -64,14 +88,14 @@ public class GroupedTestResult extends TestResult {
 		if ((stack1 == null) && (stack2 == null))	
 			return true;	//errors have a null stack trace
 
-		else if ((stack1 == null) || (stack2 == null))
+		if ((stack1 == null) || (stack2 == null))
 			return false;	//one stack is null, the other is not
-
-		
-		if (stack1.length != stack2.length) {
+    
+    
+		if (stack1.length != stack2.length)
 			return false;		/* two stack traces of different size are different */
-		}
 
+    
 		for (int i=0; i < stack1.length - FilteringTestCase.getStackLengthOfTest(); i++) {
 			/* method under test has been previously filtered by JCrasher runtime */
 			if (! stack1[i].equals(stack2[i])) {
@@ -91,44 +115,40 @@ public class GroupedTestResult extends TestResult {
 	 * same top stack element. This failure can be less, equally, or more focused
 	 * than t.
 	 */
-	protected GroupedTestFailure getPrototype (Throwable t) {
-    if (t instanceof Wrapper)
-      t = ((Wrapper)t).unwrap();
+	protected GroupedTestFailure getPrototype (Throwable throwable) {
+    if (throwable instanceof Wrapper)
+      throwable = ((Wrapper)throwable).unwrap();
     
 		GroupedTestFailure candidate= null;
-		for (int i=0; i<fErrors.size(); i++) {
-			GroupedTestFailure failure = (GroupedTestFailure) fErrors.elementAt(i);
-			Throwable p = failure.thrownException(); //p could be t's prototype.
+		for (GroupedTestFailure prototypeFailure: (Vector<GroupedTestFailure>)fErrors) {
+			Throwable prototypeThrowable = prototypeFailure.thrownException(); //p could be t's prototype.
 			
-      /* Some throwable do not have a stacktrace */
-      if (p.getStackTrace()==null)
-        return failure;
+      if (!prototypeThrowable.getClass().equals(throwable.getClass()))
+        continue;
       
-//			/* Errors do not have a stacktrace */
-//			if (t instanceof Error && p.getClass().equals(t.getClass())) {
-//				return failure;
-//			}
+      /* Some throwable do not have a stacktrace */
+      if (prototypeThrowable.getStackTrace()==null)
+        return prototypeFailure;     
 			
-			/* Exceptions may have different stack trace */
-      if (p.getClass().equals(t.getClass())) {
-//			if ((t instanceof RuntimeException && (p.getClass().equals(t.getClass()))) || 
-//					(t instanceof Wrapper && p.getClass().equals((((Wrapper)t).unwrap().getClass())))){  //same exception type.
-				
-				switch (RaGTestRunner.GROUP_MODE) {
-				  /* new CnC mode: agressive grouping. */
-					case RaGTestRunner.GROUP_FOCUSED:
-						if (hasSameTop(p.getStackTrace(), t.getStackTrace())) {
-							if (candidate==null || isMoreFocused(p, candidate.thrownException())) {
-								candidate = failure;
-							}
+      
+			switch (RaGTestRunner.GROUP_MODE) {
+			  /* new CnC mode: agressive grouping. */
+				case RaGTestRunner.GROUP_FOCUSED:
+					if (hasSameTop(prototypeThrowable.getStackTrace(), throwable.getStackTrace())) {
+						if (candidate==null || isMoreFocused(prototypeThrowable, candidate.thrownException())) {
+							candidate = prototypeFailure;
 						}
-					/* old JCrasher SPE mode: same stack trace. */
-					default:
-						if (equal(p.getStackTrace(), t.getStackTrace())) {
-							return failure;	/* found similar (prototype) exception. */							
-						}
-						break;
-				}
+					}
+          break;
+          
+				/* old JCrasher SPE mode: same stack trace. */
+				default:
+          if (StackOverflowError.class.equals(throwable.getClass()) &&
+              equal20(prototypeThrowable.getStackTrace(), throwable.getStackTrace()))
+            return prototypeFailure;
+					if (equal(prototypeThrowable.getStackTrace(), throwable.getStackTrace())) {
+						return prototypeFailure;	/* found similar (prototype) exception. */							
+					}
 			}
 		}
 		if (RaGTestRunner.GROUP_MODE==RaGTestRunner.GROUP_FOCUSED) {
