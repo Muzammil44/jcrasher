@@ -22,6 +22,6 @@ package edu.gatech.cc.jcrasher.plans.stmt;
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/statements.html#14.5
  */
-public interface Statement extends BlockStatement {
+public interface Statement<T> extends BlockStatement<T> {
 	//empty
 }

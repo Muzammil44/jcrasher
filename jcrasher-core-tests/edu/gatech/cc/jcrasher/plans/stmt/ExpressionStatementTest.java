@@ -81,7 +81,7 @@ public class ExpressionStatementTest extends TestCase {
   public void testExecute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException {
     
-    assertEquals(Boolean.TRUE, innerMethodCallStmt.execute());
+    assertEquals(Integer.valueOf(1), innerMethodCallStmt.execute());
     
     try {
       loadeeMethodCallIntStmt.execute();

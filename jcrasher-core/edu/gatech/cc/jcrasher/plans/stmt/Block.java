@@ -30,10 +30,12 @@ import edu.gatech.cc.jcrasher.plans.expr.Variable;
  * <li>Each reference return value must be non-null.
  * </ul>
  * 
+ * @param <T> return type of the last expression.
+ * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/statements.html#14.2
  */
-public interface Block extends Statement {
+public interface Block<T> extends Statement<T> {
 
   /**
    * @return testee that this block contains code for calling.
