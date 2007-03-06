@@ -46,7 +46,7 @@ public class MethodCall<T> extends FunctionCall<T> {
   protected Method meth = null;
 
   
-  protected void initBase(Method pMeth, Expression[] pConstrParams){
+  protected void initBase(Method pMeth, Expression<?>[] pConstrParams){
     notNull(pMeth);
     notNull(pConstrParams);
 

@@ -44,7 +44,7 @@ public abstract class AbstractTypeGraph implements TypeGraph {
   /**
    * @return all class-wrappers
    */
-  public ClassWrapper[] getWrappers() {
+  public ClassWrapper<?>[] getWrappers() {
     Collection<ClassWrapper<?>> wrappers = class2wrapper.values();
     return wrappers.toArray(new ClassWrapper[wrappers.size()]);
   }

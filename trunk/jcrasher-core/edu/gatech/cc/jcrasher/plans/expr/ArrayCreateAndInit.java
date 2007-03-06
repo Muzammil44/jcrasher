@@ -85,14 +85,14 @@ public class ArrayCreateAndInit<T> extends ReferenceTypeExpression<T> {
   /**
    * get plans for all components
    */
-  protected Expression[] getComponentPlans() {
+  protected Expression<?>[] getComponentPlans() {
     return notNull(componentPlans);
   }
 
   /**
    * set plans for all components
    */
-  public void setComponentPlans(final Expression[] pPlans) {
+  public void setComponentPlans(final Expression<?>[] pPlans) {
     componentPlans = notNull(pPlans);
   }
 

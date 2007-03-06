@@ -45,7 +45,7 @@ public class JUnitAllImpl implements JUnitAll {
 	 * @param c place JUnitAll.java in directory from which c was loaded
 	 * in case no out-directory has been set explicitly.
 	 */
-	public void create(Class c) {
+	public void create(Class<?> c) {
 		if (fw!=null) {return;}	//Already created.
 		
 		notNull(c);

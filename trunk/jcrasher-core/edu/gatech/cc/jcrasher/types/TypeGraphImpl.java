@@ -182,7 +182,7 @@ public class TypeGraphImpl extends AbstractTypeGraph {
     notNull(cw);
     notNull(vis);
     
-    ((ClassWrapperImpl) cw).setIsSearched();
+    ((ClassWrapperImpl<?>) cw).setIsSearched();
 
     if (cw.isLibraryType()) {
       return;   //not interested in typeGraph defined by a JDK core type
@@ -211,7 +211,7 @@ public class TypeGraphImpl extends AbstractTypeGraph {
       maybeMore = false;
 
       for (ClassWrapper<?> wrapper : getWrappers()) {
-        ClassWrapperImpl cw = (ClassWrapperImpl) wrapper;
+        ClassWrapperImpl<?> cw = (ClassWrapperImpl<?>) wrapper;
         if (cw.isSearched() == false) {
           // add meths localy and to other (empty) wrappers
           findRules(cw, visUsed);

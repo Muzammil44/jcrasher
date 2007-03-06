@@ -31,7 +31,7 @@ public class CharLiteral extends PrimitiveLiteral<Character> {
    * TODO: Is this right?
    */
   protected String textInternal() {
-    switch (value) {
+    switch (value.charValue()) {
     case '\'':
       return "\\'"; 
 

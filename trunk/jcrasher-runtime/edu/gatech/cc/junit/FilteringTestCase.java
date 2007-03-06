@@ -59,6 +59,37 @@ public class FilteringTestCase extends TestCase {
 		stackLengthOfTest = -1;
 	}
 
+  /**
+   * @return int >= 1: function stack frame height at which regular test method is placed
+   * Needed by modified JUnit for exception grouping.
+   */
+  public static int getStackLengthOfTest() {
+    return stackLengthOfTest;
+  }
+  
+  /**************************************************************************
+   * Executed by dispatchException() to 
+   * determine the length of its function stack 
+   * != pos in invocation frame array
+   * 
+   * @return the length of the client's (=caller) stack
+   *         == callee's length - 1
+   */
+  private static int getMyStackLength() {
+
+    /* discover height of function stack */
+    class DummyException extends Exception {
+      //nop
+    }
+    
+    try {
+      throw new DummyException();
+    } catch (DummyException d) {
+      int height = d.getStackTrace().length;
+      return height-1;  //caller has put us on top of himself
+    }
+  }
+  
 	/**************************************************************************
 	 * Constructor for FilteringTestCase.
 	 * @param name
@@ -67,29 +98,10 @@ public class FilteringTestCase extends TestCase {
 		super(name);
 	}
 
-
-	/**************************************************************************
-	 * Executed by dispatchException() to 
-	 * determine the length of its function stack 
-	 * != pos in invocation frame array
-	 * 
-	 * @return the length of the client's (=caller) stack
-	 *         == callee's length - 1
-	 */
-	private static int getMyStackLength() {
-
-		/* discover height of function stack */
-		class DummyException extends Exception {
-			//nop
-		}
-		
-		try {
-			throw new DummyException();
-		} catch (DummyException d) {
-			int height = d.getStackTrace().length;
-			return height-1;	//caller has put us on top of himself
-		}
-	}
+  
+  protected String getNameOfTestedMeth() {
+    return null;
+  }
 
 
 	/**
@@ -332,7 +344,18 @@ public class FilteringTestCase extends TestCase {
 		}
 	}
 	
-  	
+  
+  /**
+   * Traditional dispatch method of JCrasher.
+   * 
+   * @deprecated Naming is confusing, use throwIf instead.
+   */
+  @Deprecated
+  protected void dispatchException(Throwable throwable) throws Throwable {
+    throwIf(throwable);
+  }
+  
+  
 	/**
 	 * Main entry to JCrasher runtime
 	 * 
@@ -344,7 +367,7 @@ public class FilteringTestCase extends TestCase {
 	 * + by default
 	 * + -showErrors -directCallOnly and not thrown by directly called method 
 	 */
-	protected void dispatchException(Throwable throwable) throws Throwable {
+	protected void throwIf(Throwable throwable) throws Throwable {
 		if (stackLengthOfTest<0) {  //get our position on the function frame stack.
 			stackLengthOfTest = getMyStackLength() -1;	//we are called by test123()
 		}
@@ -436,19 +459,4 @@ public class FilteringTestCase extends TestCase {
 				}
 		}
 	}
-	
-	
-	protected String getNameOfTestedMeth() {
-		return null;
-	}
-	
-	
-	/**
-	 * @return int >= 1: function stack frame height at which regular test method is placed
-	 * Needed by modified JUnit for exception grouping.
-	 */
-	public static int getStackLengthOfTest() {
-		return stackLengthOfTest;
-	}
-
 }
