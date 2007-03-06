@@ -116,6 +116,11 @@ public abstract class Constants {
   public static boolean JUNIT_FILTERING = false;
 
   /**
+   * Include null literals in preset values.
+   */
+  public static boolean SUPPRESS_NULL_LITERALS = false;  
+  
+  /**
    * Line separator
    */
   public final static String NL  = System.getProperty("line.separator");
