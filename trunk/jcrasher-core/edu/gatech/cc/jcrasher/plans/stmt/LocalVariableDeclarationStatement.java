@@ -27,13 +27,12 @@ import edu.gatech.cc.jcrasher.plans.expr.Variable;
  * Each reference type parameter of each method must be non-null.
  * Each method returns a non-null value.
  * 
- * @param <V> type of the wrapped variable, which may differ
- * from the type (Boolean) of the value of executing a statement (true).
+ * @param <V> type of the wrapped variable.
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  * http://java.sun.com/docs/books/jls/third_edition/html/statements.html#14.4
  */
-public class LocalVariableDeclarationStatement<V> implements BlockStatement {
+public class LocalVariableDeclarationStatement<V> implements BlockStatement<V> {
   /*
    * var should be unique in the current context if obtained via
    * block.getNextID()
@@ -46,29 +45,29 @@ public class LocalVariableDeclarationStatement<V> implements BlockStatement {
    */
   public LocalVariableDeclarationStatement(
       Variable<V> pID, 
-      Expression<? extends V> pPlan) {
+      Expression<? extends V> plan) {
     
     notNull(pID);
-    notNull(pPlan);
+    notNull(plan);
 
     final Class<V> idType = pID.getReturnType();
-    final Class<? extends V> planType = pPlan.getReturnType();
+    final Class<? extends V> planType = plan.getReturnType();
     check(idType.isAssignableFrom(planType) //TODO(csallner) unknown statically
       ||  idType.isPrimitive()); //
 
     var = pID;
-    varInitPlan = pPlan;
+    varInitPlan = plan;
   }
 
 
   /**
    * @return true.
    */
-  public Boolean execute() throws InstantiationException,
+  public V execute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException {
     V value = varInitPlan.execute();
     var.assign(value);
-    return Boolean.TRUE;  //successfully executed assignment operation
+    return value;
   }  
   
   

@@ -39,7 +39,8 @@ public class LocalVariableDeclarationStatementTest extends TestCase {
   protected final LoadeeCall loadeeCallForClient = new LoadeeCall(Client.class);
   protected final LoadeeCall loadeeCallForNeeded = new LoadeeCall(Needed.class);
 	
-  protected final Expression<String> stringLit = new StringLiteral("***");
+  protected final String myString = "***";
+  protected final Expression<String> stringLit = new StringLiteral(myString);
   
   protected final Variable<Integer> intX = 
     new Variable<Integer>(int.class, Client.class, "x");
@@ -81,7 +82,7 @@ public class LocalVariableDeclarationStatementTest extends TestCase {
     assertEquals(null, stringY.execute());
     
     Object res = stringAssign.execute();
-    assertEquals(Boolean.TRUE, res);
+    assertEquals(myString, res);
     assertEquals(stringLit.execute(), stringY.execute());
     
     try {

@@ -29,7 +29,7 @@ import edu.gatech.cc.jcrasher.plans.expr.Variable;
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class BlockImpl implements Block {
+public class BlockImpl<T> implements Block<T> {
 
   /* method or constructor this block is intended to execute. */
   protected Member member;
@@ -158,12 +158,13 @@ public class BlockImpl implements Block {
   /**
    * Executes all statements of this block.
    */
-  public Boolean execute() throws InstantiationException,
+  public T execute() throws InstantiationException,
   IllegalAccessException, InvocationTargetException {
     
+    Object result = null;
     for (BlockStatement stmt : blockStmts) {
-      stmt.execute();
+      result = stmt.execute();
     }
-    return Boolean.TRUE;
+    return ((T) result);  //TODO: horrible hack.
   }
 }
