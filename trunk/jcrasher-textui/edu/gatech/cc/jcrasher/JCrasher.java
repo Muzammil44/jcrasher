@@ -42,6 +42,7 @@ public class JCrasher {
 		"  -j, --junitFiltering make generated test cases extend FilteringTestCase\n" +
 		"  -l, --log            generate detailed log\n" +		
 		"  -o, --outdir=DIR     where JCrasher writes test case sources to (default .)\n" +
+    "  -s, --suppressNull   do not include any null literals in generated test cases.\n" +
 		"  -v, --version        print version number\n";
 
   protected final static String copyright = 
@@ -320,9 +321,10 @@ public class JCrasher {
 				new LongOpt("junitFiltering", LongOpt.NO_ARGUMENT, null, 'j'),
 				new LongOpt("log", LongOpt.NO_ARGUMENT, null, 'l'),
 	   		new LongOpt("outdir", LongOpt.REQUIRED_ARGUMENT, null, 'o'),
+        new LongOpt("suppressNull", LongOpt.NO_ARGUMENT, null, 's'),
 				new LongOpt("version", LongOpt.NO_ARGUMENT, null, 'v')
 	  };
-	  Getopt g = new Getopt("JCrasher 2", args, "ed:hjlo:v;", longopts);
+	  Getopt g = new Getopt("JCrasher 2", args, "ed:hjlo:sv;", longopts);
 	  int opt = 0;
 	  while ((opt = g.getopt()) != -1) {
 	  	switch (opt) {
@@ -352,6 +354,10 @@ public class JCrasher {
 	      	exit();
 	      	break;	//TODO(csallner): dead code.
 	      
+        case 's': //--suppressNull
+          Constants.SUPPRESS_NULL_LITERALS = true; 
+          break;  
+          
 	      case 'v':  //--version .. print version number.
 	      	//TODO(csallner): get version from jar file name.
 	      	//System.out.println(name);

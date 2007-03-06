@@ -261,6 +261,10 @@ public class ClassWrapperImpl<T> implements ClassWrapper<T> {
    * @return List of preset plans of wrapped type (= userdefined database).
    */
   public List<Expression<T>> getPresetPlans(final PlanFilter planFilter) {
+
+    if (Constants.SUPPRESS_NULL_LITERALS)
+      return presetPlans; //suppress all null literals.
+    
     if (wrappedClass.isPrimitive()) { // no null for primitive
       return presetPlans;
     }

@@ -11,6 +11,13 @@ import edu.gatech.cc.jcrasher.writer.CodeGenFct;
 /**
  * Provides plan for null reference.
  * 
+ * Who needs a null literal? Be very careful to only
+ * generate a null literal in a test case if you really want it
+ * (i.e., only if a powerful program analysis has found an interesting
+ * bug that requires a null literal).
+ * It is easy to swamp the user with test cases that pass null
+ * to methods under test. The user does not want to see those NPE.
+ * 
  * @param <T> type of null literal.
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
