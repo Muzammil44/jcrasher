@@ -30,7 +30,7 @@ public abstract class TypeNode<T> implements PlanSpaceNode<T> {
   /**
    * Child types, i.e. victim and param types up to our max depth - 1
    */
-  private PlanSpaceNode[] children = null;
+  private PlanSpaceNode<T>[] children = null;
 
   /**
    * Size of each child's plan space (given their max depth), e.g.: - (3, 5, 2)
@@ -91,11 +91,11 @@ public abstract class TypeNode<T> implements PlanSpaceNode<T> {
    * 
    * @param parameters The children to set
    */
-  protected void setChildren(final PlanSpaceNode[] pChildren) {
+  protected void setChildren(final PlanSpaceNode<T>[] pChildren) {
     this.children = pChildren;
   }
 
-  protected PlanSpaceNode[] getChildren() {
+  protected PlanSpaceNode<T>[] getChildren() {
     return children;
   }
 

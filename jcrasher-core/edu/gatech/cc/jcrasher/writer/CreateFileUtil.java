@@ -53,6 +53,7 @@ public class CreateFileUtil {
     if (cl == null) { // null --> bootstrap cl --> JDK class.
       cl = ClassLoader.getSystemClassLoader(); // cl that has loaded JCrasher
     }
+    @SuppressWarnings("all")
     String classLocation = URLDecoder.decode(cl.getResource(classLocRel)
       .getPath());
 

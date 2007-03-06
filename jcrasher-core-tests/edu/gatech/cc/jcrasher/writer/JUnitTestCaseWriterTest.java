@@ -394,7 +394,7 @@ public class JUnitTestCaseWriterTest extends TestCase {
         TAB+TAB+"try"+
                 blocks1[0].text()+
                                                                     NL+
-        TAB+TAB+"catch (Exception e) {dispatchException(e);}"+      NL+
+        TAB+TAB+"catch (Throwable throwable) {throwIf(throwable);}"+NL+
         TAB+"}"+                                                    NL,
         junitTestCaseWriter.getTestCases());
 
@@ -408,7 +408,7 @@ public class JUnitTestCaseWriterTest extends TestCase {
         TAB+TAB+"try"+
                 blocks2[0].text()+
                                                                     NL+
-        TAB+TAB+"catch (Exception e) {dispatchException(e);}"+      NL+
+        TAB+TAB+"catch (Throwable throwable) {throwIf(throwable);}"+NL+
         TAB+"}"+                                                    NL+
                                                                     NL+
         TAB+"/**"+																									NL+
@@ -418,7 +418,7 @@ public class JUnitTestCaseWriterTest extends TestCase {
         TAB+TAB+"try"+
                 blocks2[1].text()+
                                                                     NL+
-        TAB+TAB+"catch (Exception e) {dispatchException(e);}"+      NL+
+        TAB+TAB+"catch (Throwable throwable) {throwIf(throwable);}"+NL+
         TAB+"}"+                                                    NL,
         junitTestCaseWriter.getTestCases());
     

@@ -57,9 +57,10 @@ public class ConstructorNode<T> extends FunctionNode<T> {
      * First, .. n-th dimesion: Add each parameter Inner class: Reflection
      * returns enclosing type as first parameter
      */
-    Class[] paramsTypes = con.getParameterTypes();
+    Class<?>[] paramsTypes = con.getParameterTypes();
     for (int j = 0; j < paramsTypes.length; j++) {
-      ClassWrapperImpl<?> pW = (ClassWrapperImpl) typeGraph.getWrapper(paramsTypes[j]);
+      ClassWrapperImpl<?> paramWrapper = 
+        (ClassWrapperImpl<?>) typeGraph.getWrapper(paramsTypes[j]);
 
       /* Filter (null): First param might be the enclosing type */
       PlanFilter planFilter = filter;
@@ -67,7 +68,7 @@ public class ConstructorNode<T> extends FunctionNode<T> {
         && (typeGraph.getWrapper(con.getDeclaringClass()).isInnerClass() == true)) {
         planFilter = Constants.removeNull(filter);
       }
-      depNodes.add(new TypeNeededNode(pW, pMaxRecursion - 1, planFilter, vis));
+      depNodes.add(new TypeNeededNode(paramWrapper, pMaxRecursion - 1, planFilter, vis));
     }
     setParams(depNodes.toArray(new TypeNode[depNodes.size()]));
   }

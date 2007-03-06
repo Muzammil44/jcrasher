@@ -39,5 +39,5 @@ public interface TypeGraph {
   /**
    * @return all class-wrappers
    */
-  public ClassWrapper[] getWrappers();
+  public ClassWrapper<?>[] getWrappers();
 }

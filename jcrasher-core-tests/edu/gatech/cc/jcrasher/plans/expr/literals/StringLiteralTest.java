@@ -52,11 +52,11 @@ public class StringLiteralTest extends TestCase {
   
   /***/
   public void testText() {
-    System.out.println(newlineLiteral.text());
-    System.out.println(spaceLiteral.text());
-    System.out.println(tickLiteral.text());
-    System.out.println(quoteLiteral.text());
-    System.out.println(backslashLiteral.text());
+//    System.out.println(newlineLiteral.text());
+//    System.out.println(spaceLiteral.text());
+//    System.out.println(tickLiteral.text());
+//    System.out.println(quoteLiteral.text());
+//    System.out.println(backslashLiteral.text());
     
     assertEquals("\"\"", emptyLiteral.text());
     assertEquals("\""+funky+"\"", funkyLiteral.text());

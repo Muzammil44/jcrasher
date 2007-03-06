@@ -248,7 +248,7 @@ implements TestCaseWriter
       
       if(doFilter) {
         sb.append(
-          TAB+TAB+"catch (Exception e) {dispatchException(e);}"+        NL+
+          TAB+TAB+"catch (Throwable throwable) {throwIf(throwable);}"+  NL+
           TAB+"}"+                                                      NL);
       }
     }
