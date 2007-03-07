@@ -170,7 +170,7 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
   </target>
   
       
-  <!-- JCrasher all: Release separate binary and source jars -->  
+  <!-- JCrasher all: Release separate binary, source, and test source jars -->  
   <target name="relase.jcrasher.all"
       depends="jcrasher.core.test,jcrasher.textui.build,jcrasher.runtime.build"
       description="make jcrasher.jar">
@@ -205,7 +205,15 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
       <fileset dir="${src-jcrasher-core}"/>
     	<fileset dir="${src-jcrasher-runtime}"/>
     	<fileset dir="${src-jcrasher-textui}"/>
-    </jar>	
+    </jar>
+  	
+    <jar destfile="jcrasher-${version}.${build.number}-tests.jar">
+			<fileset dir="${basedir}">
+				<include name="LICENSE*.txt"/>
+				<include name="NOTICE.txt"/>
+			</fileset>	
+    	<fileset dir="${src-jcrasher-core-tests}"/>
+    </jar>
   </target>
        
         
@@ -240,7 +248,7 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
       <delete dir="${bin-jcrasher-runtime}" />     
     <delete dir="${bin-jcrasher-textui}" /> 
     <delete>
-      <fileset dir="." includes="TEST-*.txt,*.tar" />
+      <fileset dir="${basedir}" includes="TEST-*.txt,*.tar" />
     </delete>
   </target>
 </project>
