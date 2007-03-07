@@ -58,6 +58,14 @@ public class LocalVariableDeclarationStatement<V> implements BlockStatement<V> {
     var = pID;
     varInitPlan = plan;
   }
+  
+  
+  /**
+   * @return variable being assigned to.
+   */
+  public Variable<V> getVariable() {
+    return var;
+  }
 
 
   /**
