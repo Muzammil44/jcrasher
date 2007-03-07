@@ -34,16 +34,9 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
     <buildnumber />
   </target>
 
- 
-  <!-- JCrasher core: Init --> 
-  <target name="jcrasher.core.init" depends="init">
-    <mkdir dir="${bin-jcrasher-core}" />
-    <mkdir dir="${bin-jcrasher-core-tests}" /> 
-  </target>  
-
 	
   <!-- Jakarta Commons -->
-  <target name="lib.commons.lang" depends="jcrasher.core.init">
+  <target name="lib.commons.lang" depends="init">
     <unzip src="${lib}/commons-lang-2.3.jar" dest="${bin-jcrasher-core}" 
         overwrite="false">
       <patternset>
@@ -65,6 +58,8 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
   
   <!-- JCrasher core: Test -->
   <target name="jcrasher.core.test" depends="jcrasher.core.build">
+  	<mkdir dir="${bin-jcrasher-core-tests}" />
+  	
     <javac destdir="${bin-jcrasher-core-tests}" debug="true">
       <src path="${src-jcrasher-core-tests}" />
       <classpath refid="project.classpath" />
@@ -84,15 +79,9 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
     </junit>
   </target> 
   
-	
-  <!-- JCrasher textui: Init --> 
-  <target name="jcrasher.textui.init" depends="init">
-    <mkdir dir="${bin-jcrasher-textui}" /> 
-  </target>
-  
   
   <!-- GNU GetOpt -->
-  <target name="lib.gnu.getopt" depends="jcrasher.textui.init">
+  <target name="lib.gnu.getopt" depends="init">
     <unzip src="${lib}/java-getopt-1.0.10.jar" dest="${bin-jcrasher-textui}" 
         overwrite="false">
       <patternset>
@@ -161,8 +150,7 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
   
 
   <!-- JCrasher runtime: Build --> 
-  <target name="jcrasher.runtime.build"
-      depends="lib.bcel">
+  <target name="jcrasher.runtime.build" depends="lib.bcel">
     <javac destdir="${bin-jcrasher-runtime}" debug="true">
       <src path="${src-jcrasher-runtime}" />
       <classpath refid="project.classpath" />
@@ -245,7 +233,7 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
   <target name="clean">
     <delete dir="${bin-jcrasher-core}" />
     <delete dir="${bin-jcrasher-core-tests}" />
-      <delete dir="${bin-jcrasher-runtime}" />     
+    <delete dir="${bin-jcrasher-runtime}" />     
     <delete dir="${bin-jcrasher-textui}" /> 
     <delete>
       <fileset dir="${basedir}" includes="TEST-*.txt,*.tar" />
