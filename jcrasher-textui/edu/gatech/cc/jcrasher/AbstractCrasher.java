@@ -31,13 +31,13 @@ public abstract class AbstractCrasher implements Crasher {
 	/**
 	 * Classes to crash.
 	 */
-	protected Class[] classes;
+	protected Class<?>[] classes;
 	
 	
 	/**
 	 * Constructor
 	 */
-	protected AbstractCrasher(Class[] classes) {
+	protected AbstractCrasher(Class<?>[] classes) {
 		this.classes = notNull(classes);
 		check(classes.length>0);
 		

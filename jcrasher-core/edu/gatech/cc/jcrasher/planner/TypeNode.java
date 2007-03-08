@@ -7,9 +7,14 @@ package edu.gatech.cc.jcrasher.planner;
 
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
+
+import java.math.BigInteger;
+
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.types.TypeGraph;
 import edu.gatech.cc.jcrasher.types.TypeGraphImpl;
+
+import static java.math.BigInteger.ZERO;
 
 /**
  * Node to access the plans of a type (sub-) plan space up to a given maximal
@@ -30,24 +35,38 @@ public abstract class TypeNode<T> implements PlanSpaceNode<T> {
   /**
    * Child types, i.e. victim and param types up to our max depth - 1
    */
-  private PlanSpaceNode<T>[] children = null;
+  private PlanSpaceNode<T>[] children;
 
   /**
-   * Size of each child's plan space (given their max depth), e.g.: - (3, 5, 2)
-   * --> own size = 10 - (0, 10, 10, 0, 5) --> 25
+   * Examples:
+   * <ul>
+   * <li>(2, 7, 9) implies [0..2], [3..7], [8..9]
+   * <li>(-1, 9, 19, 19, 24) implies [0..-1], [0..9], [10..19], [20..19], [20..24]
+   * </ul>
    */
-  private int[] childSizes = null;
-  private int[] childRanges = null; // childRanges = (2, 7, 9) --> [0..2],
-                                    // [3..7], [8..9]
-  // (-1, 9, 19, 19, 24) --> [0..-1], [0..9], [10..19], [20..19], [20..24]
-  private int planSpaceSize = -1; // own plan space size = sum of childrens'
+  protected int[] childRanges;
+  
+  /**
+   * Size of each child's plan space (given their max depth), e.g.:
+   * <ul>
+   * <li>(3, 5, 2) implies own size of 10
+   * <li>(0, 10, 10, 0, 5) implies own size of 25
+   * </ul>
+   */
+  protected int[] childSizes;
+    
+  protected int planSpaceSize = 0; // own plan space size = sum of childrens'
 
   /**
-   * Precond: 0 <= childIndex < children.length Postcond: no side effect
-   * 
    * Map childIndex to the lowest index that belongs to this child, e.g. for
-   * childRanges = (-1, 9, 19, 19, 24) lowestRangeHit(0) = 0 lowestRangeHit(1) =
-   * 0 lowestRangeHit(4) = 20
+   * childRanges = (-1, 9, 19, 19, 24)
+   * <ul>
+   * <li>lowestRangeHit(0) = 0
+   * <li>lowestRangeHit(1) = 0
+   * <li>lowestRangeHit(4) = 20
+   * </ul>
+   * 
+   * @param childIndex 0, .., (children.length - 1)
    */
   private int lowestRangeHit(int childIndex) {
     check(childIndex >= 0);
@@ -110,7 +129,7 @@ public abstract class TypeNode<T> implements PlanSpaceNode<T> {
    */
   public int getPlanSpaceSize() {
     notNull(children);
-
+    
     /* Compute childrens' and own plan space sizes */
     if (childSizes == null) { // first call
       childSizes = new int[children.length];
@@ -128,6 +147,11 @@ public abstract class TypeNode<T> implements PlanSpaceNode<T> {
         childRanges[i] = res - 1; // compute index-range for each sub space
       }
       planSpaceSize = res;
+    }
+    
+    if (planSpaceSize<0) {
+      System.out.println("TODO: int overflow.");
+      planSpaceSize = Integer.MAX_VALUE;
     }
 
     return planSpaceSize;

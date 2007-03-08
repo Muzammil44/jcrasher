@@ -8,10 +8,14 @@ package edu.gatech.cc.jcrasher;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import static edu.gatech.cc.jcrasher.Constants.MAX_TEST_CASES_TRIED_CLASS;
 
+import java.io.NotSerializableException;
 import java.lang.reflect.InvocationTargetException;
+import java.math.BigInteger;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Random;
+
+import org.apache.commons.lang.NotImplementedException;
 
 import edu.gatech.cc.jcrasher.planner.ClassUnderTest;
 import edu.gatech.cc.jcrasher.planner.Planner;
@@ -79,7 +83,12 @@ public class ExecutingPlanner {
     notNull(classUnderTest);
     
     final ClassUnderTest<T> classNode = planner.getPlanSpace(classUnderTest);     
-    final int testsAvailable = classNode.getPlanSpaceSize();
+    final BigInteger testsAvailableBig = classNode.getNrTestMethodsAvailable();
+    if (testsAvailableBig.bitCount()>32)
+      throw new NotImplementedException(
+          "Too many potential test methods. Try to reduce the --depth parameter.");
+    
+    final int testsAvailable = testsAvailableBig.intValue();
     final List<Block> testCasesSucceeded = new LinkedList<Block>();
     if (testsAvailable<=0) { //no or way too many potential test cases.
       return testCasesSucceeded;
@@ -95,7 +104,7 @@ public class ExecutingPlanner {
       		i : random.nextInt(testsAvailable));
       Block testCase = null;
       try {
-        testCase = classNode.getBlock(testIndex, classUnderTest);
+        testCase = classNode.getBlock(testIndex);
       }
       catch(Throwable e) {
         /* Tried to access some non-initializable class or interface */
