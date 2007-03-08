@@ -11,6 +11,7 @@ import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -124,8 +125,8 @@ implements ClassUnderTest<T> {
    * 
    * Precond: 0 <= planIndex < getPlanSpaceSize() Postcond: no side-effects
    */
-  public Block getBlock(int planIndex, Class<?> testeeType) {
-    Block res = null;
+  public Block<?> getBlock(int planIndex) {
+    Block<?> res = null;
 
     /* retrieve function's childrens' plans of given index */
     int childIndex = getChildIndex(planIndex);
@@ -134,7 +135,7 @@ implements ClassUnderTest<T> {
                                                                     // plan
                                                                     // space
     FunctionNode<?> node = (FunctionNode) getChild(childIndex);
-    Expression[] paramPlans = node.getParamPlans(childPlanIndex, testeeType); // get params' plans
+    Expression[] paramPlans = node.getParamPlans(childPlanIndex, wrappedClass); // get params' plans
 
     /* TODO(csallner): hack, check of which kind the child is */
     if (node instanceof ConstructorNode) {
@@ -306,6 +307,13 @@ implements ClassUnderTest<T> {
     return b;
   }
   
+  
+  /**
+   * TODO: Switch implementation to BigInteger!
+   */
+  public BigInteger getNrTestMethodsAvailable() {
+    return BigInteger.valueOf(getPlanSpaceSize());
+  }
   
   @Override
   public String toString() {

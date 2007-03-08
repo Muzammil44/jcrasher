@@ -69,9 +69,9 @@ public abstract class Constants {
   
 	/**
 	 * How many test classes should be generated max?
-	 * 300 classes * 1 min/ class = 300 min = 5h * 60min/ h
+   * Will lead to 2 million test cases.
 	 */
-  public static int MAX_NR_TEST_CLASSES = 300;
+  public static int MAX_NR_TEST_CLASSES = 4000;
   
 	/**
 	 * How many test methods per generated test class:

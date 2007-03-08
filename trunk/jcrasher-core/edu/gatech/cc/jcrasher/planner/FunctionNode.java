@@ -29,19 +29,27 @@ public abstract class FunctionNode<T> implements PlanSpaceNode<T> {
   /**
    * Child types, i.e. victim and param types up to our max depth - 1
    */
-  protected TypeNode<?>[] parameters = null;
+  protected TypeNode<?>[] parameters;
 
   /**
-   * Size of each child's plan space (given their max depth), e.g.: - (3, 5, 2)
-   * --> own size = 30 - (0, 10, 10, 5) --> 0
+   * Size of each child's plan space (given their max depth),  e.g.:
+   * <ul>
+   * <li>(3, 5, 2) --> own size = 30
+   * <li>(0, 10, 10, 5) --> 0
+   * </ul>
    */
-  protected int[] paramSizes = null;
-  protected int[] canonicalSubSapceSizes = null; // (5*2*1, 2*1, 1) for (3, 5,
-                                                  // 2)
-  protected int planSpaceSize = -1; // own plan space size = product of
-                                    // childrens'
-
-
+  protected int[] paramSizes;
+  
+  /**
+   * (5*2*1, 2*1, 1) for (3, 5, 2)
+   */
+  protected int[] canonicalSubSapceSizes;
+  
+  /**
+   * own plan space size = product of childrens'
+   */
+  protected int planSpaceSize = 0;
+  
   /**
    * Precond: true Postcond: cached sizes of all sub plan spaces to speed up
    * getPlan(int)
@@ -81,6 +89,11 @@ public abstract class FunctionNode<T> implements PlanSpaceNode<T> {
             * canonicalSubSapceSizes[i + 1];
         }
       }
+    }
+    
+    if (planSpaceSize<0) {
+      System.out.println("TODO: int overflow");
+      planSpaceSize = Integer.MAX_VALUE;
     }
 
     return planSpaceSize;

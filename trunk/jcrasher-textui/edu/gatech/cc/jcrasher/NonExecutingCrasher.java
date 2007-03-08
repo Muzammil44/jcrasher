@@ -8,10 +8,11 @@ package edu.gatech.cc.jcrasher;
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
+import java.math.BigInteger;
 import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
 import java.util.TreeMap;
+
+import org.apache.commons.lang.NotImplementedException;
 
 import edu.gatech.cc.jcrasher.planner.ClassUnderTest;
 import edu.gatech.cc.jcrasher.planner.Planner;
@@ -21,6 +22,9 @@ import edu.gatech.cc.jcrasher.writer.JUnitAll;
 import edu.gatech.cc.jcrasher.writer.JUnitAllImpl;
 import edu.gatech.cc.jcrasher.writer.JUnitTestCaseWriter;
 import edu.gatech.cc.jcrasher.writer.TestCaseWriter;
+
+import static edu.gatech.cc.jcrasher.Constants.MAX_NR_TEST_METHS_PER_CLASS;
+
 
 /**
  * <ul>
@@ -34,10 +38,6 @@ import edu.gatech.cc.jcrasher.writer.TestCaseWriter;
  */
 public class NonExecutingCrasher extends AbstractCrasher {
 	
-
-	/**
-	 * FIXME: Replace by NonExecutingPlanner to hide PlannerImpl.
-	 */
 	protected final Planner planner = PlannerImpl.instance();
 	
 	/**
@@ -48,193 +48,208 @@ public class NonExecutingCrasher extends AbstractCrasher {
 	/**
 	 * Constructor
 	 * 
-	 * create (empty) typeSpace and distribute its reference
+	 * Crawl classes to discover the type graph they imply.
 	 */
-	public NonExecutingCrasher(Class[] classes) {
+	public NonExecutingCrasher(Class<?>[] classes) {
 		super(classes);
-		
-	}
-
-	
-	/*
-	 * @return array 0, 1, 2, .., spaceSzie-1
-	 * 
-	 * FIXME this seems like a waste of memory.
-	 */
-	 private int[] getExhaustiveEnumeration(int spaceSize) {
-	 	int[] res = new int[spaceSize];
-	 	for (int i=0; i<spaceSize; i++) {
-	 		res[i] = i;
-	 	}
-	 	return res;
-	 }
-	 
-
-	/*
-	 * @return sorted array of nrIndices "random" integers ,
-	 * 	values 0..spaceSize-1, no duplicates
-	 */
-	private int[] getRandomIndices(int spaceSize, int nrIndices) {
-		
-		//generate random indices until desired amount reached =
-		//one random sample, no duplicate indices
-		TreeMap indexMap = new TreeMap();
-		while (indexMap.size() < nrIndices) {	//re-insert Integer as key
-			indexMap.put(new Integer((int) (Math.random() * (double)spaceSize)), null);
-		}
-			
-		//convert hash-list of indices to int-array
-		int[] res = new int[indexMap.size()];
-		Iterator indexIterator = indexMap.keySet().iterator();
-		for (int i=0; i<res.length; i++) {
-			res[i] = ((Integer) (indexIterator.next())).intValue();
-		}
-		
-		return res;
 	}
 	
 
+  /**
+   * @return number of test methods to be generated per class under test.
+   * The resulting array has as many entries as there are testees.
+   */
+  protected int[] chooseNrTestMethodsPerTestee() {
+    BigInteger testMethodsLimit = BigInteger.valueOf(
+        Constants.MAX_NR_TEST_CLASSES * Constants.MAX_NR_TEST_METHS_PER_CLASS);
+    
+    /* Number of different test cases available. */
+    BigInteger[] testMethodsAvailable = new BigInteger[classes.length];
+    BigInteger testMethodsAvailableTotal = BigInteger.ZERO;
+    for (int i=0; i<classes.length; i++) {
+      testMethodsAvailable[i] =  planner.getPlanSpace(classes[i]).getNrTestMethodsAvailable();
+      testMethodsAvailableTotal = testMethodsAvailableTotal.add(testMethodsAvailable[i]);
+    }
+   
+    /* Number of test cases we will actually generate. */
+    int[] testMethodsSelected = new int[classes.length];
+    
+    
+    if (testMethodsAvailableTotal.compareTo(testMethodsLimit) <= 0) {
+      /* total number of available tests much smaller than max(int). */
+      for (int i=0; i<testMethodsSelected.length; i++)
+      {
+        check(testMethodsAvailable[i].bitLength()<=32);
+        testMethodsSelected[i] = testMethodsAvailable[i].intValue();
+      }
+      return testMethodsSelected;
+    }
+    
+    /* More test cases available than we can export. Pick some. */
+    
+    /* TODO: Following does not use up to 50 percent of the limit
+     * if only a few more test cases are available than the limit. */
+    BigInteger factorTooMany = testMethodsAvailableTotal.divide(testMethodsLimit);
+    factorTooMany = factorTooMany.add(BigInteger.ONE);
+    
+    for (int i=0; i<testMethodsSelected.length; i++)
+    {
+      if (testMethodsAvailable[i].compareTo(
+          BigInteger.valueOf(Constants.MAX_NR_TEST_METHS_PER_CLASS)) <= 0)
+      { /* pick all available test cases if only few available */
+        testMethodsSelected[i] = testMethodsAvailable[i].intValue();
+        continue;
+      }      
+      
+      /* Scale back number of available test cases */
+      BigInteger scaled = testMethodsAvailable[i].divide(factorTooMany);
+      check(scaled.bitLength()<=32);
+      testMethodsSelected[i] = scaled.intValue();
+    }
+    return testMethodsSelected;    
+  }
+  
 
-	public void crashClasses() {
-		
-		if (Constants.OUT_DIR==null)
-			junitAll.create(classes[0]);
-		else
-			junitAll.create(Constants.OUT_DIR.getAbsolutePath());
-		
-		/* 
-		 * Determine size of each class's plan-space --> sum = total space 
-		 */
-		int[] planSpaceSizes = new int[classes.length];
-		int totalPlanSpaceSize = 0;
-		for (int i=0; i<classes.length; i++) {
-			planSpaceSizes[i] =  planner.getPlanSpace(classes[i]).getPlanSpaceSize();
-			totalPlanSpaceSize += planSpaceSizes[i];
-		}
-		
 
-		/* 
-		 * Determine nrSamples per class 
-		 */
-		int[] nrSamples = new int[classes.length];
-		
-		/* "Exhaustive" test iff nrPlans < nrTestMethods */
-		double methsPerPlan = 1.0;	//how many test-methods do we spend on a plan?
-		
-		/* We limit ourselves to fewer test-methods iff nrPlans >= nrTestMethods */
-		int maxNrTestMeths = 
-			Constants.MAX_NR_TEST_CLASSES * Constants.MAX_NR_TEST_METHS_PER_CLASS;
-		if (totalPlanSpaceSize > maxNrTestMeths) {			
-			methsPerPlan = (double)maxNrTestMeths / (double)totalPlanSpaceSize;
-		}
-
-		//FIXME debug: print statistic
-		//System.out.println("class --> #plans --> #tests");
-			
-		/* Assign each class (at least) as many test-methods as it has plans */
-		for (int i=0; i<classes.length; i++) {
-			double methsPerClass = (double) Constants.MAX_NR_TEST_METHS_PER_CLASS;
-			nrSamples[i] = (int) 
-				(((double)planSpaceSizes[i] + methsPerClass/2) / 	//add half of max meth per class to emulate rounding
-				methsPerClass* methsPerPlan);
-			if (nrSamples[i] == 0) {
-				nrSamples[i] += 1;
-			}
-			
-			/* check if nrSamples[i] contains more tests than plans are available */
-			int nrTests = nrSamples[i] * Constants.MAX_NR_TEST_METHS_PER_CLASS;			
-			if (nrTests > planSpaceSizes[i]) {
-				nrTests = planSpaceSizes[i];
-				//"random" sample is an exhaustive enumeration of planspace
-			}
-
-			//class-under-test; plan-depth; #tests; #planspace
-			System.out.print(
-				";"+classes[i].getName()+
-				";"+Constants.MAX_PLAN_RECURSION+
-				";"+nrTests+
-				";"+planSpaceSizes[i]
-			);			
-			//System.out.println(classes[i] +" --> \t" +planSpaceSizes[i] +" --> \t" +nrTests);
-		}		
-			
-		/*
-		 * Generate test classes, finally.
-		 * Each test class is a random sample over the class's plan space.
-	 	 */
-		for (int i=0; i<classes.length; i++) {
-			
-			int nrIndices = Constants.MAX_NR_TEST_METHS_PER_CLASS * nrSamples[i];
-			int[] sample = null;
-
-			//more methods than plans in space?
-			if (nrIndices >= planSpaceSizes[i])
-				sample = getExhaustiveEnumeration(planSpaceSizes[i]);
-			else {
-				sample = getRandomIndices(planSpaceSizes[i], nrIndices);
-				check(sample.length == nrIndices);
-			}
-			
-			
-			/* 
-			 * split result into junks of max 500 for each test class
-			 */
-			int sliceCount = 0;
-			int arrayCursor = 0;	//next block to be retrieved and printed
-
-			while (arrayCursor < sample.length) {
-				sliceCount += 1;
-				
-				/* Retrieve next block of up to max nr test/class as defined by sample */
-				Block[] blocks = getTestBlocks(classes[i], sample, arrayCursor);
-				
-				TestCaseWriter codeWriter = new JUnitTestCaseWriter(
-						classes[i],
-						"no comment",
-						true,
-						blocks,
-						sliceCount);
-				codeWriter.write();
-				
-				arrayCursor += blocks.length;
-				
-				junitAll.addTestSuite(classes[i].getName()+"Test"+sliceCount);
-			}
-			//codeWriter.generateSuite(classes[i], sliceCount);	//create a management class
-		}
-		
-		junitAll.finish();
-	}
+  protected Block<?>[] getRandomTestBlocks(
+      Class<?> testeeClass,
+      int startIndex,
+      int indexStretch,
+      int amount)
+  {
+    ClassUnderTest<?> classNode = planner.getPlanSpace(testeeClass); 
+    Block<?>[] blocks = new Block<?>[amount];
+    
+    TreeMap<Integer, Object> indexMap = new TreeMap<Integer, Object>();
+    while (indexMap.size() < amount) { //re-insert Integer as key
+      int index = startIndex + (int) (Math.random() * (double)indexStretch);
+      indexMap.put(new Integer(index), null);
+    }
+    
+    /* Retrieve indices ordered from TreeMap */
+    Iterator<Integer> indexIterator = indexMap.keySet().iterator();
+    for (int i=0; i<amount; i++)
+      blocks[i] = classNode.getBlock(indexIterator.next().intValue());
+    
+    return blocks;
+  }
 	
+  
+  
+  /**
+   * @return amount blocks enumerated from startIndex.
+   */
+  protected Block<?>[] enumerateTestBlocks(Class<?> pClass, int startIndex, int amount) {
+    ClassUnderTest<?> classNode = planner.getPlanSpace(pClass); //from cache
+    
+    Block<?>[] blocks = new Block<?>[amount];
+    for (int i=startIndex; i<blocks.length; i++)
+      blocks[i] = classNode.getBlock(i);
+    
+    return blocks;
+  }
 	
 	
 	
 	/**
-	 * Retrieve test blocks according of specified class and its indices into plan space.
-	 * @param indices is guaranteed to be free of duplicates for entire class-space
-	 * @param arrayCursor starting index into indices - retrieve from here upto
-	 * 	max tests/ class = next block
-	 * 
-	 * TODO: Move to NonExecutingPlanner
+   * @param nrTestMethodsPicked zero or positive.
+   * @param testClassSeqNr 1,2,3, ..
+   * @return test methods for pClass.
+   * The length of the returned array is MAX_NR_TEST_METHS_PER_CLASS
+   * or less (the remainder of the number of picked test methods).
 	 */
-	public <T> Block[] getTestBlocks(Class<T> pClass, int[] indices, int arrayCursor) {
-		notNull(pClass);
-		notNull(indices);
-		Block[] res = null;
+	protected <T> Block<?>[] getTestBlocks(
+      Class<T> testeeClass,
+      int nrTestMethodsPicked,
+      int testClassSeqNr)
+  {
+		notNull(testeeClass);
+    check(nrTestMethodsPicked >= 0);
+    check(testClassSeqNr > 0);
 		
-		ClassUnderTest<T> cNode = planner.getPlanSpace(pClass);	//from cache
-		
-		/* return the requested (part of the) test blocks */		
-		List<Block> resV = new LinkedList<Block>();
+		ClassUnderTest<T> classNode = planner.getPlanSpace(testeeClass);	//from cache
+    BigInteger nrTestMethosdAvailable = classNode.getNrTestMethodsAvailable();
+    if(nrTestMethosdAvailable.compareTo(BigInteger.valueOf(nrTestMethodsPicked)) <= 0) {
+      /* enumerate all available test methods */
+      int startIndex = (testClassSeqNr-1) * MAX_NR_TEST_METHS_PER_CLASS;
+      int amount = nrTestMethodsPicked - startIndex;
+      if (amount>MAX_NR_TEST_METHS_PER_CLASS)
+        amount = MAX_NR_TEST_METHS_PER_CLASS;
+      return enumerateTestBlocks(testeeClass, startIndex, amount);
+    }
 
-		/* Retrieve distinct selected plans from plan space */
-		for (int i=0; i+arrayCursor<indices.length && i<Constants.MAX_NR_TEST_METHS_PER_CLASS; i++) {
-				resV.add(cNode.getBlock(indices[i+arrayCursor], pClass));
-		}
-		
-		res = resV.toArray(new Block[resV.size()]);
-		
-		notNull(res);
-		return res;
-	}
+    /* Pick random */
+    
+    if (nrTestMethosdAvailable.bitCount()>32)
+      System.out.println(
+          testeeClass.getName()+": JCrasher found more than MAX_INT test methods." +
+          "TODO: We currently pick only from the first MAX_INT test methods.");
+    
+    /* TODO: Number truncated if > MAX_INT */
+    int nrTestMethodsAvailableInt = nrTestMethosdAvailable.intValue();
+    
+    int startIndex = (testClassSeqNr-1) * MAX_NR_TEST_METHS_PER_CLASS;
+    int amount = nrTestMethodsPicked - startIndex; 
+    if (amount>MAX_NR_TEST_METHS_PER_CLASS)
+      amount = MAX_NR_TEST_METHS_PER_CLASS;
+    
+    int factorTooManyAvailble = nrTestMethodsAvailableInt / nrTestMethodsPicked + 1;
+    int startIndexFactored = startIndex * factorTooManyAvailble;
+    int indexStretch = amount * factorTooManyAvailble; 
+    
+    return  getRandomTestBlocks(
+        testeeClass,
+        startIndexFactored,
+        indexStretch,
+        amount);
+    }
+  
+  
+  
+  /**
+   * Picks test methods and writes them to disk.
+   */
+  public void crashClasses() {      
+    int[] nrTestMethods = chooseNrTestMethodsPerTestee();
+    check(classes.length==nrTestMethods.length);
+        
+    /* Print statistics to standard out */
+    for (int i=0; i<classes.length; i++)
+      System.out.println(
+          classes[i].getName()+" "+nrTestMethods[i]+
+          " of "+planner.getPlanSpace(classes[i]).getNrTestMethodsAvailable());
+    
+    
+    /* Generate aggregate test suite */
+    if (Constants.OUT_DIR==null)
+      junitAll.create(classes[0]);
+    else
+      junitAll.create(Constants.OUT_DIR.getAbsolutePath());
+      
+    
+    /* Generate individual test classes */
+    for (int i=0; i<classes.length; i++) {
+      for (int testClassSeqNr=1; 
+           (testClassSeqNr-1) * MAX_NR_TEST_METHS_PER_CLASS  < nrTestMethods[i];
+           testClassSeqNr++)
+      {
+
+        /* Next block of up to max nr test/class as defined by sample */
+        Block<?>[] blocks = 
+          getTestBlocks(classes[i], nrTestMethods[i], testClassSeqNr);
+        
+        TestCaseWriter codeWriter = new JUnitTestCaseWriter(
+            classes[i],
+            "no comment",
+            true,
+            blocks,
+            testClassSeqNr);
+        codeWriter.write();
+        
+        junitAll.addTestSuite(classes[i].getName()+"Test"+testClassSeqNr);
+      }
+    }
+    
+    junitAll.finish();
+  }  
 }
