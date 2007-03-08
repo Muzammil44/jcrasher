@@ -7,14 +7,9 @@ package edu.gatech.cc.jcrasher.planner;
 
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
-
-import java.math.BigInteger;
-
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.types.TypeGraph;
 import edu.gatech.cc.jcrasher.types.TypeGraphImpl;
-
-import static java.math.BigInteger.ZERO;
 
 /**
  * Node to access the plans of a type (sub-) plan space up to a given maximal

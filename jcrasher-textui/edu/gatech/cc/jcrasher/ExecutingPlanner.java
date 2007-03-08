@@ -8,7 +8,6 @@ package edu.gatech.cc.jcrasher;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import static edu.gatech.cc.jcrasher.Constants.MAX_TEST_CASES_TRIED_CLASS;
 
-import java.io.NotSerializableException;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.LinkedList;

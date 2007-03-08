@@ -5,6 +5,8 @@
  */
 package edu.gatech.cc.junit.framework;
 
+import static edu.gatech.cc.jcrasher.Assertions.notNull;
+
 import java.util.Enumeration;
 import java.util.Vector;
 
@@ -15,8 +17,6 @@ import edu.gatech.cc.junit.FilteringTestCase;
 import edu.gatech.cc.junit.IntendedException;
 import edu.gatech.cc.junit.Wrapper;
 import edu.gatech.cc.junit.textui.RaGTestRunner;
-
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 /**
  * Suppresses all exceptions similar to previously recorded exceptions.
