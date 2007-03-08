@@ -1,5 +1,7 @@
 package edu.gatech.cc.junit;
 
+import static edu.gatech.cc.jcrasher.Assertions.check;
+
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
@@ -7,8 +9,6 @@ import java.util.List;
 import java.util.Vector;
 
 import junit.framework.TestCase;
-
-import static edu.gatech.cc.jcrasher.Assertions.check;
 
 /**
  * TestCase that 

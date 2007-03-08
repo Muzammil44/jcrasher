@@ -15,10 +15,12 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
   <property name="src-jcrasher-core" value="jcrasher-core"/>
   <property name="src-jcrasher-core-tests" value="jcrasher-core-tests"/>  
   <property name="src-jcrasher-textui" value="jcrasher-textui"/>
+	<property name="src-jcrasher-textui-tests" value="jcrasher-textui-tests"/>
   <property name="src-jcrasher-runtime" value="jcrasher-runtime"/> 
   <property name="bin-jcrasher-core" value="bin-jcrasher-core"/>
   <property name="bin-jcrasher-core-tests" value="bin-jcrasher-core-tests"/>  
   <property name="bin-jcrasher-textui" value="bin-jcrasher-textui"/>
+	<property name="bin-jcrasher-textui-tests" value="bin-jcrasher-textui-tests"/>
   <property name="bin-jcrasher-runtime" value="bin-jcrasher-runtime"/> 
 
   <path id="project.classpath">
@@ -102,13 +104,42 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
   </target>
 	
 	
+  <!-- JCrasher textui: Test -->
+  <target name="jcrasher.textui.test"
+  		depends="jcrasher.textui.build,jcrasher.core.test">
+  	<mkdir dir="${bin-jcrasher-textui-tests}" />
+  	
+    <javac destdir="${bin-jcrasher-textui-tests}" debug="true">
+      <src path="${src-jcrasher-textui-tests}" />
+      <classpath>
+      	<path refid="project.classpath" />
+      	<pathelement location="${bin-jcrasher-core-tests}" />
+     	</classpath>	
+    </javac>
+
+    <junit fork="yes" printsummary="on" dir="${bin-jcrasher-textui-tests}">
+      <formatter type="plain" />
+      <classpath>
+        <path refid="project.classpath" />
+        <pathelement location="${bin-jcrasher-textui-tests}" />
+      	<pathelement location="${bin-jcrasher-core-tests}" />
+      </classpath>
+      <batchtest>
+        <fileset dir="${bin-jcrasher-textui-tests}">
+          <include name="**/*Test.class" />
+        </fileset>
+      </batchtest>
+    </junit>
+  </target> 
+    	
+	
   <!-- JCrasher Basic: Release binary
   	This is the right release if you want to create test cases
   	that can be executed with plain JUnit.
   	You will not need our JUnit extensions. 
   -->
   <target name="release.jcrasher.basic.bin" 
-  	  depends="jcrasher.core.test,jcrasher.textui.build"
+  	  depends="jcrasher.core.test,jcrasher.textui.test"
       description="make jcrasher-basic.jar">
     <jar destfile="jcrasher-basic-${version}.${build.number}.jar">
       <fileset dir="${basedir}">
@@ -160,7 +191,7 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
       
   <!-- JCrasher all: Release separate binary, source, and test source jars -->  
   <target name="relase.jcrasher.all"
-      depends="jcrasher.core.test,jcrasher.textui.build,jcrasher.runtime.build"
+      depends="jcrasher.core.test,jcrasher.textui.test,jcrasher.runtime.build"
       description="make jcrasher.jar">
   	
     <jar destfile="jcrasher-${version}.${build.number}.jar">
@@ -201,6 +232,7 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
 				<include name="NOTICE.txt"/>
 			</fileset>	
     	<fileset dir="${src-jcrasher-core-tests}"/>
+    	<fileset dir="${src-jcrasher-textui-tests}"/>
     </jar>
   </target>
        
@@ -214,7 +246,8 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
         <include name="${src-jcrasher-core}/" />
         <include name="${src-jcrasher-core-tests}/" />
         <include name="${src-jcrasher-runtime}/" />
-        <include name="${src-jcrasher-textui}/" />        
+        <include name="${src-jcrasher-textui}/" />
+      	<include name="${src-jcrasher-textui-tests}/" />
         <include name="${lib}/" />
         <include name="build.number" />
         <include name="NOTICE.txt" />        
@@ -234,7 +267,8 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
     <delete dir="${bin-jcrasher-core}" />
     <delete dir="${bin-jcrasher-core-tests}" />
     <delete dir="${bin-jcrasher-runtime}" />     
-    <delete dir="${bin-jcrasher-textui}" /> 
+    <delete dir="${bin-jcrasher-textui}" />
+  	<delete dir="${bin-jcrasher-textui-tests}" /> 
     <delete>
       <fileset dir="${basedir}" includes="TEST-*.txt,*.tar" />
     </delete>

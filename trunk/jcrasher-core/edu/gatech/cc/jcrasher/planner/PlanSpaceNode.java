@@ -5,8 +5,6 @@
  */
 package edu.gatech.cc.jcrasher.planner;
 
-import java.math.BigInteger;
-
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 
 /**

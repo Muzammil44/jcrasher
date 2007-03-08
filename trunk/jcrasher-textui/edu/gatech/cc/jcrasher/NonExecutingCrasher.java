@@ -7,12 +7,11 @@ package edu.gatech.cc.jcrasher;
 
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
+import static edu.gatech.cc.jcrasher.Constants.MAX_NR_TEST_METHS_PER_CLASS;
 
 import java.math.BigInteger;
 import java.util.Iterator;
 import java.util.TreeMap;
-
-import org.apache.commons.lang.NotImplementedException;
 
 import edu.gatech.cc.jcrasher.planner.ClassUnderTest;
 import edu.gatech.cc.jcrasher.planner.Planner;
@@ -22,8 +21,6 @@ import edu.gatech.cc.jcrasher.writer.JUnitAll;
 import edu.gatech.cc.jcrasher.writer.JUnitAllImpl;
 import edu.gatech.cc.jcrasher.writer.JUnitTestCaseWriter;
 import edu.gatech.cc.jcrasher.writer.TestCaseWriter;
-
-import static edu.gatech.cc.jcrasher.Constants.MAX_NR_TEST_METHS_PER_CLASS;
 
 
 /**
@@ -117,18 +114,40 @@ public class NonExecutingCrasher extends AbstractCrasher {
       int indexStretch,
       int amount)
   {
-    ClassUnderTest<?> classNode = planner.getPlanSpace(testeeClass); 
-    Block<?>[] blocks = new Block<?>[amount];
+    notNull(testeeClass);
+    check(startIndex>=0);
+    check(indexStretch >= 0);
+    check(amount>=0);
+    check(indexStretch >= amount);
+    
+    ClassUnderTest<?> classNode = planner.getPlanSpace(testeeClass);
+    int maxTestCasesAvailable = classNode.getNrTestMethodsAvailable().intValue();
+    
+    if (startIndex >= maxTestCasesAvailable) {
+      System.out.println(
+          "startIndex too big for getRandomTestBlocks("+testeeClass.getName()+")");
+      return new Block[0];
+    }
+    
+    int checkedAmount = amount;
+    if (startIndex + amount > maxTestCasesAvailable)
+      checkedAmount = maxTestCasesAvailable - startIndex;
+    
+    int checkedStretch = indexStretch;
+    if (startIndex + indexStretch > maxTestCasesAvailable)
+      checkedStretch = maxTestCasesAvailable - startIndex;
+    
+    Block<?>[] blocks = new Block<?>[checkedAmount];
     
     TreeMap<Integer, Object> indexMap = new TreeMap<Integer, Object>();
-    while (indexMap.size() < amount) { //re-insert Integer as key
-      int index = startIndex + (int) (Math.random() * (double)indexStretch);
+    while (indexMap.size() < checkedAmount) { //re-insert Integer as key
+      int index = startIndex + (int) (Math.random() * (double)checkedStretch);
       indexMap.put(new Integer(index), null);
     }
     
     /* Retrieve indices ordered from TreeMap */
     Iterator<Integer> indexIterator = indexMap.keySet().iterator();
-    for (int i=0; i<amount; i++)
+    for (int i=0; i<checkedAmount; i++)
       blocks[i] = classNode.getBlock(indexIterator.next().intValue());
     
     return blocks;
@@ -139,12 +158,32 @@ public class NonExecutingCrasher extends AbstractCrasher {
   /**
    * @return amount blocks enumerated from startIndex.
    */
-  protected Block<?>[] enumerateTestBlocks(Class<?> pClass, int startIndex, int amount) {
-    ClassUnderTest<?> classNode = planner.getPlanSpace(pClass); //from cache
+  protected Block<?>[] enumerateTestBlocks(
+      Class<?> testeeClass,
+      int startIndex,
+      int amount)
+  {
+    notNull(testeeClass);
+    check(startIndex>=0);
+    check(amount>=0);
+        
+    ClassUnderTest<?> classNode = planner.getPlanSpace(testeeClass); //from cache
+    int maxTestCasesAvailable = classNode.getNrTestMethodsAvailable().intValue();
     
-    Block<?>[] blocks = new Block<?>[amount];
-    for (int i=startIndex; i<blocks.length; i++)
-      blocks[i] = classNode.getBlock(i);
+    if (startIndex >= maxTestCasesAvailable) {
+      System.out.println(
+          "startIndex too big for enumerateTestBlocks("+testeeClass.getName()+")");
+      return new Block[0];
+    }
+    
+    int checkedAmount = amount;
+    if (startIndex + amount > maxTestCasesAvailable)
+      checkedAmount = maxTestCasesAvailable - startIndex;
+
+    
+    Block<?>[] blocks = new Block<?>[checkedAmount];
+    for (int i=0; i<blocks.length; i++)
+      blocks[i] = classNode.getBlock(startIndex+i);
     
     return blocks;
   }

@@ -5,6 +5,8 @@
  */
 package edu.gatech.cc.junit.reinit;
 
+import static edu.gatech.cc.jcrasher.Assertions.notNull;
+
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
 import java.util.Iterator;
@@ -21,8 +23,6 @@ import org.apache.bcel.generic.InstructionHandle;
 import org.apache.bcel.generic.InstructionList;
 import org.apache.bcel.generic.MethodGen;
 import org.apache.bcel.generic.Type;
-
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 /**
  * CopyCLinitClassLoader

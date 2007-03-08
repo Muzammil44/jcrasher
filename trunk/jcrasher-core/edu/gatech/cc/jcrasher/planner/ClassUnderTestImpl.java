@@ -7,6 +7,7 @@ package edu.gatech.cc.jcrasher.planner;
 
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
+import static edu.gatech.cc.jcrasher.Constants.TAB;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Method;
@@ -27,7 +28,6 @@ import edu.gatech.cc.jcrasher.plans.stmt.BlockImpl;
 import edu.gatech.cc.jcrasher.plans.stmt.BlockStatement;
 import edu.gatech.cc.jcrasher.plans.stmt.ExpressionStatement;
 import edu.gatech.cc.jcrasher.plans.stmt.LocalVariableDeclarationStatement;
-import static edu.gatech.cc.jcrasher.Constants.TAB;
 
 /**
  * Constructs a TypeNode a loaded class under test: extract all public
