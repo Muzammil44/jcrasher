@@ -91,8 +91,10 @@ public class NonExecutingCrasher extends AbstractCrasher {
     
     BigInteger checkedStretch = planIndexStretch;
     if (startPlanIndex.add(planIndexStretch).compareTo(maxTestCasesAvailable) > 0) {
-      System.out.println(
-          "planIndexStretch too big for getRandomTestBlocks("+testeeClass.getName()+")");      
+      /* Happens if we rounded up to select one test case */
+      check(amount==1);
+//      System.out.println(
+//          "planIndexStretch too big for getRandomTestBlocks("+testeeClass.getName()+")");      
       checkedStretch = maxTestCasesAvailable.subtract(startPlanIndex);
     }
     

@@ -25,6 +25,8 @@ Note that properties of the calling project override properties defined here.
 		<pathelement location="${bin}"/>
 	</path>
 
+	<!--provides loop-->
+	<taskdef resource="net/sf/antcontrib/antlib.xml" classpath="${jcrasher.jar}"/>
 	
 	<!-- Define naming of generated files -->
 	<target name="init">
@@ -82,15 +84,29 @@ Note that properties of the calling project override properties defined here.
 
   <!-- Compile JCrasher-generated test cases -->
 	<target name="test.compile" depends="test.generate">
-    <javac
-        source="1.4"
-        target="1.4" 
-        srcdir="${src.generated.tests}"
-        destdir="${bin.generated.tests}"
-        classpathref="test.classpath"
-        debug="true"/>
+		<path id="test.list">
+			<fileset dir="${src.generated.tests}" excludes="JUnitAll.java"/>
+		</path>
+	
+		<pathconvert property="test.list.comma" refid="test.list" pathsep=",">
+			<globmapper from="${basedir}${file.separator}${src.generated.tests}${file.separator}*" to="*"/>
+		</pathconvert>
+			
+		<for param="file" list="${test.list.comma},JUnitAll.java">
+		  
+			<sequential>
+				<javac
+					source="1.4"
+					target="1.4"
+					srcdir="${src.generated.tests}"
+					destdir="${bin.generated.tests}"
+					classpathref="test.classpath"
+					debug="true"
+					includes="@{file}"/>
+			</sequential>
+		</for>
 	</target>
-
+	
 
 	<!-- Run JCrasher-generated test cases 
     TODO: Run our special test case runner.
