@@ -6,9 +6,9 @@
 package edu.gatech.cc.jcrasher;
 
 import static edu.gatech.cc.jcrasher.Assertions.check;
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
-import static edu.gatech.cc.jcrasher.Assertions.isNonNeg;
 import static edu.gatech.cc.jcrasher.Assertions.isArrayIndex;
+import static edu.gatech.cc.jcrasher.Assertions.isNonNeg;
+import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import static edu.gatech.cc.jcrasher.Constants.MAX_NR_TEST_METHS_PER_CLASS;
 
 import java.math.BigDecimal;

@@ -13,6 +13,7 @@ import static edu.gatech.cc.jcrasher.Constants.PS;
 import java.io.File;
 import java.util.Enumeration;
 import java.util.HashSet;
+import java.util.LinkedHashSet;
 import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarFile;
@@ -226,11 +227,11 @@ public class JCrasher {
 	 * found in this package and all its sub-packages.
 	 */
 	protected Class<?>[] parseClasses(final String[] userSpecs) {
-		final Set<Class<?>> res = new HashSet<Class<?>>();	//avoid multiple entires of same class
+		final Set<Class<?>> res = new LinkedHashSet<Class<?>>();	//avoid multiple entires of same class
 
 		/* First interpret each user-provided name as a class name.
 		 * Standard classloader will find class of given name. */
-		final Set<String> packageSpecs = new HashSet<String>();	//avoid multiple entires
+		final Set<String> packageSpecs = new LinkedHashSet<String>();	//avoid multiple entires
 		for (String userSpec: userSpecs) {
 			try {
 				res.add(Class.forName(userSpec));
