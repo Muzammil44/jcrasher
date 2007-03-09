@@ -38,6 +38,7 @@ public class JCrasher {
 
 		"  -e, --execute        execute test cases while generating to suppress boring ones\n" +
 		"  -d, --depth=INT      maximal depth of method chaining (default 3)\n" +
+    "  -f, --files=INT      maximal nr of test files created (default 4000)\n" +
 		"  -h, --help           print these instructions\n" +
 		"  -j, --junitFiltering make generated test cases extend FilteringTestCase\n" +
 		"  -l, --log            generate detailed log\n" +		
@@ -285,6 +286,27 @@ public class JCrasher {
 			Constants.MAX_PLAN_RECURSION = maxDepth;
 		}	  		
 	}
+  
+  
+  /** 
+   * set Constants.MAX_NR_TEST_CLASSES according to user param 
+   */
+  protected void parseFiles(final String arg) {
+    int maxFiles = 0;
+    try {
+      maxFiles = Integer.parseInt(arg);
+    }
+    catch(NumberFormatException e) {
+      die(arg +" must be greater than zero");
+    }
+    
+    if (maxFiles <= 0) {
+      die(arg +" must be greater than zero");
+    }
+    else {
+      Constants.MAX_NR_TEST_CLASSES = maxFiles;
+    }       
+  }
 	
 	
 	/**
@@ -317,6 +339,7 @@ public class JCrasher {
 		LongOpt[] longopts = new LongOpt[]{
 				new LongOpt("execute", LongOpt.NO_ARGUMENT, null, 'e'),
 				new LongOpt("depth", LongOpt.REQUIRED_ARGUMENT, null, 'd'),
+        new LongOpt("files", LongOpt.REQUIRED_ARGUMENT, null, 'f'),
 				new LongOpt("help", LongOpt.NO_ARGUMENT, null, 'h'),				
 				new LongOpt("junitFiltering", LongOpt.NO_ARGUMENT, null, 'j'),
 				new LongOpt("log", LongOpt.NO_ARGUMENT, null, 'l'),
@@ -324,7 +347,7 @@ public class JCrasher {
         new LongOpt("suppressNull", LongOpt.NO_ARGUMENT, null, 's'),
 				new LongOpt("version", LongOpt.NO_ARGUMENT, null, 'v')
 	  };
-	  Getopt g = new Getopt("JCrasher 2", args, "ed:hjlo:sv;", longopts);
+	  Getopt g = new Getopt("JCrasher 2", args, "ed:f:hjlo:sv;", longopts);
 	  int opt = 0;
 	  while ((opt = g.getopt()) != -1) {
 	  	switch (opt) {
@@ -336,6 +359,10 @@ public class JCrasher {
 	  		case 'd':  //--depth .. maximum nesting depth.
 	  			parseDepth(g.getOptarg());
 	  			break;
+          
+        case 'f':  //--files .. maximum number of test files.
+          parseFiles(g.getOptarg());
+          break;          
 	  			
 	  		case 'j':  //--junitFiltering .. FilteringTestCase.
 	  			Constants.JUNIT_FILTERING = true;
