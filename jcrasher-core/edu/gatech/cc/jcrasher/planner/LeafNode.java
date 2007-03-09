@@ -5,9 +5,9 @@
  */
 package edu.gatech.cc.jcrasher.planner;
 
-import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.isArrayIndex;
+import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
