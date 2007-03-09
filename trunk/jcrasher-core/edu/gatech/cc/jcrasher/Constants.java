@@ -70,10 +70,13 @@ public abstract class Constants {
   
 	/**
 	 * How many test classes should be generated max?
-   * Will lead to 2 million test cases, which is the harder limit.
-   * TODO: Reduced this to 100,000 for faster compiling ;-)
+   * Default set to 200 to enable fast compiling.
+   * This will result in 100,000 test cases (given the
+   * default setting of 500 test cases per test class).
+   * The original JCrasher paper talked about two million.
+   * You can overwrite this setting with --files.
 	 */
-  public static int MAX_NR_TEST_CLASSES = 4000;
+  public static int MAX_NR_TEST_CLASSES = 200;
   
 	/**
 	 * How many test methods per generated test class:

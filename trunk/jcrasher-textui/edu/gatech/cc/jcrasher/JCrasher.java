@@ -49,7 +49,7 @@ public class JCrasher {
 
   protected final static String copyright = 
     "(C) Copyright 2002-2007 Christoph Csallner and Yannis Smaragdakis.";
-	protected static String name = "JCrasher 2 (http://www.cc.gatech.edu/jcrasher)";
+	protected static String name = "JCrasher (http://code.google.com/p/jcrasher/)";
 	protected static String hint =
 		"Try `java edu.gatech.cc.jcrasher.JCrasher --help' for more information.";
 
