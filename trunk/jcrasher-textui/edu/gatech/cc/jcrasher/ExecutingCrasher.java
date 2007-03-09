@@ -22,8 +22,8 @@ import edu.gatech.cc.jcrasher.writer.TestCaseWriter;
  */
 public class ExecutingCrasher extends AbstractCrasher {	
 	
-	protected final ExecutingPlanner executingPlanner =
-		new ExecutingPlanner();
+	protected final ExecutingCutPlanner executingPlanner =
+		new ExecutingCutPlanner();
 	
 	/**
 	 * Constructor
