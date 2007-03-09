@@ -34,6 +34,7 @@ public class TypeNeededNode<T> extends TypeNode<T> {
    * <ol>
    * <li>Grab all (predefined) values
    * <li>Grab all constructing functions iff maxRecursion >= 1
+   * </ol>
    * 
    * Precond: maxRecursion >= 0
    * 
@@ -51,11 +52,11 @@ public class TypeNeededNode<T> extends TypeNode<T> {
     notNull(visUsed);
     check(remainingRecursion >= 0);
 
-    ((ClassWrapperImpl) pCW).setIsNeeded();
+    ((ClassWrapperImpl<T>) pCW).setIsNeeded();
 
     name = pCW.getWrappedClass().getName();
-    final List<PlanSpaceNode<T>> childSpaces = new ArrayList<PlanSpaceNode<T>>();
-    childSpaces.add(new ValueNode<T>(pCW.getPresetPlans(filter)));
+    final List<ExpressionNode<T>> childSpaces = new ArrayList<ExpressionNode<T>>();
+    childSpaces.add(new LeafNode<T>(pCW.getPresetPlans(filter)));
 
     /* NON_NULL enforced above, transitively used values may be null */
     final PlanFilter newFilter = Constants.addNull(filter);
@@ -64,7 +65,8 @@ public class TypeNeededNode<T> extends TypeNode<T> {
     if (remainingRecursion > 0) {
 
       /* same for class and all its implementing/ extending children */
-      final List<Class<? extends T>> classes = new ArrayList<Class<? extends T>>(pCW.getChildren());
+      final List<Class<? extends T>> classes = 
+        new ArrayList<Class<? extends T>>(pCW.getChildren());
       classes.add(pCW.getWrappedClass());
 
       for (Class<? extends T> c : classes) {
@@ -91,7 +93,7 @@ public class TypeNeededNode<T> extends TypeNode<T> {
     }
 
     /* set gathered child plan spaces in super class */
-    setChildren(childSpaces.toArray(new PlanSpaceNode[childSpaces.size()]));
+    setChildren(childSpaces.toArray(new ExpressionNode[childSpaces.size()]));
   }
   
   

@@ -64,12 +64,13 @@ public abstract class Constants {
   
   /**
    * Maximum number of test cases tried per testee class.
+   * This is a soft limit, MAX_NR_TEST_CLASSES is more important.
    */
   public static int MAX_TEST_CASES_TRIED_CLASS = 1000; 
   
 	/**
 	 * How many test classes should be generated max?
-   * Will lead to 2 million test cases.
+   * Will lead to 2 million test cases, which is the harder limit.
 	 */
   public static int MAX_NR_TEST_CLASSES = 4000;
   

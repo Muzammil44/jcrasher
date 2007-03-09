@@ -14,7 +14,7 @@ import java.lang.reflect.Modifier;
 import edu.gatech.cc.jcrasher.writer.CodeGenFct;
 
 /**
- * Wraps a method - Manages recursion to params and optional victim instance
+ * Wraps a method - Manages recursion to params and optional receiver instance
  * 
  * <p>
  * Each reference parameter of every method must be non-null.

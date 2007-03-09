@@ -125,20 +125,17 @@ implements ClassUnderTest<T> {
    * 
    * Precond: 0 <= planIndex < getPlanSpaceSize() Postcond: no side-effects
    */
-  public Block<?> getBlock(int planIndex) {
+  public Block<?> getBlock(BigInteger planIndex) {
     Block<?> res = null;
-
+    
     /* retrieve function's childrens' plans of given index */
-    int childIndex = getChildIndex(planIndex);
-    int childPlanIndex = getChildPlanIndex(childIndex, planIndex); // map to
-                                                                    // child
-                                                                    // plan
-                                                                    // space
-    FunctionNode<?> node = (FunctionNode) getChild(childIndex);
-    Expression[] paramPlans = node.getParamPlans(childPlanIndex, wrappedClass); // get params' plans
+    int child = getChildIndex(planIndex);
+    FunctionNode<?> node = (FunctionNode<?>) children[child];    
+    BigInteger childPlanIndex = getChildPlanIndex(child, planIndex);
+    
+    Expression<?>[] paramPlans = node.getParamPlans(childPlanIndex, wrappedClass);
 
-    /* TODO(csallner): hack, check of which kind the child is */
-    if (node instanceof ConstructorNode) {
+    if (node instanceof ConstructorNode) {  //TODO: hack
       ConstructorNode<T> conNode = (ConstructorNode<T>) node;
       res = getTestBlockForCon(conNode.getCon(), paramPlans);
     } 
@@ -160,7 +157,7 @@ implements ClassUnderTest<T> {
    * 
    * 2004-04-22 changed to public to allow access from ESC extension.
    */
-  public Block getTestBlockForCon(
+  public Block<?> getTestBlockForCon(
       Constructor<T> pCon,
       Expression<?>[] curPlans)
   {
@@ -168,10 +165,10 @@ implements ClassUnderTest<T> {
     notNull(curPlans);   
 
     final Class<T> testeeType = pCon.getDeclaringClass();
-    final Block b = new BlockImpl(testeeType, pCon, testBlockSpaces); // context for this combination
+    final Block<?> b = new BlockImpl(testeeType, pCon, testBlockSpaces); // context for this combination
 
     /* Simple version: one stmt for each instance and exec fct */
-    final BlockStatement[] bs = new BlockStatement[curPlans.length + 1];
+    final BlockStatement<?>[] bs = new BlockStatement[curPlans.length + 1];
 
     /* Keep track of new created local instances: all needed */
     final Variable<?>[] ids = new Variable[curPlans.length];
@@ -234,23 +231,23 @@ implements ClassUnderTest<T> {
    * 
    * 2004-04-22 changed to public to allow access from ESC extension.
    */
-  public Block getTestBlockForMeth(
+  public Block<?> getTestBlockForMeth(
       Method pMeth,
-      Expression[] curPlans) {
+      Expression<?>[] curPlans) {
     
     notNull(pMeth);
     notNull(curPlans);
     
     final Class<T> testeeType = (Class<T>) pMeth.getDeclaringClass();
-    final Block b = new BlockImpl(testeeType, pMeth, testBlockSpaces); // context for this combination
+    final Block<?> b = new BlockImpl(testeeType, pMeth, testBlockSpaces); // context for this combination
 
     /* Simple version: one stmt for each instance and exec fct */
-    BlockStatement[] bs = new BlockStatement[curPlans.length + 1];
+    BlockStatement<?>[] bs = new BlockStatement[curPlans.length + 1];
 
     /* Keep track of new created local param-instances */
-    Expression[] paramPlans = null;
+    Expression<?>[] paramPlans = null;
     if (Modifier.isStatic(pMeth.getModifiers()) == false) { // first dim is
-                                                            // victim instance
+                                                            // receiver instance
       paramPlans = new Expression[curPlans.length - 1];
       for (int j = 0; j < paramPlans.length; j++) {
         paramPlans[j] = curPlans[j + 1];
@@ -277,12 +274,12 @@ implements ClassUnderTest<T> {
      * Generate conPlan for meth under test, which references all param
      * identifiers
      */
-    MethodCall conPlan = null;
+    MethodCall<?> conPlan = null;
     if (Modifier.isStatic(pMeth.getModifiers()) == false) { // first dim is
-                                                            // victim instance
+                                                            // receiver instance
 
-      /* Generate local variable for victim */
-      Variable vID = b.getNextID(pMeth.getDeclaringClass()); // A a = ...
+      /* Generate local variable for receiver */
+      Variable<?> vID = b.getNextID(pMeth.getDeclaringClass()); // A a = ...
       bs[curPlans.length - 1] = 
       	new LocalVariableDeclarationStatement( 
       			vID,
@@ -309,10 +306,11 @@ implements ClassUnderTest<T> {
   
   
   /**
-   * TODO: Switch implementation to BigInteger!
+   * @deprecated call getPlanSpaceSize() directly.
    */
+  @Deprecated
   public BigInteger getNrTestMethodsAvailable() {
-    return BigInteger.valueOf(getPlanSpaceSize());
+    return getPlanSpaceSize();
   }
   
   @Override

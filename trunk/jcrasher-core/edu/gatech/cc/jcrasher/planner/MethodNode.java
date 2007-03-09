@@ -10,6 +10,7 @@ import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -52,12 +53,12 @@ public class MethodNode<T> extends FunctionNode<T> {
     notNull(pMeth);
 
     meth = pMeth;
-    List<TypeNode<?>> depNodes = new ArrayList<TypeNode<?>>();
+    List<TypeNeededNode<?>> depNodes = new ArrayList<TypeNeededNode<?>>();
 
-    /* First dimension: victim instance */
+    /* First dimension: receiver instance */
     if (Modifier.isStatic(pMeth.getModifiers()) == false) { // non-static method
       Class<?> decClass = pMeth.getDeclaringClass();
-      ClassWrapperImpl<?> vW = (ClassWrapperImpl) typeGraph.getWrapper(decClass); // victim
+      ClassWrapperImpl<?> vW = (ClassWrapperImpl) typeGraph.getWrapper(decClass); // receiver
       depNodes.add(new TypeNeededNode(vW, pMaxRecursion - 1, Constants
         .removeNull(filter), vis));
     }
@@ -69,18 +70,17 @@ public class MethodNode<T> extends FunctionNode<T> {
     }
 
     /* create iterators for each type dimension and set field in super class */
-    setParams(depNodes.toArray(new TypeNode[depNodes.size()]));
+    setParams(depNodes.toArray(new TypeNeededNode[depNodes.size()]));
   }
 
 
 
   /**
-   * Precond: 0 <= planIndex < getPlanSpaceSize()
-   * 
+   * @param planIndex from [0..getPlanSpaceSize()-1]
    * @return concrete method plan according to index.
    * @see PlanSpaceNode#getPlan(int)
    */
-  public Expression<T> getPlan(int planIndex, Class<?> testeeType) {
+  public Expression<T> getPlan(BigInteger planIndex, Class<?> testeeType) {
     Expression<?>[] depPlans = getParamPlans(planIndex, testeeType); // enforces our precondition
 
     /* Zero-dim ok, iff non-arg static meth */
@@ -89,13 +89,13 @@ public class MethodNode<T> extends FunctionNode<T> {
     }// end traversal of zero-dim space
 
 
-    /* Build method plan, distribute plans to victim, params */
+    /* Build method plan, distribute plans to receiver, params */
 
     check(depPlans.length > 0); // at least one dimension non-empty
 
     if (Modifier.isStatic(meth.getModifiers()) == false) { // first dim is
-                                                              // victim
-      Expression[] paramPlans = new Expression[depPlans.length - 1];
+                                                              // receiver
+      Expression<?>[] paramPlans = new Expression[depPlans.length - 1];
       for (int j = 0; j < paramPlans.length; j++) {
         paramPlans[j] = depPlans[j + 1];
       }

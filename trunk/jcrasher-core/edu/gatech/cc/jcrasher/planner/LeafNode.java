@@ -6,7 +6,10 @@
 package edu.gatech.cc.jcrasher.planner;
 
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
+import static edu.gatech.cc.jcrasher.Assertions.check;
+import static edu.gatech.cc.jcrasher.Assertions.isArrayIndex;
 
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -17,7 +20,7 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class ValueNode<T> implements PlanSpaceNode<T> {
+public class LeafNode<T> implements ExpressionNode<T> {
 
   protected final List<Expression<T>> plans = 
   	new ArrayList<Expression<T>>();
@@ -26,18 +29,24 @@ public class ValueNode<T> implements PlanSpaceNode<T> {
   /**
    * Constructor
    */
-  public ValueNode(final List<Expression<T>> pPlans) {
-    notNull(pPlans);
-    plans.addAll(pPlans);
+  public LeafNode(List<Expression<T>> plans) {
+    notNull(plans);
+    this.plans.addAll(plans);
   }
 
 
-  public int getPlanSpaceSize() {
-    return plans.size();
+  /**
+   * Efficient if plans.size() <= 16.
+   */
+  public BigInteger getPlanSpaceSize() {
+    return BigInteger.valueOf(plans.size());
   }
 
-  public Expression<T> getPlan(int planIndex, Class<?> testeeType) {
-    return plans.get(planIndex);
+  
+  public Expression<T> getPlan(BigInteger planIndex, Class<?> testeeType) {
+    check(isArrayIndex(planIndex));
+
+    return plans.get(planIndex.intValue());
   }
 
   

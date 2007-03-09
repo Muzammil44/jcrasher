@@ -7,6 +7,10 @@ package edu.gatech.cc.jcrasher.planner;
 
 import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
+import static edu.gatech.cc.jcrasher.Assertions.isNonNeg;
+
+import java.math.BigInteger;
+
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 import edu.gatech.cc.jcrasher.types.TypeGraph;
 import edu.gatech.cc.jcrasher.types.TypeGraphImpl;
@@ -17,19 +21,20 @@ import edu.gatech.cc.jcrasher.types.TypeGraphImpl;
  * <ul>
  * <li>Child plan spaces are all TypeNode.
  * <li>Knows how to transfer an index in a certain combination of child-plans.
+ * </ul>
  * 
  * @param <T> return type.
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public abstract class FunctionNode<T> implements PlanSpaceNode<T> {
+public abstract class FunctionNode<T> implements ExpressionNode<T> {
 
 	protected final TypeGraph typeGraph = TypeGraphImpl.instance();
 	
   /**
-   * Child types, i.e. victim and param types up to our max depth - 1
+   * Child types, i.e. receiver and param types up to our max depth - 1
    */
-  protected TypeNode<?>[] parameters;
+  protected TypeNeededNode<?>[] parameters;
 
   /**
    * Size of each child's plan space (given their max depth),  e.g.:
@@ -38,21 +43,86 @@ public abstract class FunctionNode<T> implements PlanSpaceNode<T> {
    * <li>(0, 10, 10, 5) --> 0
    * </ul>
    */
-  protected int[] paramSizes;
+  protected BigInteger[] paramSizes;
   
   /**
-   * (5*2*1, 2*1, 1) for (3, 5, 2)
+   * own plan space size = Product of childrens' plan space sizes.
    */
-  protected int[] canonicalSubSapceSizes;
+  protected BigInteger planSpaceSize = BigInteger.ZERO;
   
   /**
-   * own plan space size = product of childrens'
+   * Caches size of the plan space size to the right.
+   * Used to count in the plans.
+   * 
+   * E.g., for paramSizes (3, 5, 2) we get (5*2*1, 2*1, 1).
    */
-  protected int planSpaceSize = 0;
+  protected BigInteger[] canonicalSubSapceSizes;
   
   /**
-   * Precond: true Postcond: cached sizes of all sub plan spaces to speed up
-   * getPlan(int)
+   * Sets the function parameters.
+   * To be called by extending classes only.
+   * 
+   * @param parameters The children to set
+   */
+  protected void setParams(TypeNeededNode<?>[] pChildren) {
+    this.parameters = pChildren;
+  }  
+  
+
+  /**
+   * Retrieves childrens' plans (side-effect-free), according to the canonical
+   * order. E.g., for sub spaces of sizes (4, 3, 7)
+   * the indices are a*3*7 + b*7 + c*1, with
+   * <ul>
+   * <li>a element [0..3],
+   * <li>b element [0..2],
+   * <li>c element [0..6]
+   * </ul>
+   * 
+   * Following are example results:
+   * <ul>
+   * <li>0:  (0, 0, 0)
+   * <li>6:  (0, 0, 6)
+   * <li>7:  (0, 1, 0) 
+   * <li>83: (3, 2, 6)
+   * </ul>
+   * 
+   * The dimensions are checked from left, for example, for 83:
+   * <ul>
+   * <li>83 / 3*7*1 = 3 + 20/21 --> children[0].getPlan(3)
+   * <li>20 / 7*1 = 2 + 6/7 --> children[1].getPlan(2)
+   * <li>6 / 1 = 6 --> children[2].getPlan(6)
+   * </ul>
+   * 
+   * @param planIndex the index of the plan according to the node's canonical
+   *          order, taken from [0..getPlanSpaceSize()-1]
+   * @return childrens' plans according to the ordering semantics, never null
+   */
+  public Expression<?>[] getParamPlans(BigInteger planIndex, Class<?> testeeType) {
+    check(isNonNeg(planIndex));
+    check(planIndex.compareTo(getPlanSpaceSize()) < 0); //fills cache.
+    /* terminated iff canonicalSubSapceSizes[any]==0 */
+
+    Expression<?>[] res = new Expression[parameters.length]; // no children --> empty list
+
+    /* Determine index in each child dimension */
+    BigInteger currentIndex = planIndex; // index into remaining sub spaces
+    for (int i = 0; i < res.length; i++) {
+    	/* division, lower bounded index in child's dimension. */
+      BigInteger childIndex = currentIndex.divide(canonicalSubSapceSizes[i]);
+      res[i] = parameters[i].getPlan(childIndex, testeeType);
+      
+      /* leftover from division */
+      currentIndex = 
+        currentIndex.subtract(childIndex.multiply(canonicalSubSapceSizes[i]));
+    }
+
+    return res;
+  }
+  
+  
+  /**
+   * Caches sizes of all sub plan spaces to speed up getPlan(int).
    * 
    * A method's or constructor's plan space size is the product of its child
    * plan spaces.
@@ -60,99 +130,38 @@ public abstract class FunctionNode<T> implements PlanSpaceNode<T> {
    * @return size of this sub plan space = nr different plans this plan space
    *         can return via getPlan(int)
    */
-  public int getPlanSpaceSize() {
+  public BigInteger getPlanSpaceSize() {
     notNull(parameters);
 
-    /* Compute childrens' and own plan space sizes */
-    if (paramSizes == null) { // first call
-      paramSizes = new int[parameters.length];
-
-      /* Compute child sizes recursively */
-      for (int i = 0; i < parameters.length; i++) {
-        paramSizes[i] = parameters[i].getPlanSpaceSize();
-      }
-
-      /* Multiply childrens' plan space sizes */
-      int res = 1; // no children: one plan for static non-arg meth
-      for (int childSize : paramSizes) {
-        res *= childSize; // first zero will zero the entire result
-      }
-      planSpaceSize = res;
-
-      /* Compute canonical sub space sizes for each dimesion */
-      canonicalSubSapceSizes = new int[parameters.length];
-      for (int i = parameters.length - 1; i >= 0; i--) {
-        if (i == parameters.length - 1) {
-          canonicalSubSapceSizes[i] = 1;
-        } else {
-          canonicalSubSapceSizes[i] = paramSizes[i + 1]
-            * canonicalSubSapceSizes[i + 1];
-        }
-      }
-    }
+    if (paramSizes != null) //cache hit
+      return planSpaceSize;
     
-    if (planSpaceSize<0) {
-      System.out.println("TODO: int overflow");
-      planSpaceSize = Integer.MAX_VALUE;
+    /* Compute childrens' and own plan space sizes */
+    
+    paramSizes = new BigInteger[parameters.length];
+
+    /* Compute child sizes recursively */
+    for (int i = 0; i < parameters.length; i++) {
+      paramSizes[i] = parameters[i].getPlanSpaceSize();
+    }
+
+    /* Multiply childrens' plan space sizes */
+    BigInteger res = BigInteger.ONE; //no children: one plan for static non-arg meth
+    for (BigInteger childSize : paramSizes) {
+      res = res.multiply(childSize); // first zero will zero the entire result
+    }
+    planSpaceSize = res;
+
+    /* Compute canonical sub space sizes for each dimesion */
+    canonicalSubSapceSizes = new BigInteger[parameters.length];
+    for (int i = parameters.length - 1; i >= 0; i--) {
+      if (i == parameters.length - 1) //right-most counts by one. 
+        canonicalSubSapceSizes[i] = BigInteger.ONE;
+      else
+        canonicalSubSapceSizes[i] = 
+          paramSizes[i+1].multiply(canonicalSubSapceSizes[i+1]);
     }
 
     return planSpaceSize;
   }
-
-
-
-  /**
-   * Precond: 0 <= planIndex < getPlanSpaceSize() Postcond: no side-effects
-   * 
-   * Retrieve childrens' plans according to canonical ordering. For e.g. sub
-   * spaces of sizes (4, 3, 7) --> 84 the indices are a*3*7 + b*7 + c*1, with a
-   * element [0..3], b element [0..2], c element [0..6] (0, 0, 0) --> 0 (0, 0,
-   * 6) --> 6 (0, 1, 0) --> 7 (3, 2, 6) --> 83
-   * 
-   * So for an index e.g. of 83 the dimensions are checked from left: 83 / 3*7*1 =
-   * 3 + 20/21 --> children[0].getPlan(3) 20 / 7*1 = 2 + 6/7 -->
-   * children[1].getPlan(2) 6 / 1 = 6 --> children[2].getPlan(6)
-   * 
-   * @param planIndex the index of the plan according to the node's canonical
-   *          order, taken from [0..getPlanSpaceSize()-1]
-   * @return childrens' plans according to the ordering semantics, never null
-   */
-  public Expression<?>[] getParamPlans(int planIndex, Class<?> testeeType) {
-    check(planIndex >= 0); // enforce precondition
-    check(planIndex < getPlanSpaceSize()); // terminate here iff any
-                                          // canonicalSubSapceSizes[i] == 0
-
-    /* Make sure children and own sizes are cached */
-    if (paramSizes == null) {
-      getPlanSpaceSize();
-    }
-
-    Expression<?>[] res = new Expression[parameters.length]; // no children --> empty list
-
-    /* Determine index in each child dimension */
-    int currentIndex = planIndex; // index into remaining sub spaces
-    for (int i = 0; i < res.length; i++) {
-    	/* division, lower bounded index in child's dimension. */
-      int childIndex = currentIndex / canonicalSubSapceSizes[i];
-      
-      /* leftover from division */
-      currentIndex = currentIndex - (childIndex * canonicalSubSapceSizes[i]);
-      res[i] = parameters[i].getPlan(childIndex, testeeType);
-    }
-
-    return res;
-  }
-
-
-
-  /**
-   * Sets the function parameters.
-   * To be called by extending classes only.
-   * 
-   * @param parameters The children to set
-   */
-  protected void setParams(final TypeNode<?>[] pChildren) {
-    this.parameters = pChildren;
-  }
-
 }
