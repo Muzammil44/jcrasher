@@ -31,6 +31,5 @@ public interface CutPlanner extends Planner {
   /**
    * @return plan space of classUnderTest.
    */ 
-  @Override
   public <T> ClassUnderTestImpl<T> getPlanSpace(Class<T> classUnderTest);
 }
