@@ -13,12 +13,12 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.math.RoundingMode;
 
-import edu.gatech.cc.jcrasher.planner.PlannerImpl;
+import edu.gatech.cc.jcrasher.planner.CutPlannerImpl;
 
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class NonExecutingPlanner extends PlannerImpl {
+public class NonExecutingCutPlanner extends CutPlannerImpl {
 
   protected Class<?>[] classes;
   
@@ -39,7 +39,7 @@ public class NonExecutingPlanner extends PlannerImpl {
   /**
    * Constructor
    */
-  public NonExecutingPlanner(Class<?>[] classes) {
+  public NonExecutingCutPlanner(Class<?>[] classes) {
     this.classes = classes;
     this.testMethodsSelected = new int[classes.length];  //sum <= two million.
     

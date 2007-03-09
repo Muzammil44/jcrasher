@@ -17,8 +17,9 @@ import java.util.Random;
 import org.apache.commons.lang.NotImplementedException;
 
 import edu.gatech.cc.jcrasher.planner.ClassUnderTest;
+import edu.gatech.cc.jcrasher.planner.CutPlanner;
 import edu.gatech.cc.jcrasher.planner.Planner;
-import edu.gatech.cc.jcrasher.planner.PlannerImpl;
+import edu.gatech.cc.jcrasher.planner.CutPlannerImpl;
 import edu.gatech.cc.jcrasher.plans.JavaCode;
 import edu.gatech.cc.jcrasher.plans.stmt.Block;
 
@@ -27,9 +28,9 @@ import edu.gatech.cc.jcrasher.plans.stmt.Block;
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class ExecutingPlanner {
+public class ExecutingCutPlanner {
 	
-	protected static final Planner planner = PlannerImpl.instance();
+	protected static final CutPlanner cutPlanner = CutPlannerImpl.instance();
 	protected static final Random random = new Random();
 
 
@@ -81,7 +82,7 @@ public class ExecutingPlanner {
 	public <T> List<Block> getBlocks(final Class<T> classUnderTest, int maxAmount) {
     notNull(classUnderTest);
     
-    final ClassUnderTest<T> classNode = planner.getPlanSpace(classUnderTest);     
+    final ClassUnderTest<T> classNode = cutPlanner.getPlanSpace(classUnderTest);     
     final BigInteger testsAvailableBig = classNode.getNrTestMethodsAvailable();
     if (testsAvailableBig.bitCount()>32)
       throw new NotImplementedException(

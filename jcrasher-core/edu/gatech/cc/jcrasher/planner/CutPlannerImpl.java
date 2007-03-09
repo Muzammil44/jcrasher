@@ -23,19 +23,20 @@ import edu.gatech.cc.jcrasher.types.TypeGraphImpl;
 
 
 /**
+ * Planner for classes under test.
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public class PlannerImpl implements Planner {
+public class CutPlannerImpl implements CutPlanner {
   
-  protected static PlannerImpl theInstance;
+  protected static CutPlanner theInstance;
   
   /**
    * @return non-null singleton
    */
-  public static PlannerImpl instance() {
+  public static CutPlanner instance() {
   	if (theInstance==null)
-  		theInstance = new PlannerImpl();
+  		theInstance = new CutPlannerImpl();
   	
   	return theInstance; 
   }
@@ -46,18 +47,18 @@ public class PlannerImpl implements Planner {
   /**
    * Cache constructed nodes
    */
-  final protected Map<Class, ClassUnderTest> plans = 
-    new Hashtable<Class, ClassUnderTest>();
+  final protected Map<Class<?>, ClassUnderTestImpl<?>> plans = 
+    new Hashtable<Class<?>, ClassUnderTestImpl<?>>();
 
   
   /**
    * @return plan space of class T.
    */ 
-  public <T> ClassUnderTest<T> getPlanSpace(Class<T> c) {
+  public <T> ClassUnderTestImpl<T> getPlanSpace(Class<T> c) {
   	if (plans.containsKey(c))
-  		return plans.get(c);
+  		return (ClassUnderTestImpl<T>) plans.get(c);
   	
-    final ClassUnderTest<T> classNode = new ClassUnderTestImpl<T>(
+    final ClassUnderTestImpl<T> classNode = new ClassUnderTestImpl<T>(
         c,
         Constants.MAX_PLAN_RECURSION,
         Constants.VIS_TESTED,

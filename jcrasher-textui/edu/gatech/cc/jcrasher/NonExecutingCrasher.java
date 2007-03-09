@@ -36,7 +36,7 @@ import edu.gatech.cc.jcrasher.writer.TestCaseWriter;
  */
 public class NonExecutingCrasher extends AbstractCrasher {
 	
-	protected NonExecutingPlanner planner;
+	protected NonExecutingCutPlanner planner;
 	
 	/**
 	 * Aggregate test suite
@@ -51,7 +51,7 @@ public class NonExecutingCrasher extends AbstractCrasher {
 	public NonExecutingCrasher(Class<?>[] classes) {
 		super(classes);
     
-    planner = new NonExecutingPlanner(classes);
+    planner = new NonExecutingCutPlanner(classes);
 	}
 
   
