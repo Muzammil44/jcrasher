@@ -5,6 +5,8 @@
  */
 package edu.gatech.cc.jcrasher.planner;
 
+import java.math.BigInteger;
+
 import edu.gatech.cc.jcrasher.plans.expr.Expression;
 
 /**
@@ -13,27 +15,28 @@ import edu.gatech.cc.jcrasher.plans.expr.Expression;
  * <li>all plans of how to invoke a method, chaining up to a given depth
  * <li>all plans of how to obtain an instance of a type,
  * using chaining up to a given depth
+ * </ul>
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
  */
 public interface PlanSpaceNode<T> {
 
   /**
-   * Precond: true Postcond: cached sizes of all sub plan spaces to speed up
-   * getPlan(int)
+   * Caches sizes of all sub plan spaces to speed up getPlan(int).
    * 
    * @return size of this sub plan space = nr different plans this plan space
    *         can return via getPlan(int)
    */
-  public int getPlanSpaceSize();
+  public BigInteger getPlanSpaceSize();
 
+  
   /**
-   * Precond: 0 <= planIndex < getPlanSpaceSize() Postcond: no side-effects
+   * Does not produce any side-effects.
    * 
    * @param planIndex the index of the plan according to the node's canonical
    *          order, taken from [0..getPlanSpaceSize()-1]
    * @param testeeType needed to emit test code tailored to testee.
    * @return plan according to the ordering semantics, never null
    */
-  public Expression<? extends T> getPlan(int planIndex, Class<?> testeeType);
+  public Expression<? extends T> getPlan(BigInteger planIndex, Class<?> testeeType);
 }

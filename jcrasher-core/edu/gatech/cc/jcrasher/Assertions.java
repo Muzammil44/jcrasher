@@ -2,6 +2,8 @@
 
 package edu.gatech.cc.jcrasher;
 
+import java.math.BigInteger;
+
 /**
  * Makes assertion checking more elegant than explicit if statements. Avoids the
  * -disableassertions problem of Java's assert statements. Avoids copyright
@@ -33,5 +35,24 @@ public class Assertions {
     if (b == false) {
       throw new IllegalStateException();
     }
+  }
+  
+  
+  /**
+   * @returns bigInteger represents a non-negative number.
+   */
+  public static boolean isNonNeg(BigInteger bigInteger) {
+    return (bigInteger.compareTo(BigInteger.ZERO) >= 0);
+  }
+  
+  
+  /**
+   * @returns bigInteger represents a non-negative number in the int range.
+   * This means bigInteger.intValue() can be used to index an array
+   * without causing a negative index exception or truncating the value
+   * of bigInteger.
+   */
+  public static boolean isArrayIndex(BigInteger bigInteger) {
+    return isNonNeg(bigInteger) && bigInteger.bitLength() <= 30;
   }
 }

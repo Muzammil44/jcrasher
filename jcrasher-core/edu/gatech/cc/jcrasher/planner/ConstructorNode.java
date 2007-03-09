@@ -9,6 +9,7 @@ import static edu.gatech.cc.jcrasher.Assertions.check;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
 
 import java.lang.reflect.Constructor;
+import java.math.BigInteger;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -51,7 +52,7 @@ public class ConstructorNode<T> extends FunctionNode<T> {
     notNull(pCon);
 
     con = pCon;
-    List<TypeNode<T>> depNodes = new ArrayList<TypeNode<T>>();
+    List<TypeNeededNode<T>> depNodes = new ArrayList<TypeNeededNode<T>>();
 
     /*
      * First, .. n-th dimesion: Add each parameter Inner class: Reflection
@@ -70,7 +71,7 @@ public class ConstructorNode<T> extends FunctionNode<T> {
       }
       depNodes.add(new TypeNeededNode(paramWrapper, pMaxRecursion - 1, planFilter, vis));
     }
-    setParams(depNodes.toArray(new TypeNode[depNodes.size()]));
+    setParams(depNodes.toArray(new TypeNeededNode[depNodes.size()]));
   }
 
 
@@ -81,7 +82,7 @@ public class ConstructorNode<T> extends FunctionNode<T> {
    * @return concrete method plan according to index.
    * @see PlanSpaceNode#getPlan(int)
    */
-  public Expression<T> getPlan(int planIndex, Class<?> testeeType) {
+  public Expression<T> getPlan(BigInteger planIndex, Class<?> testeeType) {
     Expression<?>[] depPlans = getParamPlans(planIndex, testeeType); // enforces our precondition
 
     /* distinguish inner class from params */

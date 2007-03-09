@@ -18,7 +18,7 @@ public interface ClassUnderTest<T> {
 	 * 
 	 * Precond: 0 <= planIndex < getPlanSpaceSize() Postcond: no side-effects
 	 */
-	public Block<?> getBlock(int planIndex);
+	public Block<?> getBlock(BigInteger planIndex);
   
   /**
    * @return the number of test methods available.

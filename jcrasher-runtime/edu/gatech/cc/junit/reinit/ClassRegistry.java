@@ -49,7 +49,7 @@ public class ClassRegistry {
 		//System.out.println("\tresetting " +f.getDeclaringClass().getName() +"." +f.getName() +" \"" +f.get(null) +"\"");			
 		
 		Class<?> fieldType = f.getType();	//switch case (field type)
-		if (! fieldType.isPrimitive()) {f.set(null, null);}	//victim-obj := null as static, value := null as reset
+		if (! fieldType.isPrimitive()) {f.set(null, null);}	//receiver-obj := null as static, value := null as reset
 		else {	//primitive types
 			if (fieldType.getName() == "boolean") {f.setBoolean(null, false);}
 			if (fieldType.getName() == "byte") {f.setByte(null, (byte)0);}

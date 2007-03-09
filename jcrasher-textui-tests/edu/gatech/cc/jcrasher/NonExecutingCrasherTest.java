@@ -8,6 +8,9 @@ package edu.gatech.cc.jcrasher;
 import static edu.gatech.cc.jcrasher.Constants.MAX_NR_TEST_CLASSES;
 import static edu.gatech.cc.jcrasher.Constants.MAX_NR_TEST_METHS_PER_CLASS;
 import static edu.gatech.cc.jcrasher.Constants.TAB;
+
+import java.math.BigInteger;
+
 import junit.framework.AssertionFailedError;
 import junit.framework.TestCase;
 import client.Client;
@@ -35,6 +38,7 @@ public class NonExecutingCrasherTest extends TestCase {
     super.tearDown();
     
     MAX_NR_TEST_CLASSES = MAX_NR_TEST_CLASSES_ORIG;
+    crasher.planner.choosePlans();
   }
   
   /**
@@ -55,10 +59,11 @@ public class NonExecutingCrasherTest extends TestCase {
   }
   
   public void testAssertDifferent() {
-    Block[] blocks = crasher.getRandomTestBlocks(MiniClient.class, 0, 1, 1);
+    Block<?>[] blocks = crasher.getRandomTestBlocks(
+        MiniClient.class, BigInteger.valueOf(0), BigInteger.valueOf(1), 1);
     assertEquals(1, blocks.length);
     
-    Block[] sameBlocks = new Block[] { blocks[0], blocks[0] };
+    Block<?>[] sameBlocks = new Block[] { blocks[0], blocks[0] };
     try {
       assertDifferentText(sameBlocks);
       fail(); //AssertionFailedError expected.
@@ -69,27 +74,52 @@ public class NonExecutingCrasherTest extends TestCase {
   }
 
   
-  public void testChoose() {
-    int[] testMethodsPicked = crasher.chooseNrTestMethodsPerTestee();
+  public void testChooseAll() {
+    int[] testMethodsPicked = crasher.planner.getChosenPlans();
+    crasher.planner.printStatistics();
+    assertEquals(true, crasher.planner.isEveryAvailablePlan());
     assertEquals(2, testMethodsPicked.length);
     assertEquals(2187, testMethodsPicked[0]);
     assertEquals(1, testMethodsPicked[1]);
   }
   
   
-  public void testChoose4TestClasses() {
+  public void testChooseLimit2000() {
     MAX_NR_TEST_CLASSES = 4;
-    int maxNrTestMethods = MAX_NR_TEST_CLASSES * MAX_NR_TEST_METHS_PER_CLASS; 
-    int[] testMethodsPicked = crasher.chooseNrTestMethodsPerTestee();
+    int maxNrTestMethods = MAX_NR_TEST_CLASSES * MAX_NR_TEST_METHS_PER_CLASS;
+    assertEquals(2000, maxNrTestMethods);
+        
+    crasher.planner.choosePlans();
+    int[] testMethodsPicked = crasher.planner.getChosenPlans();
+    crasher.planner.printStatistics();
+    assertEquals(false, crasher.planner.isEveryAvailablePlan());
     assertTrue(testMethodsPicked[0] < maxNrTestMethods);
     assertEquals(1, testMethodsPicked[1]);
   }
   
 
-  public void testChoose2TestClasses() {
+  public void testChooseLimit1000() {
     MAX_NR_TEST_CLASSES = 2;
     int maxNrTestMethods = MAX_NR_TEST_CLASSES * MAX_NR_TEST_METHS_PER_CLASS;
-    int[] testMethodsPicked = crasher.chooseNrTestMethodsPerTestee();
+    assertEquals(1000, maxNrTestMethods);
+    
+    crasher.planner.choosePlans();
+    int[] testMethodsPicked = crasher.planner.getChosenPlans();
+    crasher.planner.printStatistics();
+    assertEquals(false, crasher.planner.isEveryAvailablePlan());
+    assertTrue(testMethodsPicked[0] < maxNrTestMethods);
+    assertEquals(1, testMethodsPicked[1]);
+  }
+  
+  public void testChooseLimit500() {
+    MAX_NR_TEST_CLASSES = 1;
+    int maxNrTestMethods = MAX_NR_TEST_CLASSES * MAX_NR_TEST_METHS_PER_CLASS;
+    assertEquals(500, maxNrTestMethods);
+   
+    crasher.planner.choosePlans();
+    int[] testMethodsPicked = crasher.planner.getChosenPlans();
+    crasher.planner.printStatistics();
+    assertEquals(false, crasher.planner.isEveryAvailablePlan());
     assertTrue(testMethodsPicked[0] < maxNrTestMethods);
     assertEquals(1, testMethodsPicked[1]);
   }
@@ -128,22 +158,27 @@ public class NonExecutingCrasherTest extends TestCase {
   public void testRandom() {
     Block<?>[] blocks;
     
-    blocks = crasher.getRandomTestBlocks(Client.class, 1800, 100, 7);
+    blocks = crasher.getRandomTestBlocks(
+        Client.class, BigInteger.valueOf(1800), BigInteger.valueOf(100), 7);
     assertEquals(7, blocks.length);
     assertDifferentText(blocks);
 //    for (Block block: blocks)
 //      System.out.println(block.text());
     
-    blocks = crasher.getRandomTestBlocks(MiniClient.class, 0, 1, 1);
+    blocks = crasher.getRandomTestBlocks(
+        MiniClient.class, BigInteger.valueOf(0), BigInteger.valueOf(1), 1);
     assertEquals(1, blocks.length);
     
-    blocks = crasher.getRandomTestBlocks(MiniClient.class, 0, 5, 1);
+    blocks = crasher.getRandomTestBlocks(
+        MiniClient.class, BigInteger.valueOf(0), BigInteger.valueOf(5), 1);
     assertEquals(1, blocks.length);
     
-    blocks = crasher.getRandomTestBlocks(MiniClient.class, 0, 5, 5);
+    blocks = crasher.getRandomTestBlocks(
+        MiniClient.class, BigInteger.valueOf(0), BigInteger.valueOf(5), 5);
     assertEquals(1, blocks.length);
     
-    blocks = crasher.getRandomTestBlocks(MiniClient.class, 1, 1, 1);
+    blocks = crasher.getRandomTestBlocks(
+        MiniClient.class, BigInteger.valueOf(1), BigInteger.valueOf(1), 1);
     assertEquals(0, blocks.length);
   }
 }

@@ -103,7 +103,7 @@ public class ExecutingPlanner {
       		i : random.nextInt(testsAvailable));
       Block testCase = null;
       try {
-        testCase = classNode.getBlock(testIndex);
+        testCase = classNode.getBlock(BigInteger.valueOf(testIndex));
       }
       catch(Throwable e) {
         /* Tried to access some non-initializable class or interface */
