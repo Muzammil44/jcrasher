@@ -173,9 +173,14 @@ public class NonExecutingCrasherTest extends TestCase {
         MiniClient.class, BigInteger.valueOf(0), BigInteger.valueOf(5), 1);
     assertEquals(1, blocks.length);
     
-    blocks = crasher.getRandomTestBlocks(
-        MiniClient.class, BigInteger.valueOf(0), BigInteger.valueOf(5), 5);
-    assertEquals(1, blocks.length);
+    try {
+      blocks = crasher.getRandomTestBlocks(
+          MiniClient.class, BigInteger.valueOf(0), BigInteger.valueOf(5), 5);
+      fail();
+    }
+    catch(RuntimeException e) {
+      /* Expected. */
+    }
     
     blocks = crasher.getRandomTestBlocks(
         MiniClient.class, BigInteger.valueOf(1), BigInteger.valueOf(1), 1);
