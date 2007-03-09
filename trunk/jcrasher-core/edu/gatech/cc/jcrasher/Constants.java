@@ -71,6 +71,7 @@ public abstract class Constants {
 	/**
 	 * How many test classes should be generated max?
    * Will lead to 2 million test cases, which is the harder limit.
+   * TODO: Reduced this to 100,000 for faster compiling ;-)
 	 */
   public static int MAX_NR_TEST_CLASSES = 4000;
   

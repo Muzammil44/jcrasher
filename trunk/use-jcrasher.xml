@@ -84,6 +84,18 @@ Note that properties of the calling project override properties defined here.
 
   <!-- Compile JCrasher-generated test cases -->
 	<target name="test.compile" depends="test.generate">
+		<javac
+				source="1.4"
+				target="1.4"
+				srcdir="${src.generated.tests}"
+				destdir="${bin.generated.tests}"
+				classpathref="test.classpath"
+				debug="true"/>
+	</target>
+	
+	
+	<!-- Use the following to compile the generated test cases separately -->
+	<target name="test.compile.separate" depends="test.generate">
 		<path id="test.list">
 			<fileset dir="${src.generated.tests}" excludes="JUnitAll.java"/>
 		</path>
