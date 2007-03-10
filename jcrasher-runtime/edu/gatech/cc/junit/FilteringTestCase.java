@@ -450,7 +450,7 @@ public class FilteringTestCase extends TestCase {
 		/* Treat unchecked (runtime) exceptions */
 		RuntimeException e = (RuntimeException) throwable;
 		
-		if (!ANNOTATED_LIST.isEmpty()) {
+		if (FILTER_MODE==FilterMode.CLASSIC_SPE && !ANNOTATED_LIST.isEmpty()) {
 			/* Bypass heuristic iff we have Daikon-inferred preconditions 
 			 * for the method that caused the exception */
 			StackTraceElement calledMeth = stack[stack.length-stackLengthOfTest-1];
