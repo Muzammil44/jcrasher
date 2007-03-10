@@ -158,6 +158,7 @@ Note that properties of the calling project override properties defined here.
       <assertions>  <!--assertions enabled for testing-->
         <enable/>
       </assertions>
+    	<arg line="${junit.filtering.params}"/>  <!--e.g., "-suppressErrors"-->
       <arg value="JUnitAll"/>
     </java>
   </target> 

@@ -354,8 +354,9 @@ public class FilteringTestCase extends TestCase {
 		
 		//TODO more precision: Write precise full signature in test case
 		//		and use PreciseCallStack
-		String testedMethName = PreciseCallStack.stackTraceStyle(getNameOfTestedMeth());
-		
+		//String testedMethName = PreciseCallStack.stackTraceStyle(getNameOfTestedMeth());
+		String testedMethName = getNameOfTestedMeth();
+    
 		if (testedMethName.equals(calledMethName))
       return CallStack.TEST_TESTED_METH;
     
@@ -366,8 +367,10 @@ public class FilteringTestCase extends TestCase {
 	}
 
 	
-	/* throw e wrapped if it occurred in a tested method.
-	 * This means we ignore exceptions thrown by other classes. */
+	/**
+   * Throw e wrapped if it occurred in a tested method.
+	 * This means we ignore exceptions thrown by other classes.
+   */
 	protected void throwIfTested(RuntimeException e) throws Wrapper {
 		switch (testCalledTestee(e)) {
 			case TEST_TESTED_METH:  throw new IntendedException(e);

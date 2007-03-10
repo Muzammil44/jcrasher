@@ -204,7 +204,7 @@ implements TestCaseWriter
         return getTestedMethName(blocks[0]);
       default:
         String testedMethName = getTestedMethName(blocks[0]);
-        for (Block block: blocks) {
+        for (Block<?> block: blocks) {
           if (!getTestedMethName(block).equals(testedMethName)) {
             return null;
           }
