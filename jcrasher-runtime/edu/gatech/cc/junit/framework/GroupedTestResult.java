@@ -26,6 +26,9 @@ import edu.gatech.cc.junit.textui.RaGTestRunner.GroupMode;
  */
 public class GroupedTestResult extends TestResult {
 
+  /**
+   * FIXME: This will never be called, right?
+   */
 	protected boolean isMoreFocused(Wrapper t1, Wrapper t2) {
 		return (
 				isMoreFocused(t1.unwrap(), t2.unwrap()) &&
@@ -33,7 +36,9 @@ public class GroupedTestResult extends TestResult {
 				t2 instanceof AccidentException);
 	}
 	
-	/* @return if stack1 has the same top element and is shorter than stack2. */
+	/**
+   * @return if stack1 has the same top element and is shorter than stack2.
+   */
 	protected boolean isMoreFocused(Throwable t1, Throwable t2) {
 		notNull(t1);
 		notNull(t2);
@@ -197,20 +202,21 @@ public class GroupedTestResult extends TestResult {
 		if (RaGTestRunner.GROUP_MODE==GroupMode.GROUP_FOCUSED && prototype!=null &&
 				isMoreFocused(throwable, prototype.thrownException())) // unwrap after isMoreFocused
 		{	/* make failure the new protype */
-			if (throwable instanceof Wrapper) {throwable = ((Wrapper)throwable).unwrap();}
+			if (throwable instanceof Wrapper)
+        throwable = ((Wrapper)throwable).unwrap();
+
 			failure = new GroupedTestFailure(test, throwable, null);
 			prototype.parent = failure;
 		}		
 		else {
-			if (throwable instanceof Wrapper) {
+			if (throwable instanceof Wrapper)
         throwable = ((Wrapper)throwable).unwrap();
-      }
+
 			failure = new GroupedTestFailure(test, throwable, prototype);
 		}
 		
 		fErrors.addElement(failure);		
-		for (Enumeration e= fListeners.elements(); e.hasMoreElements(); ) {
+		for (Enumeration e= fListeners.elements(); e.hasMoreElements(); )
 			((GroupedTestListener)e.nextElement()).addError(test, throwable, prototype);
-		}
 	}
 }
