@@ -16,6 +16,7 @@ import junit.textui.ResultPrinter;
 import junit.textui.TestRunner;
 import edu.gatech.cc.junit.FilteringTestCase;
 import edu.gatech.cc.junit.NoExitSecurityManager;
+import edu.gatech.cc.junit.FilteringTestCase.FilterMode;
 import edu.gatech.cc.junit.framework.GroupedTestResult;
 import edu.gatech.cc.junit.reinit.CopyCLinitClassLoader;
 
@@ -28,6 +29,23 @@ import edu.gatech.cc.junit.reinit.CopyCLinitClassLoader;
  */
 public class RaGTestRunner extends TestRunner {
 
+  /**
+   * How to group exceptions
+   */
+  public enum GroupMode {
+    
+    /**
+     * SPE: same stack-trace down to test0
+     */
+    GROUP_CLASSIC,
+    
+    /**
+     * Same top-element. Leads to fewer reports.
+     */
+    GROUP_FOCUSED
+  }
+  
+  
 	/**
 	 * Where we write our list of annotated methods to.
 	 */
@@ -37,21 +55,12 @@ public class RaGTestRunner extends TestRunner {
 	 * Reinit?
 	 */
 	public static boolean DO_REINIT = false;
-	
-	/**
-	 * SPE: same stack-trace down to test0.
-	 */
-	public static final int GROUP_CLASSIC = 1;
-	
-	/**
-	 * Same top-element.
-	 */
-	public static final int GROUP_FOCUSED = 2;
+
 	
 	/**
 	 * Classic grouping
 	 */
-	public static int GROUP_MODE = GROUP_CLASSIC;
+	public static GroupMode GROUP_MODE = GroupMode.GROUP_CLASSIC;
 	
 	
 	
@@ -220,19 +229,19 @@ public class RaGTestRunner extends TestRunner {
 			}
 			
 			if (args[0].equals("-focus")) {
-				GROUP_MODE = GROUP_FOCUSED;
+				GROUP_MODE = GroupMode.GROUP_FOCUSED;
 				foundArg = true;
 			}			
-			if (args[0].equals("-all")) {
-				FilteringTestCase.FILTER_MODE = FilteringTestCase.REPORT_ALL;
+			if (args[0].equals("-reportAllExceptions")) {
+				FilteringTestCase.FILTER_MODE = FilterMode.ALL;
 				foundArg = true;
 			}			
-			if (args[0].equals("-selective")) {
-				FilteringTestCase.FILTER_MODE = FilteringTestCase.REPORT_SELECTIVE;
+			if (args[0].equals("-reportSpeExceptions")) {
+				FilteringTestCase.FILTER_MODE = FilterMode.CLASSIC_SPE;
 				foundArg = true;
 			}
-			if (args[0].equals("-showErrors")) {  //show java.lang.Error to user
-				FilteringTestCase.SHOW_ERRORS = true;
+			if (args[0].equals("-suppressErrors")) {  //hide java.lang.Error from user
+				FilteringTestCase.SUPPRESS_ERRORS = true;
 				foundArg = true;
 			}		
 			if (foundArg) {  //remove from list.

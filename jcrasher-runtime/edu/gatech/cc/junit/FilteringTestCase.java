@@ -25,23 +25,50 @@ import junit.framework.TestCase;
  */
 public class FilteringTestCase extends TestCase {
 	
-	/* Exception filtering mode:
-	 * a) report all exceptions.
-	 * b) report NPE, IllArg only if thrown by another public method. Classic mode.
-	 * c) never report NPE, IllArg. */
-	public static final int REPORT_ALL = 0;
-	public static final int REPORT_CLASSIC = 1;
-	public static final int REPORT_SELECTIVE = 2;
-	public static int FILTER_MODE = REPORT_CLASSIC;
-		
+  /**
+   * Filters plans.
+   */
+  public enum FilterMode {
+
+    /**
+     * Do not suppress any RunTime exception based on its type.
+     */
+    ALL,
+    
+    /**
+     * Classic JCrasher mode from SPE paper:
+     * Suppress NPE, IllegalArg exception was thrown by the
+     * method called directly from the test case.
+     * In this case the test case probably provided illegal arguments.  
+     */
+    CLASSIC_SPE,
+    
+    /**
+     *  Suppress all NPE, IllegalArg exceptions.
+     */
+    CLASSCAST_ARITHMETIC_ARRAYEXCEPTIONS
+  }
+  
+  
+  /**
+   * How does the call stack look like?
+   */
+  public enum CallStack {
+    
+    TEST_TESTED_METH,
+    
+    TEST_TESTED_CLASS,
+    
+    TEST_OTHER_CLASS
+  }
+  
+  	
 	public static final List<String> ANNOTATED_LIST = new Vector<String>();
 	public static boolean DIRECT_CALL_ONLY = false;
-	public static boolean SHOW_ERRORS = false;	//show java.lang.Error
-	
-	/* How does the call stack look like? */
-	protected static final int TEST_TESTED_METH = 2;
-	protected static final int TEST_TESTED_CLASS = 1;
-	protected static final int TEST_OTHER_CLASS = 0;
+  public static FilterMode FILTER_MODE = 
+    FilterMode.CLASSCAST_ARITHMETIC_ARRAYEXCEPTIONS;
+	public static boolean SUPPRESS_ERRORS = false;	//hide java.lang.Error
+
 	
 	/**
 	 * on which height of function frame stack are regular test sequences placed?
@@ -312,14 +339,15 @@ public class FilteringTestCase extends TestCase {
 	 * when calling getNameOfTest().
 	 * The result is a little imprecise as there can be more methods of
 	 * the same name. */
-	protected int testCalledTestee(RuntimeException e) {
+	protected CallStack testCalledTestee(RuntimeException e) {
 		int testPos = e.getStackTrace().length - stackLengthOfTest;
 		check(testPos>0);
 		
 		int calledPos = testPos - 1;		
 		StackTraceElement calledFrame = e.getStackTrace()[calledPos];
 		
-		if (getNameOfTestedMeth()==null) {return TEST_OTHER_CLASS;}
+		if (getNameOfTestedMeth()==null) 
+      return CallStack.TEST_OTHER_CLASS;
 		
 		String calledMethName =
 			calledFrame.getClassName() +"." +calledFrame.getMethodName();
@@ -328,9 +356,13 @@ public class FilteringTestCase extends TestCase {
 		//		and use PreciseCallStack
 		String testedMethName = PreciseCallStack.stackTraceStyle(getNameOfTestedMeth());
 		
-		if (testedMethName.equals(calledMethName)) {return TEST_TESTED_METH;}
-		if (testedMethName.startsWith(calledFrame.getClassName())) {return TEST_TESTED_CLASS;}
-		return TEST_OTHER_CLASS;
+		if (testedMethName.equals(calledMethName))
+      return CallStack.TEST_TESTED_METH;
+    
+		if (testedMethName.startsWith(calledFrame.getClassName()))
+      return CallStack.TEST_TESTED_CLASS;
+    
+		return CallStack.TEST_OTHER_CLASS;
 	}
 
 	
@@ -439,24 +471,31 @@ public class FilteringTestCase extends TestCase {
 		if (publicToPublicSliceHeight == 0) {return;}
 			
 		switch (FILTER_MODE) {
-		  /* new CnC mode: simpler filtering, aggressive grouping. */
-			case REPORT_ALL: throwIfTested(e); return;
-			case REPORT_SELECTIVE:
-				if (isBugException(e)) {throwIfTested(e);} return;
-			/* classic JCrasher SPE mode: old filter, old grouping. */
-			default:
-				/* height== |funcUnderTest| =|testSeq|+1 --> determine "bug" from "bad precond"
-				 * only iff we have called a public method - compare to protected service method
-				 * invoked to generate a needed parameter. */
-				if (publicToPublicSliceHeight == 1) {		
-					if (isBugException(e)) {throw new IntendedException(e);} return;
-				}
-				
-				/* height > |testSeq|+1 -->
-				 * throw exception only if we found a transitively called public method/base-constructor */					
-				if  (publicToPublicSliceHeight > 1) {
-					throw e;
-				}
+    
+    case ALL:       //report any RuntimeException, regardless who called.
+      throwIfTested(e);
+      return;
+            
+		case CLASSCAST_ARITHMETIC_ARRAYEXCEPTIONS: //report any Bug-RuntimeException, regardless who called. 
+			if (isBugException(e))
+         throwIfTested(e); 
+       return;
+        
+        
+		/* classic JCrasher SPE mode: old filter, old grouping. */
+		default:
+			/* height== |funcUnderTest| =|testSeq|+1 --> determine "bug" from "bad precond"
+			 * only iff we have called a public method - compare to protected service method
+			 * invoked to generate a needed parameter. */
+			if (publicToPublicSliceHeight == 1) {		
+				if (isBugException(e)) {throw new IntendedException(e);} return;
+			}
+			
+			/* height > |testSeq|+1 -->
+			 * throw exception only if we found a transitively called public method/base-constructor */					
+			if  (publicToPublicSliceHeight > 1) {
+				throw e;
+			}
 		}
 	}
 }

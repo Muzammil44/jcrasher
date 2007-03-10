@@ -18,7 +18,6 @@ import org.apache.commons.lang.NotImplementedException;
 
 import edu.gatech.cc.jcrasher.planner.ClassUnderTest;
 import edu.gatech.cc.jcrasher.planner.CutPlanner;
-import edu.gatech.cc.jcrasher.planner.Planner;
 import edu.gatech.cc.jcrasher.planner.CutPlannerImpl;
 import edu.gatech.cc.jcrasher.plans.JavaCode;
 import edu.gatech.cc.jcrasher.plans.stmt.Block;

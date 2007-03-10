@@ -17,6 +17,7 @@ import edu.gatech.cc.junit.FilteringTestCase;
 import edu.gatech.cc.junit.IntendedException;
 import edu.gatech.cc.junit.Wrapper;
 import edu.gatech.cc.junit.textui.RaGTestRunner;
+import edu.gatech.cc.junit.textui.RaGTestRunner.GroupMode;
 
 /**
  * Suppresses all exceptions similar to previously recorded exceptions.
@@ -133,7 +134,7 @@ public class GroupedTestResult extends TestResult {
       
 			switch (RaGTestRunner.GROUP_MODE) {
 			  /* new CnC mode: agressive grouping. */
-				case RaGTestRunner.GROUP_FOCUSED:
+				case GROUP_FOCUSED:
 					if (hasSameTop(prototypeThrowable.getStackTrace(), throwable.getStackTrace())) {
 						if (candidate==null || isMoreFocused(prototypeThrowable, candidate.thrownException())) {
 							candidate = prototypeFailure;
@@ -151,7 +152,7 @@ public class GroupedTestResult extends TestResult {
 					}
 			}
 		}
-		if (RaGTestRunner.GROUP_MODE==RaGTestRunner.GROUP_FOCUSED) {
+		if (RaGTestRunner.GROUP_MODE==GroupMode.GROUP_FOCUSED) {
 			return candidate;
 		}
 		return null;  //could not find a prototype exception in failure list.
@@ -187,13 +188,13 @@ public class GroupedTestResult extends TestResult {
     /* Moved Error check here from FilteringTestCase.
      * Calling dispatchError might generate another stack overflow error.
      * Which would end up here regardless of any filtering in dispatchError. */
-    if ((throwable instanceof Error) && (!FilteringTestCase.SHOW_ERRORS))
+    if ((FilteringTestCase.SUPPRESS_ERRORS) && (throwable instanceof Error))
       return;
     
 		GroupedTestFailure prototype = getPrototype(throwable);
 		GroupedTestFailure failure = null;
 		
-		if (RaGTestRunner.GROUP_MODE==RaGTestRunner.GROUP_FOCUSED && prototype!=null &&
+		if (RaGTestRunner.GROUP_MODE==GroupMode.GROUP_FOCUSED && prototype!=null &&
 				isMoreFocused(throwable, prototype.thrownException())) // unwrap after isMoreFocused
 		{	/* make failure the new protype */
 			if (throwable instanceof Wrapper) {throwable = ((Wrapper)throwable).unwrap();}
