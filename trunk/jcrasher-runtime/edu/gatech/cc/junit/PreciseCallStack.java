@@ -16,7 +16,6 @@ import org.apache.bcel.generic.Type;
  * the precise method signature.
  * 
  * @author csallner@gatech.edu (Christoph Csallner)
- * @version	$Id: $
  */
 public class PreciseCallStack {
 
