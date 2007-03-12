@@ -26,7 +26,7 @@ implements TestCaseWriter
 {
 	protected final boolean doFilter;
 	protected final int fileNr;					//-1 = no number.
-	protected final Block[] blocks;
+	protected final Block<?>[] blocks;
   protected Class<? extends Throwable> expectThrown = null;
   protected int expectedThrowingLineNumber = 0;
 	
@@ -39,7 +39,7 @@ implements TestCaseWriter
       final Class<T> testeeClass,
       final String comment,
       boolean doFilter,
-      final Block[] blocks,
+      final Block<?>[] blocks,
       int fileNr) {
     this(testeeClass, comment, doFilter, blocks, fileNr, null, 0);
   }
@@ -59,7 +59,7 @@ implements TestCaseWriter
 			final Class<T> testeeClass,
 			final String comment,
       boolean doFilter,
-      final Block[] blocks,
+      final Block<?>[] blocks,
       int fileNr,
       Class<? extends Throwable> expectThrown,
       int expectedThrowingLineNumber) {
@@ -83,7 +83,7 @@ implements TestCaseWriter
 			final Class<T> testeeClass,
       final String comment,
       boolean doFilter,
-      final Block[] blocks) {
+      final Block<?>[] blocks) {
 	
 		this(
 				notNull(testeeClass),
@@ -184,7 +184,7 @@ implements TestCaseWriter
     if (doFilter && (expectThrown != null)) {
       sb.append(
         getOverride()+
-        TAB+"protected Class<Throwable> getExpectedThrowable() {"+          NL+
+        TAB+"protected Class<? extends Throwable> getExpectedThrowable() {"+NL+
         TAB+TAB+"return "+expectThrown.getName()+".class;"+                 NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL);
@@ -223,7 +223,7 @@ implements TestCaseWriter
   /**
    * @return <init> for constructor and simple name for methods.
    */
-  protected String getTestedMethName(final Block block) {
+  protected String getTestedMethName(final Block<?> block) {
     notNull(block);
     
     if (block.getTestee() instanceof Constructor) {

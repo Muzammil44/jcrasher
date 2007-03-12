@@ -127,7 +127,7 @@ public class FilteringTestCase extends TestCase {
 	}
 
   
-  protected Class<Throwable> getExpectedThrowable() {
+  protected Class<? extends Throwable> getExpectedThrowable() {
     return null;
   }
 
