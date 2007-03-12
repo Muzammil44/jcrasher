@@ -12,16 +12,16 @@ import edu.gatech.cc.jcrasher.plans.stmt.Block;
 /**
  * @author csallner@gatech.edu (Christoph Csallner)
  */
-public interface ClassUnderTest<T> {
+public abstract class ClassUnderTest<T> extends TypeNode<T> {
 	/**
    * Retrieve block with given index from the underlying class's plan space.
 	 * 
 	 * Precond: 0 <= planIndex < getPlanSpaceSize() Postcond: no side-effects
 	 */
-	public Block<?> getBlock(BigInteger planIndex);
+	public abstract Block<?> getBlock(BigInteger planIndex);
   
-  /**
-   * @return the number of test methods available.
-   */
-  public BigInteger getNrTestMethodsAvailable();
+  @Override
+  public ExpressionNode<T>[] getChildren() {
+    return children;
+  }
 }

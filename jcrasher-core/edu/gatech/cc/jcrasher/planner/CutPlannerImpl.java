@@ -47,18 +47,18 @@ public class CutPlannerImpl implements CutPlanner {
   /**
    * Cache constructed nodes
    */
-  final protected Map<Class<?>, ClassUnderTestImpl<?>> plans = 
-    new Hashtable<Class<?>, ClassUnderTestImpl<?>>();
+  final protected Map<Class<?>, ClassUnderTest<?>> plans = 
+    new Hashtable<Class<?>, ClassUnderTest<?>>();
 
   
   /**
    * @return plan space of class T.
    */ 
-  public <T> ClassUnderTestImpl<T> getPlanSpace(Class<T> c) {
+  public <T> ClassUnderTest<T> getPlanSpace(Class<T> c) {
   	if (plans.containsKey(c))
-  		return (ClassUnderTestImpl<T>) plans.get(c);
+  		return (ClassUnderTest<T>) plans.get(c);
   	
-    final ClassUnderTestImpl<T> classNode = new ClassUnderTestImpl<T>(
+    final ClassUnderTest<T> classNode = new ClassUnderTestImpl<T>(
         c,
         Constants.MAX_PLAN_RECURSION,
         Constants.VIS_TESTED,

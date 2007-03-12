@@ -56,7 +56,7 @@ public class NonExecutingCutPlanner extends CutPlannerImpl {
     for (int i=0; i<testMethodsSelected.length; i++)
     { /* total number of available tests much smaller than max(int). */
       BigInteger testMethodsAvailable = 
-        getPlanSpace(classes[i]).getNrTestMethodsAvailable();
+        getPlanSpace(classes[i]).getPlanSpaceSize();
       check(testMethodsAvailable.bitLength()<=32);
       testMethodsSelected[i] = testMethodsAvailable.intValue();
       testMethodsSelectedTotal += testMethodsSelected[i];
@@ -88,7 +88,7 @@ public class NonExecutingCutPlanner extends CutPlannerImpl {
     for (int i=0; i<classes.length; i++) {
       /* TODO: This only reports the first MAX_INT methods per class. */
       testMethodsAvailable[i] =
-        getPlanSpace(classes[i]).getNrTestMethodsAvailable();
+        getPlanSpace(classes[i]).getPlanSpaceSize();
       testMethodsAvailableTotal =
         testMethodsAvailableTotal.add(testMethodsAvailable[i]);
     }
@@ -152,11 +152,19 @@ public class NonExecutingCutPlanner extends CutPlannerImpl {
    * Prints statistics to standard out.
    */
   public void printStatistics() {
-    check(chosen);
+    check(chosen);  
+
+    int[] nrSelectedFunctions = new int[classes.length];
+    int functionsSelectedTotal = 0;
+    int nrSelectedFunctionsLengthMax = 0;
+    int[] nrDeclaredFunctions = new int[classes.length];
+    int functionsDeclaredTotal = 0;
+    int nrDeclaredFunctionsLengthMax = 0;
     
     int nameLengthMax = 0;     
-    int nrSelectedLengthMax = 0;
-    int nrAvailableLengthMax = 0;
+    int nrSelectedTestsLengthMax = 0;
+    int nrAvailableTestsLengthMax = 0;
+
     
     /* Determine maximum lenghts for pretty printing */
     for (int i=0; i<classes.length; i++) {
@@ -164,27 +172,48 @@ public class NonExecutingCutPlanner extends CutPlannerImpl {
       if (nameLength > nameLengthMax)
         nameLengthMax = nameLength;
       
-      int nrSelectedLength = Integer.toString(testMethodsSelected[i]).length(); 
-      if (nrSelectedLength > nrSelectedLengthMax)
-        nrSelectedLengthMax = nrSelectedLength;
+      nrSelectedFunctions[i] = getPlanSpace(classes[i]).getChildren().length;
+      functionsSelectedTotal += nrSelectedFunctions[i];
+      int nrSelectedFunctionsLength = Integer.toString(nrSelectedFunctions[i]).length();
+      if (nrSelectedFunctionsLength > nrSelectedFunctionsLengthMax)
+        nrSelectedFunctionsLengthMax = nrSelectedFunctionsLength;      
       
-      int nrAvailableLength =
-        getPlanSpace(classes[i]).getNrTestMethodsAvailable().toString().length();
-      if (nrAvailableLength > nrAvailableLengthMax)
-        nrAvailableLengthMax = nrAvailableLength;
+      nrDeclaredFunctions[i] = 
+        classes[i].getDeclaredConstructors().length + classes[i].getDeclaredMethods().length;
+      functionsDeclaredTotal += nrDeclaredFunctions[i];
+      int nrDeclaredFunctionsLength = Integer.toString(nrDeclaredFunctions[i]).length();
+      if (nrDeclaredFunctionsLength > nrDeclaredFunctionsLengthMax)
+        nrDeclaredFunctionsLengthMax = nrDeclaredFunctionsLength;     
+            
+      int nrSelectedTestLength = Integer.toString(testMethodsSelected[i]).length(); 
+      if (nrSelectedTestLength > nrSelectedTestsLengthMax)
+        nrSelectedTestsLengthMax = nrSelectedTestLength;
+      
+      int nrAvailableTestLength =
+        getPlanSpace(classes[i]).getPlanSpaceSize().toString().length();
+      if (nrAvailableTestLength > nrAvailableTestsLengthMax)
+        nrAvailableTestsLengthMax = nrAvailableTestLength;
     }
 
     System.out.println(
-        "Generating "+
+        "Generating for "+
+        functionsSelectedTotal+" public of total "+functionsDeclaredTotal+
+        " methods and constructors "+
         testMethodsSelectedTotal+" of "+testMethodsAvailableTotal+
         " found test methods:");
     
     for (int i=0; i<classes.length; i++) {
       System.out.printf(
-          "%1$-"+nameLengthMax+"s %2$"+nrSelectedLengthMax+"d of %3$"+nrAvailableLengthMax+"d\n",
+              "%1$-"+nameLengthMax+"s for " +
+              "%2$"+nrSelectedFunctionsLengthMax+"d of " +
+              "%3$"+nrDeclaredFunctionsLengthMax+"d: " +
+              "%4$"+nrSelectedTestsLengthMax+"d of " +
+              "%5$"+nrAvailableTestsLengthMax+"d\n",
           classes[i].getName(),
-          Integer.valueOf(testMethodsSelected[i]),
-          getPlanSpace(classes[i]).getNrTestMethodsAvailable());
+          nrSelectedFunctions[i],
+          nrDeclaredFunctions[i], 
+          testMethodsSelected[i],
+          getPlanSpace(classes[i]).getPlanSpaceSize());
     }
     
     System.out.println();
