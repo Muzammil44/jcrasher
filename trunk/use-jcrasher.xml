@@ -127,6 +127,7 @@ Note that properties of the calling project override properties defined here.
     <junit dir="${bin.generated.tests}" fork="yes" 
         printsummary="on">
       <formatter type="plain" />
+    	<jvmarg line="${jvm.args.junit}"/>
       <classpath>
         <pathelement location="${bin.generated.tests}" /> 
         <pathelement location="${bin}"/> 
@@ -148,6 +149,7 @@ Note that properties of the calling project override properties defined here.
     <java classname="edu.gatech.cc.junit.textui.RaGTestRunner"
     		output="${junit.out}"
     		fork="yes">	<!--TODO: Ant crashes otherwise-->
+    	<jvmarg line="${jvm.args.junit}"/>
       <classpath>
         <pathelement location="${jcrasher.jar}"/>
         <pathelement location="${junit.jar}"/>

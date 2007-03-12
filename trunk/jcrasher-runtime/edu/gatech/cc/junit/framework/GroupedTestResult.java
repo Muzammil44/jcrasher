@@ -10,6 +10,7 @@ import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import junit.framework.AssertionFailedError;
 import junit.framework.Test;
 import junit.framework.TestResult;
 import edu.gatech.cc.junit.AccidentException;
@@ -219,4 +220,14 @@ public class GroupedTestResult extends TestResult {
 		for (Enumeration e= fListeners.elements(); e.hasMoreElements(); )
 			((GroupedTestListener)e.nextElement()).addError(test, throwable, prototype);
 	}
+  
+
+  
+  /**
+   * TODO: Should our tools ignore violations of JUnit's assertions?
+   */
+  @Override
+  public synchronized void addFailure(Test test, AssertionFailedError t) {
+    addError(test, t);
+  }
 }

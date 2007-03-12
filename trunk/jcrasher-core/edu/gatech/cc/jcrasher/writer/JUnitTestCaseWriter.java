@@ -27,28 +27,50 @@ implements TestCaseWriter
 	protected final boolean doFilter;
 	protected final int fileNr;					//-1 = no number.
 	protected final Block[] blocks;
+  protected Class<? extends Throwable> expectThrown = null;
+  protected int expectedThrowingLineNumber = 0;
 	
-	
-	/**
+	/** 
+   * Constructor
+   * 
+   * Uses default values.
+	 */
+  public JUnitTestCaseWriter(
+      final Class<T> testeeClass,
+      final String comment,
+      boolean doFilter,
+      final Block[] blocks,
+      int fileNr) {
+    this(testeeClass, comment, doFilter, blocks, fileNr, null, 0);
+  }
+  
+  /**
 	 * Constructor.
 	 * <p>
    * Writes a series of test cases to a new java file together
    * with a text that will be included as a comment.
+   * 
 	 * @param doFilter wrap test case into a try-catch block that passes any
    * thrown exception to JCrasher's runtime filters.
+   * @param expectThrown null indicates don't care.
+   * @param expectedThrowingLineNumber smaller than one indicates don't care.
 	 */
 	public JUnitTestCaseWriter(
 			final Class<T> testeeClass,
 			final String comment,
       boolean doFilter,
       final Block[] blocks,
-      int fileNr) {
+      int fileNr,
+      Class<? extends Throwable> expectThrown,
+      int expectedThrowingLineNumber) {
 	
 		super(notNull(testeeClass), notNull(comment));
 		
 		this.doFilter = doFilter;
 		this.blocks = notNull(blocks);
 		this.fileNr = fileNr;
+    this.expectThrown = expectThrown;
+    this.expectedThrowingLineNumber = expectedThrowingLineNumber;
 	}
 	
 
@@ -68,7 +90,9 @@ implements TestCaseWriter
 				notNull(comment),
 				doFilter, 
 				notNull(blocks),
-				-1);	
+				-1,
+        null,
+        0);	
 	}
 	
   /**
@@ -157,6 +181,24 @@ implements TestCaseWriter
         TAB+"}"+                                                            NL+
         TAB+                                                                NL);
     }
+    if (doFilter && (expectThrown != null)) {
+      sb.append(
+        getOverride()+
+        TAB+"protected Class<Throwable> getExpectedThrowable() {"+          NL+
+        TAB+TAB+"return \""+expectThrown.getName()+".class\";"+             NL+
+        TAB+"}"+                                                            NL+
+        TAB+                                                                NL);
+    }    
+    if (doFilter && (expectedThrowingLineNumber > 0)) {
+      sb.append(
+        getOverride()+
+        TAB+"protected int getExpectedThrowingLineNumber() {"+              NL+
+        TAB+TAB+"return "+expectedThrowingLineNumber+";"+                   NL+
+        TAB+"}"+                                                            NL+
+        TAB+                                                                NL);
+    }    
+    
+    
     sb.append(
     		getJavaDocComment("Constructor", TAB)+
         TAB+"public "+simpleTestName+"(String pName) {"+                    NL+

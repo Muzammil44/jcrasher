@@ -65,6 +65,7 @@ public class FilteringTestCase extends TestCase {
   	
 	public static final List<String> ANNOTATED_LIST = new Vector<String>();
 	public static boolean DIRECT_CALL_ONLY = false;
+  public static boolean THROWN_BY_TESTED_METHOD_ONLY = false;
   public static FilterMode FILTER_MODE = 
     FilterMode.CLASSCAST_ARITHMETIC_ARRAYEXCEPTIONS;
 	public static boolean SUPPRESS_ERRORS = false;	//hide java.lang.Error
@@ -125,6 +126,14 @@ public class FilteringTestCase extends TestCase {
 		super(name);
 	}
 
+  
+  protected Class<Throwable> getExpectedThrowable() {
+    return null;
+  }
+
+  protected int getExpectedThrowingLineNumber() {
+    return 0;
+  }
   
   protected String getNameOfTestedMeth() {
     return null;
@@ -373,9 +382,16 @@ public class FilteringTestCase extends TestCase {
    */
 	protected void throwIfTested(RuntimeException e) throws Wrapper {
 		switch (testCalledTestee(e)) {
-			case TEST_TESTED_METH:  throw new IntendedException(e);
-			case TEST_TESTED_CLASS: throw new AccidentException(e);
-			case TEST_OTHER_CLASS: return;
+			case TEST_TESTED_METH:  
+        throw new IntendedException(e);
+        
+			case TEST_TESTED_CLASS:
+        if (THROWN_BY_TESTED_METHOD_ONLY)
+          return;
+        throw new AccidentException(e);
+      
+			case TEST_OTHER_CLASS:
+        return;
 		}
 	}
 	
@@ -414,6 +430,18 @@ public class FilteringTestCase extends TestCase {
     
     if (throwable instanceof ExitSecurityException)
       return;  //Always ignore System.exit violations.
+    
+    /* Ignore exceptions that differ from the expected exception. */
+    if (getExpectedThrowable() != null)
+      if (!throwable.getClass().isAssignableFrom(getExpectedThrowable()))
+        return;
+    
+    /* Ignore exceptions that were not thrown at the expected line number. */
+    if (getExpectedThrowingLineNumber() > 0)
+      if (throwable.getStackTrace() != null && throwable.getStackTrace().length>0)
+        if (throwable.getStackTrace()[0].getLineNumber() > 0)
+          if (getExpectedThrowingLineNumber() != throwable.getStackTrace()[0].getLineNumber())
+            return;
         
     /* Moved following if-statement to GroupedTestResult.addError.
      * Calling dispatchExeption may produce a stack overflow error itself
