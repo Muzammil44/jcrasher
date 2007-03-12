@@ -185,7 +185,7 @@ implements TestCaseWriter
       sb.append(
         getOverride()+
         TAB+"protected Class<Throwable> getExpectedThrowable() {"+          NL+
-        TAB+TAB+"return \""+expectThrown.getName()+".class\";"+             NL+
+        TAB+TAB+"return "+expectThrown.getName()+".class;"+                 NL+
         TAB+"}"+                                                            NL+
         TAB+                                                                NL);
     }    
