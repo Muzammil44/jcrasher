@@ -10,8 +10,10 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintStream;
 
+import junit.framework.Test;
 import junit.framework.TestResult;
 import junit.runner.TestSuiteLoader;
+import junit.runner.Version;
 import junit.textui.ResultPrinter;
 import junit.textui.TestRunner;
 import edu.gatech.cc.junit.FilteringTestCase;
@@ -93,7 +95,7 @@ public class RaGTestRunner extends TestRunner {
 	
 	
 	@Override
-	protected TestResult createTestResult() {
+	protected GroupedTestResult createTestResult() {
 		return new GroupedTestResult();
 	}
 
@@ -120,8 +122,7 @@ public class RaGTestRunner extends TestRunner {
 	 */	 	
 	protected PrintStream getResultsStream() {
 		return System.out;
-	}
-	
+	} 
 	
 	/*
 	 * Stuff from main - to be reused by subclasses.
@@ -227,7 +228,10 @@ public class RaGTestRunner extends TestRunner {
 				DO_REINIT = true;  //turn on reinitialization
 				foundArg = true;
 			}
-			
+      if (args[0].equals("-testedOnly")) {  //restrict reporting to exception caused by tested method
+        FilteringTestCase.THROWN_BY_TESTED_METHOD_ONLY = true;
+        foundArg = true;
+      }     			
 			if (args[0].equals("-focus")) {
 				GROUP_MODE = GroupMode.GROUP_FOCUSED;
 				foundArg = true;
