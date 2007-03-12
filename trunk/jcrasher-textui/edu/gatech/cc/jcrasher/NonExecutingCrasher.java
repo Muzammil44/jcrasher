@@ -17,6 +17,7 @@ import java.util.Iterator;
 import java.util.TreeMap;
 
 import edu.gatech.cc.jcrasher.planner.ClassUnderTest;
+import edu.gatech.cc.jcrasher.planner.ClassUnderTestImpl;
 import edu.gatech.cc.jcrasher.plans.stmt.Block;
 import edu.gatech.cc.jcrasher.writer.JUnitAll;
 import edu.gatech.cc.jcrasher.writer.JUnitAllImpl;
@@ -72,7 +73,7 @@ public class NonExecutingCrasher extends AbstractCrasher {
     check(planIndexStretch.compareTo(BigInteger.valueOf(amount)) >= 0);
     
     ClassUnderTest<?> classNode = planner.getPlanSpace(testeeClass);
-    BigInteger maxTestCasesAvailable =  classNode.getNrTestMethodsAvailable();
+    BigInteger maxTestCasesAvailable =  classNode.getPlanSpaceSize();
     
     if (startPlanIndex.compareTo(maxTestCasesAvailable) >=  0) {
       System.out.println(
@@ -132,7 +133,7 @@ public class NonExecutingCrasher extends AbstractCrasher {
     check(amount>=0);
         
     ClassUnderTest<?> classNode = planner.getPlanSpace(testeeClass); //from cache
-    int maxTestCasesAvailable = classNode.getNrTestMethodsAvailable().intValue();
+    int maxTestCasesAvailable = classNode.getPlanSpaceSize().intValue();
     
     if (testMethodStartIndex >= maxTestCasesAvailable) {
       System.out.println(

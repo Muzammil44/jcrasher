@@ -39,8 +39,7 @@ import edu.gatech.cc.jcrasher.plans.stmt.LocalVariableDeclarationStatement;
  * @author csallner@gatech.edu (Christoph Csallner)
  */
 public class ClassUnderTestImpl<T> 
-extends TypeNode<T> 
-implements ClassUnderTest<T> {
+extends ClassUnderTest<T> {
 
   protected Class<T> wrappedClass = null;
   protected String testBlockSpaces = TAB+TAB;
@@ -302,15 +301,6 @@ implements ClassUnderTest<T> {
     b.setBlockStmts(blockStatements);
     
     return b;
-  }
-  
-  
-  /**
-   * @deprecated call getPlanSpaceSize() directly.
-   */
-  @Deprecated
-  public BigInteger getNrTestMethodsAvailable() {
-    return getPlanSpaceSize();
   }
   
   @Override

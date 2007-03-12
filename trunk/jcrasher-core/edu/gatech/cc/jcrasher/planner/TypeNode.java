@@ -70,7 +70,7 @@ public abstract class TypeNode<T> implements PlanSpaceNode<T> {
     this.children = pChildren;
   }
 
-  protected PlanSpaceNode<T>[] getChildren() {
+  protected ExpressionNode<T>[] getChildren() {
     return children;
   }
 

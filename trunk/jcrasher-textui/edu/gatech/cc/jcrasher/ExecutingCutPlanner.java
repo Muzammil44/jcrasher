@@ -17,6 +17,7 @@ import java.util.Random;
 import org.apache.commons.lang.NotImplementedException;
 
 import edu.gatech.cc.jcrasher.planner.ClassUnderTest;
+import edu.gatech.cc.jcrasher.planner.ClassUnderTestImpl;
 import edu.gatech.cc.jcrasher.planner.CutPlanner;
 import edu.gatech.cc.jcrasher.planner.CutPlannerImpl;
 import edu.gatech.cc.jcrasher.plans.JavaCode;
@@ -82,7 +83,7 @@ public class ExecutingCutPlanner {
     notNull(classUnderTest);
     
     final ClassUnderTest<T> classNode = cutPlanner.getPlanSpace(classUnderTest);     
-    final BigInteger testsAvailableBig = classNode.getNrTestMethodsAvailable();
+    final BigInteger testsAvailableBig = classNode.getPlanSpaceSize();
     if (testsAvailableBig.bitCount()>32)
       throw new NotImplementedException(
           "Too many potential test methods. Try to reduce the --depth parameter.");
