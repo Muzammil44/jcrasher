@@ -7,7 +7,7 @@ Copyright (C) 2006, 2007 Christoph Csallner and Yannis Smaragdakis.
 <project basedir="." default="relase.jcrasher.all" name="jcrasher">
 
   <!-- inc for major change -->
-  <property name="version" value="2.0" /> 
+  <property name="version" value="2.1" /> 
   <property name="license-jcrasher" value="LICENSE.txt"/>
   <property name="license-fb-crasher" value="LICENSE-fb-crasher.txt"/>  
   <property name="license-gnu-getopt" value="LICENSE-gnu-getopt.txt"/>  
