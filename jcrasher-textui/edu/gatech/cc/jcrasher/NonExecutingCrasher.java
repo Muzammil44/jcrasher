@@ -11,6 +11,7 @@ import static edu.gatech.cc.jcrasher.Assertions.isNonNeg;
 import static edu.gatech.cc.jcrasher.Assertions.notNull;
 import static edu.gatech.cc.jcrasher.Constants.MAX_NR_TEST_METHS_PER_CLASS;
 
+import java.lang.reflect.Member;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Iterator;
@@ -158,8 +159,8 @@ public class NonExecutingCrasher extends AbstractCrasher {
 	
 	
 	/**
-   * @param nrTestMethodsPicked zero or positive.
-   * @param testClassSeqNr 1,2,3, ..
+   * @param testeeIndex index into classes array.
+   * @param testMethodStartIndex first test case index to return
    * @return test methods for pClass.
    * The length of the returned array is MAX_NR_TEST_METHS_PER_CLASS
    * or less (the remainder of the number of picked test methods).
@@ -168,8 +169,8 @@ public class NonExecutingCrasher extends AbstractCrasher {
       int testeeIndex,
       int testMethodStartIndex)
   {
-	  Class<?> testeeClass = classes[testeeIndex];
-    notNull(testeeClass);
+	  Class<?> testee = classes[testeeIndex];
+    notNull(testee);
     
     int nrTestMethodsPicked = planner.getChosenPlans()[testeeIndex];
     check(nrTestMethodsPicked >= 0);
@@ -183,19 +184,67 @@ public class NonExecutingCrasher extends AbstractCrasher {
     
     if(planner.isEveryAvailablePlan())
       /* Enumerate all available test methods */
-      return enumerateTestBlocks(testeeClass, testMethodStartIndex, amount);
+      return enumerateTestBlocks(testee, testMethodStartIndex, amount);
 
     /* Pick random */
     BigInteger startPlanIndex = planner.projectToPlanIndex(testMethodStartIndex);
     BigInteger planIndexStretch = planner.projectToPlanIndex(amount); 
     
     return getRandomTestBlocks(
-        testeeClass,
+        testee,
         startPlanIndex,
         planIndexStretch,
         amount);
     }
   
+  
+  /**
+   * Writes test cases to new test classes.
+   * No test case class shall test more than one testee method.
+   * 
+   * @param testee class under test.
+   * @param blocks test cases to write to disk.
+   * @param firstTestClassSeqNr id of first test class to write.
+   * @return number of classes written.
+   */
+  protected int writeTestClasses(
+      Class<?> testee,
+      Block<?>[] blocks,
+      int firstTestClassSeqNr)
+  {
+    notNull(blocks);
+    if (blocks.length==0)
+      return 0;
+    
+    check(firstTestClassSeqNr>0);
+    
+    int firstMethIndex = 0; //first test case index for current method under test
+    int nextClassSeqNr = firstTestClassSeqNr;
+    
+    for (int i=1; i<=blocks.length; i++) {
+      if (i<blocks.length)
+        if(blocks[i].getTestee().equals(blocks[firstMethIndex].getTestee()))
+          continue; //skip until a test case for a different testee method
+      
+      /* Found next testee, or final test case:
+       * Write test cases for previous testee */
+      
+      Block<?>[] methBlocks = new Block[i-firstMethIndex];
+      System.arraycopy(blocks, firstMethIndex, methBlocks, 0, methBlocks.length);
+      TestCaseWriter codeWriter = new JUnitTestCaseWriter(
+          testee,
+          "Test cases for "+blocks[firstMethIndex].getTestee().getName(),
+          true,
+          methBlocks,
+          nextClassSeqNr);
+      codeWriter.write();
+      junitAll.addTestSuite(testee.getName()+"Test"+nextClassSeqNr);
+      
+      firstMethIndex = i;
+      nextClassSeqNr += 1;
+    }      
+    return nextClassSeqNr - firstTestClassSeqNr;
+  }
   
   
   /**
@@ -216,24 +265,19 @@ public class NonExecutingCrasher extends AbstractCrasher {
     
     /* Generate individual test classes */
     for (int testeeIndex=0; testeeIndex<classes.length; testeeIndex++) {
-      for (int testClassSeqNr=1; 
-           (testClassSeqNr-1) * MAX_NR_TEST_METHS_PER_CLASS  < nrTestMethods[testeeIndex];
-           testClassSeqNr++)
-      {
-
+      int generatedTests = 0;
+      int nextTestClassSeqNr = 1;
+      while (generatedTests < nrTestMethods[testeeIndex]) {
         /* Next block of up to max nr test/class as defined by sample */
-        Block<?>[] blocks = 
-          getTestBlocks(testeeIndex, (testClassSeqNr-1) * MAX_NR_TEST_METHS_PER_CLASS);
-        
-        TestCaseWriter codeWriter = new JUnitTestCaseWriter(
+        Block<?>[] blocks = getTestBlocks(testeeIndex, generatedTests);
+        notNull(blocks);
+        int nrClassesWritten = writeTestClasses(
             classes[testeeIndex],
-            "no comment",
-            true,
             blocks,
-            testClassSeqNr);
-        codeWriter.write();
-        
-        junitAll.addTestSuite(classes[testeeIndex].getName()+"Test"+testClassSeqNr);
+            nextTestClassSeqNr);
+     
+        generatedTests += blocks.length;
+        nextTestClassSeqNr += nrClassesWritten;
       }
     }
     
