@@ -98,7 +98,7 @@ public abstract class Constants {
     "javax.", 
     "sun.", 
     "com.sun.", 
-    "org.apache.", 
+    //"org.apache.",  //TODO: Why did we consider these library types? 
     "org.ietf.",
     "org.omg.", 
     "org.w3c.", 
