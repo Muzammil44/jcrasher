@@ -21,8 +21,9 @@ public class ShortLiteral extends PrimitiveLiteral<Short> {
     super(Short.TYPE, Short.valueOf(value));
   }
   
+  
   @Override
-  public String toString() {
-    return "(short)" + value.toString();
+  public String text() {
+  	return "(short)" + value.toString();
   }
 }
